@@ -125,10 +125,32 @@ enable_dpi_awareness(void)
   }
 }
 
+#if 0
+static HWND
+create_the_window(void)
+{
+  HINSTANCE Instance = GetModuleHandleW(0);
+  WNDCLASSEXW WindowClass = {0};
+  WindowClass.cbSize = sizeof(WindowClass);
+  WindowClass.lpfnWndProc = window_proc;
+  WindowClass.lpszClassName = GH_CLASS;
+  WindowClass.style = CS_OWNDC;
+  WindowClass.hInstance = Instance;
+  //WindowClass.hIcon = LoadIconW(0, (WCHAR*)IDI_WINLOGO);
+  //WindowClass.hCursor = LoadCursorW(0, (WCHAR*)IDC_ARROW);
+  RegisterClassExW(&WindowClass);
+  DWORD WindowStyleEx = WS_EX_APPWINDOW | WS_EX_WINDOWEDGE;
+  DWORD WindowStyle = WS_OVERLAPPEDWINDOW | WS_CLIPSIBLINGS | WS_CLIPCHILDREN;
+  HWND Result = CreateWindowExW(WindowStyleEx, GH_CLASS, GH_TITLE, WindowStyle, GH_SCREEN_X, GH_SCREEN_Y, GH_SCREEN_WIDTH, GH_SCREEN_HEIGHT, 0, 0, Instance, 0);
+  return Result;
+}
+#endif
+
 int APIENTRY
 WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 {
   enable_dpi_awareness();
+  //HWND Window = create_the_window();
   Engine engine;
   return engine.Run();
 }

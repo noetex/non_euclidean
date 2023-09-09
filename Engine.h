@@ -14,8 +14,8 @@ public:
   float NearestPortalDist() const;
 
 private:
-  void CreateGLWindow();
-  void InitGLObjects();
+  HWND CreateGLWindow();
+  GLint InitGLObjects();
   void DestroyGLObjects();
   void SetupInputs();
   void ConfineCursor();

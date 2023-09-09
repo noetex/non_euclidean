@@ -4,6 +4,27 @@ const Input* GH_INPUT = nullptr;
 int GH_REC_LEVEL = 0;
 int64_t GH_FRAME = 0;
 
+static HGLRC
+create_opengl_context(HDC WindowDC)
+{
+  PIXELFORMATDESCRIPTOR PFD = {0};
+  PFD.nSize = sizeof(PFD);
+  PFD.nVersion = 1;
+  PFD.dwFlags = PFD_DRAW_TO_WINDOW | PFD_SUPPORT_OPENGL | PFD_DOUBLEBUFFER;
+  PFD.iPixelType = PFD_TYPE_RGBA;
+  //PFD.cStencilBits = 8;
+  PFD.cColorBits = 32;
+  PFD.cDepthBits = 32;
+  int PixelFormat = ChoosePixelFormat(WindowDC, &PFD);
+  SetPixelFormat(WindowDC, PixelFormat, &PFD);
+  DescribePixelFormat(WindowDC, PixelFormat, sizeof(PFD), &PFD);
+  HGLRC Result = wglCreateContext(WindowDC);
+  wglMakeCurrent(WindowDC, Result);
+  return Result;
+}
+
+
+
 LRESULT WINAPI StaticWindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
   Engine* eng = (Engine*)GetWindowLongPtr(hWnd, GWLP_USERDATA);
   if (eng) {
@@ -12,13 +33,16 @@ LRESULT WINAPI StaticWindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
   return DefWindowProc(hWnd, uMsg, wParam, lParam);
 }
 
-Engine::Engine() : hWnd(NULL), hDC(NULL), hRC(NULL) {
+Engine::Engine(void)
+{
   GH_ENGINE = this;
   GH_INPUT = &input;
   isFullscreen = false;
 
-  CreateGLWindow();
-  InitGLObjects();
+  this->hWnd = this->CreateGLWindow();
+  this->hDC = GetDC(this->hWnd);
+  this->hRC = create_opengl_context(this->hDC);
+  this->occlusionCullingSupported = this->InitGLObjects();
   SetupInputs();
 
   player.reset(new Player);
@@ -313,7 +337,8 @@ LRESULT Engine::WindowProc(HWND hCurWnd, UINT uMsg, WPARAM wParam, LPARAM lParam
   return DefWindowProc(hCurWnd, uMsg, wParam, lParam);
 }
 
-void Engine::CreateGLWindow() {
+HWND Engine::CreateGLWindow(void)
+{
   WNDCLASSEX wc;
   hInstance = GetModuleHandle(NULL);
   wc.cbSize = sizeof(WNDCLASSEX);
@@ -328,18 +353,14 @@ void Engine::CreateGLWindow() {
   wc.lpszMenuName = NULL;
   wc.lpszClassName = GH_CLASS;
   wc.hIconSm = NULL;
-
-  if (!RegisterClassEx(&wc)) {
-    MessageBoxEx(NULL, "RegisterClass() failed: Cannot register window class.", "Error", MB_OK, 0);
-    return;
-  }
+  RegisterClassEx(&wc);
 
   //Always start in windowed mode
   iWidth = GH_SCREEN_WIDTH;
   iHeight = GH_SCREEN_HEIGHT;
 
   //Create the window
-  hWnd = CreateWindowEx(
+  HWND Result = CreateWindowEx(
     WS_EX_APPWINDOW | WS_EX_WINDOWEDGE,
     GH_CLASS,
     GH_TITLE,
@@ -353,39 +374,6 @@ void Engine::CreateGLWindow() {
     hInstance,
     NULL);
 
-  if (hWnd == NULL) {
-    MessageBoxEx(NULL, "CreateWindow() failed:  Cannot create a window.", "Error", MB_OK, 0);
-    return;
-  }
-
-  hDC = GetDC(hWnd);
-
-  PIXELFORMATDESCRIPTOR pfd;
-  memset(&pfd, 0, sizeof(pfd));
-  pfd.nSize = sizeof(pfd);
-  pfd.nVersion = 1;
-  pfd.dwFlags = PFD_DRAW_TO_WINDOW | PFD_SUPPORT_OPENGL | PFD_DOUBLEBUFFER;
-  pfd.iPixelType = PFD_TYPE_RGBA;
-  pfd.cColorBits = 32;
-  pfd.cDepthBits = 32;
-  pfd.iLayerType = PFD_MAIN_PLANE;
-
-  const int pf = ChoosePixelFormat(hDC, &pfd);
-  if (pf == 0) {
-    MessageBoxEx(NULL, "ChoosePixelFormat() failed: Cannot find a suitable pixel format.", "Error", MB_OK, 0);
-    return;
-  }
-
-  if (SetPixelFormat(hDC, pf, &pfd) == FALSE) {
-    MessageBoxEx(NULL, "SetPixelFormat() failed: Cannot set format specified.", "Error", MB_OK, 0);
-    return;
-  }
-
-  DescribePixelFormat(hDC, pf, sizeof(PIXELFORMATDESCRIPTOR), &pfd);
-
-  hRC = wglCreateContext(hDC);
-  wglMakeCurrent(hDC, hRC);
-
   if (GH_START_FULLSCREEN) {
     ToggleFullscreen();
   }
@@ -393,12 +381,14 @@ void Engine::CreateGLWindow() {
     ShowCursor(FALSE);
   }
 
-  ShowWindow(hWnd, SW_SHOW);
-  SetForegroundWindow(hWnd);
-  SetFocus(hWnd);
+  ShowWindow(Result, SW_SHOW);
+  SetForegroundWindow(Result);
+  SetFocus(Result);
+  return Result;
 }
 
-void Engine::InitGLObjects() {
+GLint Engine::InitGLObjects(void)
+{
   //Initialize extensions
   glewInit();
 
@@ -409,12 +399,10 @@ void Engine::InitGLObjects() {
   glEnable(GL_DEPTH_TEST);
   glDepthFunc(GL_LESS);
   glDepthMask(GL_TRUE);
-
-  //Check GL functionality
-  glGetQueryiv(GL_SAMPLES_PASSED_ARB, GL_QUERY_COUNTER_BITS_ARB, &occlusionCullingSupported);
-
-  //Attempt to enalbe vsync (if failure then oh well)
+  GLint Result;
+  glGetQueryiv(GL_SAMPLES_PASSED_ARB, GL_QUERY_COUNTER_BITS_ARB, &Result);
   wglSwapIntervalEXT(1);
+  return Result;
 }
 
 void Engine::DestroyGLObjects() {
