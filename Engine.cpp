@@ -17,7 +17,6 @@ Engine::Engine() : hWnd(NULL), hDC(NULL), hRC(NULL) {
   GH_INPUT = &input;
   isFullscreen = false;
 
-  SetProcessDPIAware();
   CreateGLWindow();
   InitGLObjects();
   SetupInputs();

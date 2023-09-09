@@ -79,16 +79,56 @@
 #include"shader.cpp"
 #include"texture.cpp"
 
-int APIENTRY WinMain(HINSTANCE hCurrentInst, HINSTANCE hPreviousInst, LPSTR lpszCmdLine, int nCmdShow) {
-  //Open console in debug mode
-#ifdef _DEBUG
+static void
+create_debug_console(void)
+{
+  #if 0
   AllocConsole();
-  //SetWindowPos(GetConsoleWindow(), 0, 1920, 200, 0, 0, SWP_NOSIZE | SWP_NOZORDER);
-  AttachConsole(GetCurrentProcessId());
+  HWND Console = GetConsoleWindow();
+  //SetWindowPos(Console, 0, 1920, 200, 0, 0, SWP_NOSIZE | SWP_NOZORDER);
+  DWORD ProcessID = GetCurrentProcessId();
+  AttachConsole(ProcessID);
   freopen("CON", "w", stdout);
-#endif
+  #endif
+}
 
-  //Run the main engine
+static void
+enable_dpi_awareness(void)
+{
+  HMODULE Winuser = LoadLibraryA("user32.dll");
+  void* Function = GetProcAddress(Winuser, "SetProcessDpiAwarenessContext");
+  if(Function)
+  {
+    typedef BOOL dpi_function(DPI_AWARENESS_CONTEXT);
+    dpi_function* SetProcessDpiAwarenessContext = (dpi_function*)Function;
+    if(!SetProcessDpiAwarenessContext(DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE_V2))
+    {
+      SetProcessDpiAwarenessContext(DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE);
+    }
+    return;
+  }
+  HMODULE ShellCore = LoadLibraryA("shcore.dll");
+  Function = GetProcAddress(ShellCore, "SetProcessDpiAwareness");
+  if(Function)
+  {
+    typedef HRESULT dpi_function(PROCESS_DPI_AWARENESS);
+    dpi_function* SetProcessDpiAwareness = (dpi_function*)Function;
+    SetProcessDpiAwareness(PROCESS_PER_MONITOR_DPI_AWARE);
+    return;
+  }
+  Function = GetProcAddress(Winuser, "SetProcessDPIAware");
+  if(Function)
+  {
+    typedef BOOL dpi_function(void);
+    dpi_function* SetProcessDPIAware = (dpi_function*)Function;
+    SetProcessDPIAware();
+  }
+}
+
+int APIENTRY
+WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
+{
+  enable_dpi_awareness();
   Engine engine;
   return engine.Run();
 }
