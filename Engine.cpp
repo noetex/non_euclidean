@@ -26,10 +26,7 @@ create_opengl_context(HDC WindowDC)
 static GLint
 InitGLObjects(void)
 {
-  //Initialize extensions
   glewInit();
-
-  //Basic global variables
   glClearColor(0.6f, 0.9f, 1.0f, 1.0f);
   glEnable(GL_CULL_FACE);
   glCullFace(GL_BACK);
@@ -42,7 +39,9 @@ InitGLObjects(void)
   return Result;
 }
 
-LRESULT WINAPI StaticWindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
+static LRESULT WINAPI
+StaticWindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
+{
   Engine* eng = (Engine*)GetWindowLongPtr(hWnd, GWLP_USERDATA);
   if (eng) {
     return eng->WindowProc(hWnd, uMsg, wParam, lParam);
@@ -101,7 +100,8 @@ int Engine::Run() {
 
   //Game loop
   MSG msg;
-  while (true) {
+  for(;;)
+  {
     if (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE)) {
       //Handle windows messages
       if (msg.message == WM_QUIT) {
