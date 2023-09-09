@@ -15,7 +15,6 @@ public:
 
 private:
   HWND CreateGLWindow();
-  GLint InitGLObjects();
   void DestroyGLObjects();
   void SetupInputs();
   void ConfineCursor();

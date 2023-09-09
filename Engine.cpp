@@ -23,7 +23,24 @@ create_opengl_context(HDC WindowDC)
   return Result;
 }
 
+static GLint
+InitGLObjects(void)
+{
+  //Initialize extensions
+  glewInit();
 
+  //Basic global variables
+  glClearColor(0.6f, 0.9f, 1.0f, 1.0f);
+  glEnable(GL_CULL_FACE);
+  glCullFace(GL_BACK);
+  glEnable(GL_DEPTH_TEST);
+  glDepthFunc(GL_LESS);
+  glDepthMask(GL_TRUE);
+  GLint Result;
+  glGetQueryiv(GL_SAMPLES_PASSED_ARB, GL_QUERY_COUNTER_BITS_ARB, &Result);
+  wglSwapIntervalEXT(1);
+  return Result;
+}
 
 LRESULT WINAPI StaticWindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
   Engine* eng = (Engine*)GetWindowLongPtr(hWnd, GWLP_USERDATA);
@@ -42,7 +59,7 @@ Engine::Engine(void)
   this->hWnd = this->CreateGLWindow();
   this->hDC = GetDC(this->hWnd);
   this->hRC = create_opengl_context(this->hDC);
-  this->occlusionCullingSupported = this->InitGLObjects();
+  this->occlusionCullingSupported = InitGLObjects();
   SetupInputs();
 
   player.reset(new Player);
@@ -384,24 +401,6 @@ HWND Engine::CreateGLWindow(void)
   ShowWindow(Result, SW_SHOW);
   SetForegroundWindow(Result);
   SetFocus(Result);
-  return Result;
-}
-
-GLint Engine::InitGLObjects(void)
-{
-  //Initialize extensions
-  glewInit();
-
-  //Basic global variables
-  glClearColor(0.6f, 0.9f, 1.0f, 1.0f);
-  glEnable(GL_CULL_FACE);
-  glCullFace(GL_BACK);
-  glEnable(GL_DEPTH_TEST);
-  glDepthFunc(GL_LESS);
-  glDepthMask(GL_TRUE);
-  GLint Result;
-  glGetQueryiv(GL_SAMPLES_PASSED_ARB, GL_QUERY_COUNTER_BITS_ARB, &Result);
-  wglSwapIntervalEXT(1);
   return Result;
 }
 
