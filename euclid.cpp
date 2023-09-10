@@ -16,7 +16,6 @@
 #include<iostream>
 #include<unordered_map>
 
-#pragma warning(disable : 4100) // Unreferenced formal parameter
 #pragma warning(disable : 4099) // Missing PDB file
 
 #define GLEW_STATIC

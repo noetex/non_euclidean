@@ -44,6 +44,19 @@ create_debug_console(void)
 #endif
 }
 
+static void
+confine_cursor(HWND Window)
+{
+  if(GH_HIDE_MOUSE)
+  {
+    RECT WindowRect;
+    GetWindowRect(Window, &WindowRect);
+    int CursorX = (WindowRect.left + WindowRect.right) / 2;
+    int CursorY = (WindowRect.top + WindowRect.bottom) / 2;
+    SetCursorPos(CursorX, CursorY);
+  }
+}
+
 #if 0
 static HWND
 create_the_window(void)
@@ -129,7 +142,7 @@ WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
       }
     } else {
       //Confine the cursor
-      engine.ConfineCursor();
+      confine_cursor(engine.hWnd);
 
       if (engine.input.key_press['1']) {
         engine.LoadScene(0);

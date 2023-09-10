@@ -14,7 +14,6 @@ public:
 //private:
   HWND CreateGLWindow();
   void DestroyGLObjects();
-  void ConfineCursor();
   void ToggleFullscreen();
 
   HWND  hWnd;				   // window

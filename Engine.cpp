@@ -340,14 +340,6 @@ void Engine::DestroyGLObjects() {
   vPortals.clear();
 }
 
-void Engine::ConfineCursor() {
-  if (GH_HIDE_MOUSE) {
-    RECT rect;
-    GetWindowRect(hWnd, &rect);
-    SetCursorPos((rect.right + rect.left) / 2, (rect.top + rect.bottom) / 2);
-  }
-}
-
 float Engine::NearestPortalDist() const {
   float dist = FLT_MAX;
   for (size_t i = 0; i < vPortals.size(); ++i) {
