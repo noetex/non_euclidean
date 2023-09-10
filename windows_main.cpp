@@ -72,6 +72,46 @@ WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
   create_debug_console();
   //HWND Window = create_the_window();
   Engine engine;
+
+#if 0
+  engine.hWnd = this->CreateGLWindow();
+  engine.hDC = GetDC(this->hWnd);
+  engine.hRC = create_opengl_context(this->hDC);
+  engine.occlusionCullingSupported = InitGLObjects();
+  engine.vObjects = std::vector<std::shared_ptr<Object>>();
+  engine.vPortals = std::vector<std::shared_ptr<Portal>>();
+  engine.sky = new Sky;
+  engine.player = new Player;
+  engine.vScenes = std::vector<std::shared_ptr<Scene>>();
+  engine.curScene = std::shared_ptr<Scene>();
+  engine.input = {0};
+  engine.isFullscreen = false;
+  setup_raw_input(engine.hWnd);
+{
+  this->main_cam.width = 256;
+  this->main_cam.height = 256;
+  this->main_cam.worldView.MakeIdentity();
+  this->main_cam.projection.MakeIdentity();
+  QueryPerformanceFrequency(&this->timer.frequency);
+  SetupInputs();
+
+  vScenes.push_back(std::shared_ptr<Scene>(new Level1));
+  vScenes.push_back(std::shared_ptr<Scene>(new Level2(3)));
+  vScenes.push_back(std::shared_ptr<Scene>(new Level2(6)));
+  vScenes.push_back(std::shared_ptr<Scene>(new Level3));
+  vScenes.push_back(std::shared_ptr<Scene>(new Level4));
+  vScenes.push_back(std::shared_ptr<Scene>(new Level5));
+  vScenes.push_back(std::shared_ptr<Scene>(new Level6));
+  GH_ENGINE = this;
+  GH_INPUT = &this->input;
+  GH_PLAYER = this->player.get();
+}
+#endif
+
+
+
+
+
   engine.LoadScene(0);
   SetWindowLongPtr(engine.hWnd, GWLP_USERDATA, (LONG_PTR)&engine);
 

@@ -27,6 +27,21 @@
   #define DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE_V2 ((DPI_AWARENESS_CONTEXT)-4)
 #endif
 
+// https://learn.microsoft.com/en-us/windows-hardware/drivers/hid/hid-usages
+enum raw_input_stuff
+{
+  HID_USAGE_PAGE_GENERIC = 0x01,
+  HID_USAGE_PAGE_GAME = 0x05,
+  HID_USAGE_PAGE_LED = 0x08,
+  HID_USAGE_PAGE_BUTTON = 0x09,
+  HID_USAGE_GENERIC_POINTER = 0x01,
+  HID_USAGE_GENERIC_MOUSE = 0x02,
+  HID_USAGE_GENERIC_JOYSTICK = 0x04,
+  HID_USAGE_GENERIC_GAMEPAD = 0x05,
+  HID_USAGE_GENERIC_KEYBOARD = 0x06,
+  HID_USAGE_GENERIC_KEYPAD = 0x07,
+  HID_USAGE_GENERIC_MULTI_AXIS_CONTROLLER = 0x08,
+};
 
 //Windows
 static const char GH_TITLE[] = "NonEuclideanDemo";

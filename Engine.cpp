@@ -39,6 +39,28 @@ InitGLObjects(void)
   return Result;
 }
 
+static void
+setup_raw_input(HWND Window)
+{
+  RAWINPUTDEVICE Devices[3];
+  Devices[0].usUsagePage = HID_USAGE_PAGE_GENERIC;
+  Devices[0].usUsage = HID_USAGE_GENERIC_MOUSE;
+  Devices[0].dwFlags = RIDEV_INPUTSINK;
+  Devices[0].hwndTarget = Window;
+
+  Devices[1].usUsagePage = HID_USAGE_PAGE_GENERIC;
+  Devices[1].usUsage = HID_USAGE_GENERIC_JOYSTICK;
+  Devices[1].dwFlags = 0;
+  Devices[1].hwndTarget = 0;
+
+  Devices[2].usUsagePage = HID_USAGE_PAGE_GENERIC;
+  Devices[2].usUsage = HID_USAGE_GENERIC_GAMEPAD;
+  Devices[2].dwFlags = 0;
+  Devices[2].hwndTarget = 0;
+
+  RegisterRawInputDevices(Devices, 3, sizeof(*Devices));
+}
+
 static LRESULT WINAPI
 StaticWindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
@@ -69,7 +91,7 @@ Engine::Engine(void)
   this->main_cam.worldView.MakeIdentity();
   this->main_cam.projection.MakeIdentity();
   QueryPerformanceFrequency(&this->timer.frequency);
-  SetupInputs();
+  setup_raw_input(this->hWnd);
 
   vScenes.push_back(std::shared_ptr<Scene>(new Level1));
   vScenes.push_back(std::shared_ptr<Scene>(new Level2(3)));
@@ -350,35 +372,6 @@ void Engine::DestroyGLObjects() {
   curScene->Unload();
   vObjects.clear();
   vPortals.clear();
-}
-
-void Engine::SetupInputs() {
-  static const int HID_USAGE_PAGE_GENERIC     = 0x01;
-  static const int HID_USAGE_GENERIC_MOUSE    = 0x02;
-  static const int HID_USAGE_GENERIC_JOYSTICK = 0x04;
-  static const int HID_USAGE_GENERIC_GAMEPAD  = 0x05;
-
-  RAWINPUTDEVICE Rid[3];
-
-  //Mouse
-  Rid[0].usUsagePage = HID_USAGE_PAGE_GENERIC;
-  Rid[0].usUsage = HID_USAGE_GENERIC_MOUSE;
-  Rid[0].dwFlags = RIDEV_INPUTSINK;
-  Rid[0].hwndTarget = hWnd;
-
-  //Joystick
-  Rid[1].usUsagePage = HID_USAGE_PAGE_GENERIC;
-  Rid[1].usUsage = HID_USAGE_GENERIC_JOYSTICK;
-  Rid[1].dwFlags = 0;
-  Rid[1].hwndTarget = 0;
-
-  //Gamepad
-  Rid[2].usUsagePage = HID_USAGE_PAGE_GENERIC;
-  Rid[2].usUsage = HID_USAGE_GENERIC_GAMEPAD;
-  Rid[2].dwFlags = 0;
-  Rid[2].hwndTarget = 0;
-
-  RegisterRawInputDevices(Rid, 3, sizeof(Rid[0]));
 }
 
 void Engine::ConfineCursor() {
