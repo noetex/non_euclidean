@@ -292,14 +292,14 @@ LRESULT Engine::WindowProc(HWND Window, UINT Message, WPARAM wParam, LPARAM lPar
 
 HWND Engine::CreateGLWindow(void)
 {
+  HINSTANCE Instance = GetModuleHandle(NULL);
   WNDCLASSEX wc;
-  hInstance = GetModuleHandle(NULL);
   wc.cbSize = sizeof(WNDCLASSEX);
   wc.style = CS_OWNDC;
   wc.lpfnWndProc = (WNDPROC)StaticWindowProc;
   wc.cbClsExtra = 0;
   wc.cbWndExtra = 0;
-  wc.hInstance = hInstance;
+  wc.hInstance = Instance;
   wc.hIcon = LoadIcon(NULL, IDI_WINLOGO);
   wc.hCursor = LoadCursor(NULL, IDC_ARROW);
   wc.hbrBackground = NULL;
@@ -324,7 +324,7 @@ HWND Engine::CreateGLWindow(void)
     iHeight,
     NULL,
     NULL,
-    hInstance,
+    Instance,
     NULL);
 
   if (GH_START_FULLSCREEN) {

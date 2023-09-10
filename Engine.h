@@ -22,7 +22,6 @@ public:
   HDC   hDC;           // device context
   HGLRC hRC;				   // opengl context
   HWND  hWnd;				   // window
-  HINSTANCE hInstance; // process id
 
   LONG iWidth;         // window width
   LONG iHeight;        // window height
