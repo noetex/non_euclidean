@@ -1,17 +1,4 @@
 static void
-create_debug_console(void)
-{
-  #if 0
-  AllocConsole();
-  HWND Console = GetConsoleWindow();
-  //SetWindowPos(Console, 0, 1920, 200, 0, 0, SWP_NOSIZE | SWP_NOZORDER);
-  DWORD ProcessID = GetCurrentProcessId();
-  AttachConsole(ProcessID);
-  freopen("CON", "w", stdout);
-  #endif
-}
-
-static void
 enable_dpi_awareness(void)
 {
   HMODULE Winuser = LoadLibraryA("user32.dll");
@@ -44,6 +31,19 @@ enable_dpi_awareness(void)
   }
 }
 
+static void
+create_debug_console(void)
+{
+#if _DEBUG
+  AllocConsole();
+  HWND Console = GetConsoleWindow();
+  //SetWindowPos(Console, 0, 1920, 200, 0, 0, SWP_NOSIZE | SWP_NOZORDER);
+  DWORD ProcessID = GetCurrentProcessId();
+  AttachConsole(ProcessID);
+  freopen("CON", "w", stdout);
+#endif
+}
+
 #if 0
 static HWND
 create_the_window(void)
@@ -68,8 +68,8 @@ create_the_window(void)
 int APIENTRY
 WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 {
-  create_debug_console();
   enable_dpi_awareness();
+  create_debug_console();
   //HWND Window = create_the_window();
   Engine engine;
   return engine.Run();

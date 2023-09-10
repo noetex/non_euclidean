@@ -296,62 +296,70 @@ void Engine::Render(const Camera& cam, GLuint curFBO, const Portal* skipPortal) 
 #endif
 }
 
-LRESULT Engine::WindowProc(HWND hCurWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
-  static PAINTSTRUCT ps;
-  static BYTE lpb[256];
-  static UINT dwSize = sizeof(lpb);
+LRESULT Engine::WindowProc(HWND Window, UINT Message, WPARAM wParam, LPARAM lParam)
+{
+  LRESULT Result = 0;
+  switch(Message)
+  {
+    case WM_SYSCOMMAND:
+    {
+      if (wParam == SC_SCREENSAVE || wParam == SC_MONITORPOWER)
+      {
+        return 0;
+      }
+    } break;
+    case WM_PAINT:
+    {
+      PAINTSTRUCT PaintStruct;
+      BeginPaint(Window, &PaintStruct);
+      EndPaint(Window, &PaintStruct);
+    } break;
+    case WM_SIZE:
+    {
+      iWidth = LOWORD(lParam);
+      iHeight = HIWORD(lParam);
+      PostMessage(Window, WM_PAINT, 0, 0);
+    } break;
+    case WM_KEYDOWN:
+    {
+      if (lParam & 0x40000000) { return 0; }
+      input.key[wParam & 0xFF] = true;
+      input.key_press[wParam & 0xFF] = true;
+      if (wParam == VK_ESCAPE)
+      {
+        PostQuitMessage(0);
+      }
+    } break;
+    case WM_SYSKEYDOWN:
+    {
+      if (wParam == VK_RETURN)
+      {
+        ToggleFullscreen();
+      }
+    } break;
+    case WM_KEYUP:
+    {
+      input.key[wParam & 0xFF] = false;
 
-  switch (uMsg) {
-  case WM_SYSCOMMAND:
-    if (wParam == SC_SCREENSAVE || wParam == SC_MONITORPOWER) {
-      return 0;
-    }
-    break;
-
-  case WM_PAINT:
-    BeginPaint(hCurWnd, &ps);
-    EndPaint(hCurWnd, &ps);
-    return 0;
-
-  case WM_SIZE:
-    iWidth = LOWORD(lParam);
-    iHeight = HIWORD(lParam);
-    PostMessage(hCurWnd, WM_PAINT, 0, 0);
-    return 0;
-
-  case WM_KEYDOWN:
-    //Ignore repeat keys
-    if (lParam & 0x40000000) { return 0; }
-    input.key[wParam & 0xFF] = true;
-    input.key_press[wParam & 0xFF] = true;
-    if (wParam == VK_ESCAPE) {
+    } break;
+    case WM_INPUT:
+    {
+      BYTE lpb[256];
+      UINT dwSize = sizeof(lpb);
+      dwSize = sizeof(lpb);
+      GetRawInputData((HRAWINPUT)lParam, RID_INPUT, lpb, &dwSize, sizeof(RAWINPUTHEADER));
+      input.UpdateRaw((const RAWINPUT*)lpb);
+    } break;
+    case WM_CLOSE:
+    {
       PostQuitMessage(0);
+    } break;
+    default:
+    {
+      Result = DefWindowProcW(Window, Message, wParam, lParam);
     }
-    return 0;
-
-  case WM_SYSKEYDOWN:
-    if (wParam == VK_RETURN) {
-      ToggleFullscreen();
-      return 0;
-    }
-    break;
-
-  case WM_KEYUP:
-    input.key[wParam & 0xFF] = false;
-    return 0;
-
-  case WM_INPUT:
-    dwSize = sizeof(lpb);
-    GetRawInputData((HRAWINPUT)lParam, RID_INPUT, lpb, &dwSize, sizeof(RAWINPUTHEADER));
-    input.UpdateRaw((const RAWINPUT*)lpb);
-    break;
-
-  case WM_CLOSE:
-    PostQuitMessage(0);
-    return 0;
   }
-
-  return DefWindowProc(hCurWnd, uMsg, wParam, lParam);
+  return Result;
 }
 
 HWND Engine::CreateGLWindow(void)
