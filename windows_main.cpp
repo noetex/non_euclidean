@@ -73,40 +73,35 @@ WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
   //HWND Window = create_the_window();
   Engine engine;
 
-#if 0
-  engine.hWnd = this->CreateGLWindow();
-  engine.hDC = GetDC(this->hWnd);
-  engine.hRC = create_opengl_context(this->hDC);
+  engine.hWnd = engine.CreateGLWindow();
+  engine.hDC = GetDC(engine.hWnd);
+  engine.hRC = create_opengl_context(engine.hDC);
   engine.occlusionCullingSupported = InitGLObjects();
   engine.vObjects = std::vector<std::shared_ptr<Object>>();
   engine.vPortals = std::vector<std::shared_ptr<Portal>>();
-  engine.sky = new Sky;
-  engine.player = new Player;
+  engine.sky = std::shared_ptr<Sky>(new Sky);
+  engine.player = std::shared_ptr<Player>(new Player);
   engine.vScenes = std::vector<std::shared_ptr<Scene>>();
   engine.curScene = std::shared_ptr<Scene>();
   engine.input = {0};
   engine.isFullscreen = false;
   setup_raw_input(engine.hWnd);
-{
-  this->main_cam.width = 256;
-  this->main_cam.height = 256;
-  this->main_cam.worldView.MakeIdentity();
-  this->main_cam.projection.MakeIdentity();
-  QueryPerformanceFrequency(&this->timer.frequency);
-  SetupInputs();
+  engine.main_cam.width = 256;
+  engine.main_cam.height = 256;
+  engine.main_cam.worldView.MakeIdentity();
+  engine.main_cam.projection.MakeIdentity();
+  QueryPerformanceFrequency(&engine.timer.frequency);
 
-  vScenes.push_back(std::shared_ptr<Scene>(new Level1));
-  vScenes.push_back(std::shared_ptr<Scene>(new Level2(3)));
-  vScenes.push_back(std::shared_ptr<Scene>(new Level2(6)));
-  vScenes.push_back(std::shared_ptr<Scene>(new Level3));
-  vScenes.push_back(std::shared_ptr<Scene>(new Level4));
-  vScenes.push_back(std::shared_ptr<Scene>(new Level5));
-  vScenes.push_back(std::shared_ptr<Scene>(new Level6));
-  GH_ENGINE = this;
-  GH_INPUT = &this->input;
-  GH_PLAYER = this->player.get();
-}
-#endif
+  engine.vScenes.push_back(std::shared_ptr<Scene>(new Level1));
+  engine.vScenes.push_back(std::shared_ptr<Scene>(new Level2(3)));
+  engine.vScenes.push_back(std::shared_ptr<Scene>(new Level2(6)));
+  engine.vScenes.push_back(std::shared_ptr<Scene>(new Level3));
+  engine.vScenes.push_back(std::shared_ptr<Scene>(new Level4));
+  engine.vScenes.push_back(std::shared_ptr<Scene>(new Level5));
+  engine.vScenes.push_back(std::shared_ptr<Scene>(new Level6));
+  GH_ENGINE = &engine;
+  GH_INPUT = &engine.input;
+  GH_PLAYER = engine.player.get();
 
 
 

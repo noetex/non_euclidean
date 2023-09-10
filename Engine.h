@@ -1,6 +1,5 @@
 class Engine {
 public:
-  Engine();
   ~Engine();
 
   void Update();

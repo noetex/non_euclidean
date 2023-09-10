@@ -71,40 +71,6 @@ StaticWindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
   return DefWindowProc(hWnd, uMsg, wParam, lParam);
 }
 
-Engine::Engine(void)
-:
-  hWnd(this->CreateGLWindow()),
-  hDC(GetDC(this->hWnd)),
-  hRC(create_opengl_context(this->hDC)),
-  occlusionCullingSupported(InitGLObjects()),
-  vObjects(std::vector<std::shared_ptr<Object>>()),
-  vPortals(std::vector<std::shared_ptr<Portal>>()),
-  sky(new Sky),
-  player(new Player),
-  vScenes(std::vector<std::shared_ptr<Scene>>()),
-  curScene(std::shared_ptr<Scene>()),
-  input({0}),
-  isFullscreen(false)
-{
-  this->main_cam.width = 256;
-  this->main_cam.height = 256;
-  this->main_cam.worldView.MakeIdentity();
-  this->main_cam.projection.MakeIdentity();
-  QueryPerformanceFrequency(&this->timer.frequency);
-  setup_raw_input(this->hWnd);
-
-  vScenes.push_back(std::shared_ptr<Scene>(new Level1));
-  vScenes.push_back(std::shared_ptr<Scene>(new Level2(3)));
-  vScenes.push_back(std::shared_ptr<Scene>(new Level2(6)));
-  vScenes.push_back(std::shared_ptr<Scene>(new Level3));
-  vScenes.push_back(std::shared_ptr<Scene>(new Level4));
-  vScenes.push_back(std::shared_ptr<Scene>(new Level5));
-  vScenes.push_back(std::shared_ptr<Scene>(new Level6));
-  GH_ENGINE = this;
-  GH_INPUT = &this->input;
-  GH_PLAYER = this->player.get();
-}
-
 Engine::~Engine() {
   ClipCursor(NULL);
   wglMakeCurrent(NULL, NULL);
