@@ -3,7 +3,6 @@ public:
   Engine();
   ~Engine();
 
-  int Run();
   void Update();
   void Render(const Camera& cam, GLuint curFBO, const Portal* skipPortal);
   void LoadScene(int ix);
@@ -13,7 +12,7 @@ public:
   const Player& GetPlayer() const { return *player; }
   float NearestPortalDist() const;
 
-private:
+//private:
   HWND CreateGLWindow();
   void DestroyGLObjects();
   void SetupInputs();
