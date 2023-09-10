@@ -51,6 +51,12 @@ StaticWindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
 Engine::Engine(void)
 {
+  this->input = {0};
+  this->main_cam.width = 256;
+  this->main_cam.height = 256;
+  this->main_cam.worldView.MakeIdentity();
+  this->main_cam.projection.MakeIdentity();
+  QueryPerformanceFrequency(&this->timer.frequency);
   GH_ENGINE = this;
   GH_INPUT = &input;
   isFullscreen = false;

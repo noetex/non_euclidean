@@ -1,7 +1,5 @@
 class Input {
 public:
-  Input();
-
   void EndFrame();
   void UpdateRaw(const tagRAWINPUT* raw);
 

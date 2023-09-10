@@ -1,7 +1,3 @@
-Input::Input() {
-  memset(this, 0, sizeof(Input));
-}
-
 void Input::EndFrame() {
   memset(key_press, 0, sizeof(key_press));
   memset(mouse_button_press, 0, sizeof(mouse_button_press));

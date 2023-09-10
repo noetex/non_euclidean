@@ -1,7 +1,5 @@
 class Camera {
 public:
-  Camera();
-
   Matrix4 InverseProjection() const;
 
   Matrix4 Matrix() const;

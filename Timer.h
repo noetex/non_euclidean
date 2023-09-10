@@ -1,9 +1,5 @@
 class Timer {
 public:
-  Timer() {
-    QueryPerformanceFrequency(&frequency);
-  }
-
   void Start() {
     QueryPerformanceCounter(&t1);
   }
@@ -28,7 +24,7 @@ public:
     return result;
   }
 
-private:
+//private:
   LARGE_INTEGER frequency;        // ticks per second
   LARGE_INTEGER t1, t2;           // ticks
 };

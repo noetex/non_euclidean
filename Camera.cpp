@@ -1,10 +1,3 @@
-Camera::Camera() :
-  width(256),
-  height(256) {
-  worldView.MakeIdentity();
-  projection.MakeIdentity();
-}
-
 void Camera::SetSize(int w, int h, float n, float f) {
   width = w;
   height = h;
