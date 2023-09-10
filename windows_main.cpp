@@ -72,7 +72,7 @@ WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
   create_debug_console();
   //HWND Window = create_the_window();
   Engine engine;
-
+  engine.LoadScene(0);
   SetWindowLongPtr(engine.hWnd, GWLP_USERDATA, (LONG_PTR)&engine);
 
   //Setup the timer
