@@ -6,13 +6,10 @@ public:
   void Render(const Camera& cam, GLuint curFBO, const Portal* skipPortal);
   void LoadScene(int ix);
 
-  LRESULT WindowProc(HWND hCurWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
-
   const Player& GetPlayer() const { return *player; }
   float NearestPortalDist() const;
 
 //private:
-  HWND CreateGLWindow();
   void DestroyGLObjects();
   void ToggleFullscreen();
 

@@ -57,36 +57,184 @@ confine_cursor(HWND Window)
   }
 }
 
-#if 0
-static HWND
-create_the_window(void)
+static LRESULT CALLBACK
+window_proc(HWND Window, UINT Message, WPARAM wParam, LPARAM lParam)
 {
-  HINSTANCE Instance = GetModuleHandleW(0);
-  WNDCLASSEXW WindowClass = {0};
-  WindowClass.cbSize = sizeof(WindowClass);
-  WindowClass.lpfnWndProc = window_proc;
-  WindowClass.lpszClassName = GH_CLASS;
-  WindowClass.style = CS_OWNDC;
-  WindowClass.hInstance = Instance;
-  //WindowClass.hIcon = LoadIconW(0, (WCHAR*)IDI_WINLOGO);
-  //WindowClass.hCursor = LoadCursorW(0, (WCHAR*)IDC_ARROW);
-  RegisterClassExW(&WindowClass);
-  DWORD WindowStyleEx = WS_EX_APPWINDOW | WS_EX_WINDOWEDGE;
-  DWORD WindowStyle = WS_OVERLAPPEDWINDOW | WS_CLIPSIBLINGS | WS_CLIPCHILDREN;
-  HWND Result = CreateWindowExW(WindowStyleEx, GH_CLASS, GH_TITLE, WindowStyle, GH_SCREEN_X, GH_SCREEN_Y, GH_SCREEN_WIDTH, GH_SCREEN_HEIGHT, 0, 0, Instance, 0);
+  Engine* engine = (Engine*)GetWindowLongPtr(Window, GWLP_USERDATA);
+  if(!engine)
+  {
+    return DefWindowProc(Window, Message, wParam, lParam);
+  }
+  LRESULT Result = 0;
+  switch(Message)
+  {
+    case WM_CREATE:
+    {
+      CREATESTRUCT* Struct = (CREATESTRUCT*)lParam;
+      Engine* engine = (Engine*)Struct->lpCreateParams;
+      SetWindowLongPtr(Window, GWLP_USERDATA, (LONG_PTR)engine);
+    } break;
+    case WM_SYSCOMMAND:
+    {
+      if (wParam == SC_SCREENSAVE || wParam == SC_MONITORPOWER)
+      {
+        return 0;
+      }
+    } break;
+    case WM_PAINT:
+    {
+      PAINTSTRUCT PaintStruct;
+      BeginPaint(Window, &PaintStruct);
+      EndPaint(Window, &PaintStruct);
+    } break;
+    case WM_SIZE:
+    {
+      engine->iWidth = LOWORD(lParam);
+      engine->iHeight = HIWORD(lParam);
+      PostMessage(Window, WM_PAINT, 0, 0);
+    } break;
+    case WM_KEYDOWN:
+    {
+      if (lParam & 0x40000000) { return 0; }
+      engine->input.key[wParam & 0xFF] = true;
+      engine->input.key_press[wParam & 0xFF] = true;
+      if (wParam == VK_ESCAPE)
+      {
+        PostQuitMessage(0);
+      }
+    } break;
+    case WM_SYSKEYDOWN:
+    {
+      if (wParam == VK_RETURN)
+      {
+        engine->ToggleFullscreen();
+      }
+    } break;
+    case WM_KEYUP:
+    {
+      engine->input.key[wParam & 0xFF] = false;
+    } break;
+    case WM_INPUT:
+    {
+      BYTE lpb[256];
+      UINT dwSize = sizeof(lpb);
+      dwSize = sizeof(lpb);
+      GetRawInputData((HRAWINPUT)lParam, RID_INPUT, lpb, &dwSize, sizeof(RAWINPUTHEADER));
+      engine->input.UpdateRaw((const RAWINPUT*)lpb);
+    } break;
+    case WM_CLOSE:
+    {
+      PostQuitMessage(0);
+    } break;
+    default:
+    {
+      Result = DefWindowProc(Window, Message, wParam, lParam);
+    }
+  }
   return Result;
 }
-#endif
+
+static void
+setup_raw_input(HWND Window)
+{
+  RAWINPUTDEVICE Devices[3];
+  Devices[0].usUsagePage = HID_USAGE_PAGE_GENERIC;
+  Devices[0].usUsage = HID_USAGE_GENERIC_MOUSE;
+  Devices[0].dwFlags = RIDEV_INPUTSINK;
+  Devices[0].hwndTarget = Window;
+
+  Devices[1].usUsagePage = HID_USAGE_PAGE_GENERIC;
+  Devices[1].usUsage = HID_USAGE_GENERIC_JOYSTICK;
+  Devices[1].dwFlags = 0;
+  Devices[1].hwndTarget = 0;
+
+  Devices[2].usUsagePage = HID_USAGE_PAGE_GENERIC;
+  Devices[2].usUsage = HID_USAGE_GENERIC_GAMEPAD;
+  Devices[2].dwFlags = 0;
+  Devices[2].hwndTarget = 0;
+
+  RegisterRawInputDevices(Devices, 3, sizeof(*Devices));
+}
+
+static GLint
+InitGLObjects(void)
+{
+  glewInit();
+  glClearColor(0.6f, 0.9f, 1.0f, 1.0f);
+  glEnable(GL_CULL_FACE);
+  glCullFace(GL_BACK);
+  glEnable(GL_DEPTH_TEST);
+  glDepthFunc(GL_LESS);
+  glDepthMask(GL_TRUE);
+  GLint Result;
+  glGetQueryiv(GL_SAMPLES_PASSED_ARB, GL_QUERY_COUNTER_BITS_ARB, &Result);
+  wglSwapIntervalEXT(1);
+  return Result;
+}
+
+static HWND
+create_the_window(Engine* engine)
+{
+  HINSTANCE Instance = GetModuleHandle(NULL);
+  WNDCLASSEX wc;
+  wc.cbSize = sizeof(wc);
+  wc.style = CS_OWNDC;
+  wc.lpfnWndProc = window_proc;
+  wc.cbClsExtra = 0;
+  wc.cbWndExtra = 0;
+  wc.hInstance = Instance;
+  wc.hIcon = LoadIcon(NULL, IDI_WINLOGO);
+  wc.hCursor = LoadCursor(NULL, IDC_ARROW);
+  wc.hbrBackground = NULL;
+  wc.lpszMenuName = NULL;
+  wc.lpszClassName = GH_CLASS;
+  wc.hIconSm = NULL;
+  RegisterClassEx(&wc);
+
+  //Always start in windowed mode
+  engine->iWidth = GH_SCREEN_WIDTH;
+  engine->iHeight = GH_SCREEN_HEIGHT;
+
+  //Create the window
+  HWND Result = CreateWindowEx(
+    WS_EX_APPWINDOW | WS_EX_WINDOWEDGE,
+    GH_CLASS,
+    GH_TITLE,
+    WS_OVERLAPPEDWINDOW | WS_CLIPSIBLINGS | WS_CLIPCHILDREN,
+    GH_SCREEN_X,
+    GH_SCREEN_Y,
+    engine->iWidth,
+    engine->iHeight,
+    NULL,
+    NULL,
+    Instance,
+    NULL);
+
+  return Result;
+}
 
 int APIENTRY
 WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 {
   enable_dpi_awareness();
   create_debug_console();
-  //HWND Window = create_the_window();
-  Engine engine;
 
-  engine.hWnd = engine.CreateGLWindow();
+  Engine engine;
+  HWND Window = create_the_window(&engine);
+
+  //engine.hWnd = engine.CreateGLWindow();
+  engine.hWnd = Window;
+  if (GH_START_FULLSCREEN) {
+    engine.ToggleFullscreen();
+  }
+  if (GH_HIDE_MOUSE) {
+    ShowCursor(FALSE);
+  }
+
+  ShowWindow(Window, SW_SHOW);
+  SetForegroundWindow(Window);
+  SetFocus(Window);
+
   engine.hDC = GetDC(engine.hWnd);
   engine.hRC = create_opengl_context(engine.hDC);
   engine.occlusionCullingSupported = InitGLObjects();
