@@ -230,7 +230,7 @@ WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
   //Setup the timer
   const int64_t ticks_per_step = engine.timer.SecondsToTicks(GH_DT);
   int64_t cur_ticks = engine.timer.GetTicks();
-  GH_FRAME = 0;
+  int64_t GH_FRAME = 0;
 
   SetWindowLongPtrW(Window, GWL_STYLE, WS_OVERLAPPEDWINDOW);
   SetWindowLongPtrW(Window, GWL_EXSTYLE, WS_EX_APPWINDOW);

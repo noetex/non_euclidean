@@ -2,7 +2,6 @@ Engine* GH_ENGINE = nullptr;
 Player* GH_PLAYER = nullptr;
 const Input* GH_INPUT = nullptr;
 int GH_REC_LEVEL = 0;
-int64_t GH_FRAME = 0;
 
 void Engine::LoadScene(int ix) {
   //Clear out old scene

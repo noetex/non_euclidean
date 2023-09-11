@@ -91,7 +91,7 @@ extern Engine* GH_ENGINE;
 extern Player* GH_PLAYER;
 extern const Input* GH_INPUT;
 extern int GH_REC_LEVEL;
-extern int64_t GH_FRAME;
+//extern int64_t GH_FRAME;
 
 //Functions
 template<class T>
