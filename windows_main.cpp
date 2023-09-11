@@ -213,12 +213,13 @@ WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 {
   enable_dpi_awareness();
   create_debug_console();
-
   Engine engine;
   //HWND Window = create_the_window(&engine);
   engine.iWidth = GH_SCREEN_WIDTH;
   engine.iHeight = GH_SCREEN_HEIGHT;
   engine.hWnd = create_the_window(&engine);
+  HDC WindowDC = GetDC(engine.hWnd);
+  HGLRC OpenGLContext = create_opengl_context(WindowDC);
   if (GH_START_FULLSCREEN) {
     engine.ToggleFullscreen();
   }
@@ -228,8 +229,6 @@ WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
   SetForegroundWindow(engine.hWnd);
   SetFocus(engine.hWnd);
 
-  engine.hDC = GetDC(engine.hWnd);
-  engine.hRC = create_opengl_context(engine.hDC);
   engine.occlusionCullingSupported = InitGLObjects();
   engine.vObjects = std::vector<std::shared_ptr<Object>>();
   engine.vPortals = std::vector<std::shared_ptr<Portal>>();
@@ -318,14 +317,14 @@ WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
     //Render scene
     GH_REC_LEVEL = GH_MAX_RECURSION;
     engine.Render(engine.main_cam, 0, nullptr);
-    SwapBuffers(engine.hDC);
+    SwapBuffers(WindowDC);
   }
 label_loop_exit:
   engine.DestroyGLObjects();
   ClipCursor(NULL);
-  wglMakeCurrent(engine.hDC, NULL);
-  wglDeleteContext(engine.hRC);
-  ReleaseDC(engine.hWnd, engine.hDC);
+  wglMakeCurrent(WindowDC, NULL);
+  wglDeleteContext(OpenGLContext);
+  ReleaseDC(engine.hWnd, WindowDC);
   //DestroyWindow(hWnd);
   return 0;
 }

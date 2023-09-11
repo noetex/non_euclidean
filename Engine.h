@@ -16,8 +16,6 @@ public:
   bool isFullscreen;
 
   HWND  hWnd;
-  HDC   hDC;
-  HGLRC hRC;
 
   GLint occlusionCullingSupported;
 
