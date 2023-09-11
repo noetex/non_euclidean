@@ -60,23 +60,29 @@ confine_cursor(HWND Window)
 static void
 ToggleFullscreen(Engine* engine)
 {
+  //int WindowX = engine->isFullscreen ? CW_USEDEFAULT : 0;
+  //int WindowY = engine->isFullscreen ? CW_USEDEFAULT : 0;
+  //int WindowWidth = engine->isFullscreen ? engine->iWidth : GetSystemMetrics(SM_CXSCREEN);
+  //int WindowHeight = engine->isFullscreen ? engine->iHeight : GetSystemMetrics(SM_CYSCREEN);
+  //DWORD NewStyle = (WS_CLIPSIBLINGS | WS_CLIPCHILDREN) | engine->isFullscreen ? WS_OVERLAPPEDWINDOW : 0;
+  //DWORD NewStyleEx = WS_EX_APPWINDOW | (engine->isFullscreen ? WS_EX_WINDOWEDGE : 0);
+  engine->isFullscreen = !engine->isFullscreen;
   if(engine->isFullscreen)
   {
     engine->iWidth = GH_SCREEN_WIDTH;
     engine->iHeight = GH_SCREEN_HEIGHT;
-    SetWindowLong(engine->hWnd, GWL_STYLE, WS_OVERLAPPEDWINDOW | WS_CLIPSIBLINGS | WS_CLIPCHILDREN);
-    SetWindowLong(engine->hWnd, GWL_EXSTYLE, WS_EX_APPWINDOW | WS_EX_WINDOWEDGE);
+    SetWindowLongPtrW(engine->hWnd, GWL_STYLE, WS_OVERLAPPEDWINDOW | WS_CLIPSIBLINGS | WS_CLIPCHILDREN);
+    SetWindowLongPtrW(engine->hWnd, GWL_EXSTYLE, WS_EX_APPWINDOW | WS_EX_WINDOWEDGE);
     SetWindowPos(engine->hWnd, HWND_TOP, GH_SCREEN_X, GH_SCREEN_Y, engine->iWidth, engine->iHeight, SWP_SHOWWINDOW);
   }
   else
   {
     engine->iWidth = GetSystemMetrics(SM_CXSCREEN);
     engine->iHeight = GetSystemMetrics(SM_CYSCREEN);
-    SetWindowLong(engine->hWnd, GWL_STYLE, WS_POPUP | WS_CLIPSIBLINGS | WS_CLIPCHILDREN);
-    SetWindowLong(engine->hWnd, GWL_EXSTYLE, WS_EX_APPWINDOW);
-    SetWindowPos(engine->hWnd, HWND_TOPMOST, 0, 0, engine->iWidth, engine->iHeight, SWP_SHOWWINDOW);
+    SetWindowLongPtrW(engine->hWnd, GWL_STYLE, WS_POPUP | WS_CLIPSIBLINGS | WS_CLIPCHILDREN);
+    SetWindowLongPtrW(engine->hWnd, GWL_EXSTYLE, WS_EX_APPWINDOW);
+    SetWindowPos(engine->hWnd, HWND_TOP, 0, 0, engine->iWidth, engine->iHeight, SWP_SHOWWINDOW);
   }
-  engine->isFullscreen = !engine->isFullscreen;
 }
 
 static LRESULT CALLBACK
@@ -141,12 +147,11 @@ window_proc(HWND Window, UINT Message, WPARAM wParam, LPARAM lParam)
     } break;
     case WM_INPUT:
     {
+      RAWINPUT RawInput;
+      UINT InputSize = sizeof(RawInput);
       HRAWINPUT RawInputHandle = (HRAWINPUT)lParam;
-      BYTE Buffer[sizeof(RAWINPUT)];
-      UINT BufferSize = sizeof(Buffer);
-      GetRawInputData(RawInputHandle, RID_INPUT, Buffer, &BufferSize, sizeof(RAWINPUTHEADER));
-      RAWINPUT* RawInput = (RAWINPUT*)Buffer;
-      engine->input.UpdateRaw(RawInput);
+      GetRawInputData(RawInputHandle, RID_INPUT, (void*)&RawInput, &InputSize, sizeof(RAWINPUTHEADER));
+      engine->input.UpdateRaw(&RawInput);
     } break;
     case WM_CLOSE:
     {
@@ -218,7 +223,7 @@ InitGLObjects(void)
 }
 
 static HWND
-create_the_window(Engine* engine)
+create_the_window(void)
 {
   HINSTANCE Instance = GetModuleHandleW(0);
   WNDCLASSEXW WindowClass = {0};
@@ -228,9 +233,7 @@ create_the_window(Engine* engine)
   WindowClass.hInstance = Instance;
   WindowClass.lpszClassName = GH_CLASS;
   RegisterClassExW(&WindowClass);
-  DWORD WindowStyleEx = WS_EX_APPWINDOW | WS_EX_WINDOWEDGE;
-  DWORD WindowStyle = WS_OVERLAPPEDWINDOW | WS_CLIPSIBLINGS | WS_CLIPCHILDREN;
-  HWND Result = CreateWindowExW(WindowStyleEx, GH_CLASS, GH_TITLE, WindowStyle, GH_SCREEN_X, GH_SCREEN_Y, engine->iWidth, engine->iHeight, 0, 0, Instance, 0);
+  HWND Result = CreateWindowExW(0, GH_CLASS, GH_TITLE, 0, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, 0, 0, Instance, 0);
   return Result;
 }
 
@@ -243,17 +246,17 @@ WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
   //HWND Window = create_the_window(&engine);
   engine.iWidth = GH_SCREEN_WIDTH;
   engine.iHeight = GH_SCREEN_HEIGHT;
-  engine.hWnd = create_the_window(&engine);
+  engine.isFullscreen = GH_START_FULLSCREEN;
+  engine.hWnd = create_the_window();
+  ToggleFullscreen(&engine);
+
   HDC WindowDC = GetDC(engine.hWnd);
   HGLRC OpenGLContext = create_opengl_context(WindowDC);
-  if (GH_START_FULLSCREEN) {
-    ToggleFullscreen(&engine);
-  }
   ShowCursor(!GH_HIDE_MOUSE);
 
-  ShowWindow(engine.hWnd, SW_SHOW);
-  SetForegroundWindow(engine.hWnd);
-  SetFocus(engine.hWnd);
+  //ShowWindow(engine.hWnd, SW_SHOW);
+  //SetForegroundWindow(engine.hWnd);
+  //SetFocus(engine.hWnd);
 
   engine.occlusionCullingSupported = InitGLObjects();
   engine.vObjects = std::vector<std::shared_ptr<Object>>();

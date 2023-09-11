@@ -12,6 +12,8 @@ public:
 
   LONG iWidth;
   LONG iHeight;
+  //LONG FullscreenWidth;
+  //LONG FullscreenHeight;
   bool isFullscreen;
 
   HWND  hWnd;
