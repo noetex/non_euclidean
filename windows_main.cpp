@@ -60,20 +60,20 @@ confine_cursor(HWND Window)
 static LRESULT CALLBACK
 window_proc(HWND Window, UINT Message, WPARAM wParam, LPARAM lParam)
 {
-  Engine* engine = (Engine*)GetWindowLongPtr(Window, GWLP_USERDATA);
+  Engine* engine = (Engine*)GetWindowLongPtrW(Window, GWLP_USERDATA);
   if(!engine)
   {
-    return DefWindowProc(Window, Message, wParam, lParam);
+    return DefWindowProcW(Window, Message, wParam, lParam);
   }
   LRESULT Result = 0;
   switch(Message)
   {
-    case WM_CREATE:
-    {
-      CREATESTRUCT* Struct = (CREATESTRUCT*)lParam;
-      Engine* engine = (Engine*)Struct->lpCreateParams;
-      SetWindowLongPtr(Window, GWLP_USERDATA, (LONG_PTR)engine);
-    } break;
+    //case WM_CREATE:
+    //{
+    //  CREATESTRUCT* Struct = (CREATESTRUCT*)lParam;
+    //  Engine* engine = (Engine*)Struct->lpCreateParams;
+    //  SetWindowLongPtrW(Window, GWLP_USERDATA, (LONG_PTR)engine);
+    //} break;
     case WM_SYSCOMMAND:
     {
       if (wParam == SC_SCREENSAVE || wParam == SC_MONITORPOWER)
@@ -91,7 +91,7 @@ window_proc(HWND Window, UINT Message, WPARAM wParam, LPARAM lParam)
     {
       engine->iWidth = LOWORD(lParam);
       engine->iHeight = HIWORD(lParam);
-      PostMessage(Window, WM_PAINT, 0, 0);
+      PostMessageW(Window, WM_PAINT, 0, 0);
     } break;
     case WM_KEYDOWN:
     {
@@ -175,41 +175,19 @@ InitGLObjects(void)
 static HWND
 create_the_window(Engine* engine)
 {
-  HINSTANCE Instance = GetModuleHandle(NULL);
-  WNDCLASSEX wc;
-  wc.cbSize = sizeof(wc);
-  wc.style = CS_OWNDC;
-  wc.lpfnWndProc = window_proc;
-  wc.cbClsExtra = 0;
-  wc.cbWndExtra = 0;
-  wc.hInstance = Instance;
-  wc.hIcon = LoadIcon(NULL, IDI_WINLOGO);
-  wc.hCursor = LoadCursor(NULL, IDC_ARROW);
-  wc.hbrBackground = NULL;
-  wc.lpszMenuName = NULL;
-  wc.lpszClassName = GH_CLASS;
-  wc.hIconSm = NULL;
-  RegisterClassEx(&wc);
-
-  //Always start in windowed mode
+  HINSTANCE Instance = GetModuleHandleW(0);
+  WNDCLASSEXW WindowClass = {0};
+  WindowClass.cbSize = sizeof(WindowClass);
+  WindowClass.style = CS_OWNDC;
+  WindowClass.lpfnWndProc = window_proc;
+  WindowClass.hInstance = Instance;
+  WindowClass.lpszClassName = GH_CLASS;
+  RegisterClassExW(&WindowClass);
   engine->iWidth = GH_SCREEN_WIDTH;
   engine->iHeight = GH_SCREEN_HEIGHT;
-
-  //Create the window
-  HWND Result = CreateWindowEx(
-    WS_EX_APPWINDOW | WS_EX_WINDOWEDGE,
-    GH_CLASS,
-    GH_TITLE,
-    WS_OVERLAPPEDWINDOW | WS_CLIPSIBLINGS | WS_CLIPCHILDREN,
-    GH_SCREEN_X,
-    GH_SCREEN_Y,
-    engine->iWidth,
-    engine->iHeight,
-    NULL,
-    NULL,
-    Instance,
-    NULL);
-
+  DWORD WindowStyleEx = WS_EX_APPWINDOW | WS_EX_WINDOWEDGE;
+  DWORD WindowStyle = WS_OVERLAPPEDWINDOW | WS_CLIPSIBLINGS | WS_CLIPCHILDREN;
+  HWND Result = CreateWindowExW(WindowStyleEx, GH_CLASS, GH_TITLE, WindowStyle, GH_SCREEN_X, GH_SCREEN_Y, engine->iWidth, engine->iHeight, 0, 0, Instance, 0);
   return Result;
 }
 
@@ -269,7 +247,7 @@ WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 
 
   engine.LoadScene(0);
-  SetWindowLongPtr(engine.hWnd, GWLP_USERDATA, (LONG_PTR)&engine);
+  SetWindowLongPtrW(engine.hWnd, GWLP_USERDATA, (LONG_PTR)&engine);
 
   //Setup the timer
   const int64_t ticks_per_step = engine.timer.SecondsToTicks(GH_DT);
@@ -280,13 +258,13 @@ WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
   MSG msg;
   for(;;)
   {
-    if (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE)) {
+    if (PeekMessageW(&msg, NULL, 0, 0, PM_REMOVE)) {
       //Handle windows messages
       if (msg.message == WM_QUIT) {
         break;
       } else {
         TranslateMessage(&msg);
-        DispatchMessage(&msg);
+        DispatchMessageW(&msg);
       }
     } else {
       //Confine the cursor

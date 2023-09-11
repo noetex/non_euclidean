@@ -44,8 +44,8 @@ enum raw_input_stuff
 };
 
 //Windows
-static const char GH_TITLE[] = "NonEuclideanDemo";
-static const char GH_CLASS[] = "NED";
+static const wchar_t GH_TITLE[] = L"NonEuclideanDemo";
+static const wchar_t GH_CLASS[] = L"NED";
 
 //General
 static const float GH_PI = 3.141592653589793f;
