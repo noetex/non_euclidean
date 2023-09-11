@@ -43,6 +43,8 @@ enum raw_input_stuff
   HID_USAGE_GENERIC_MULTI_AXIS_CONTROLLER = 0x08,
 };
 
+typedef int bool_t;
+
 //Windows
 static const wchar_t GH_TITLE[] = L"NonEuclideanDemo";
 static const wchar_t GH_CLASS[] = L"NED";

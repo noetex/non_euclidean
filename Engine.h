@@ -9,7 +9,6 @@ public:
 
 //private:
   void DestroyGLObjects();
-  void ToggleFullscreen();
 
   LONG iWidth;
   LONG iHeight;

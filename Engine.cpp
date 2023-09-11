@@ -156,22 +156,3 @@ float Engine::NearestPortalDist() const {
   }
   return dist;
 }
-
-void Engine::ToggleFullscreen() {
-  isFullscreen = !isFullscreen;
-  if (isFullscreen) {
-    iWidth = GetSystemMetrics(SM_CXSCREEN);
-    iHeight = GetSystemMetrics(SM_CYSCREEN);
-    SetWindowLong(hWnd, GWL_STYLE, WS_POPUP | WS_CLIPSIBLINGS | WS_CLIPCHILDREN);
-    SetWindowLong(hWnd, GWL_EXSTYLE, WS_EX_APPWINDOW);
-    SetWindowPos(hWnd, HWND_TOPMOST, 0, 0,
-      iWidth, iHeight, SWP_SHOWWINDOW);
-  } else {
-    iWidth = GH_SCREEN_WIDTH;
-    iHeight = GH_SCREEN_HEIGHT;
-    SetWindowLong(hWnd, GWL_STYLE, WS_OVERLAPPEDWINDOW | WS_CLIPSIBLINGS | WS_CLIPCHILDREN);
-    SetWindowLong(hWnd, GWL_EXSTYLE, WS_EX_APPWINDOW | WS_EX_WINDOWEDGE);
-    SetWindowPos(hWnd, HWND_TOP, GH_SCREEN_X, GH_SCREEN_Y,
-      iWidth, iHeight, SWP_SHOWWINDOW);
-  }
-}

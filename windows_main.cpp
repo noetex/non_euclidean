@@ -57,6 +57,28 @@ confine_cursor(HWND Window)
   }
 }
 
+static void
+ToggleFullscreen(Engine* engine)
+{
+  if(engine->isFullscreen)
+  {
+    engine->iWidth = GH_SCREEN_WIDTH;
+    engine->iHeight = GH_SCREEN_HEIGHT;
+    SetWindowLong(engine->hWnd, GWL_STYLE, WS_OVERLAPPEDWINDOW | WS_CLIPSIBLINGS | WS_CLIPCHILDREN);
+    SetWindowLong(engine->hWnd, GWL_EXSTYLE, WS_EX_APPWINDOW | WS_EX_WINDOWEDGE);
+    SetWindowPos(engine->hWnd, HWND_TOP, GH_SCREEN_X, GH_SCREEN_Y, engine->iWidth, engine->iHeight, SWP_SHOWWINDOW);
+  }
+  else
+  {
+    engine->iWidth = GetSystemMetrics(SM_CXSCREEN);
+    engine->iHeight = GetSystemMetrics(SM_CYSCREEN);
+    SetWindowLong(engine->hWnd, GWL_STYLE, WS_POPUP | WS_CLIPSIBLINGS | WS_CLIPCHILDREN);
+    SetWindowLong(engine->hWnd, GWL_EXSTYLE, WS_EX_APPWINDOW);
+    SetWindowPos(engine->hWnd, HWND_TOPMOST, 0, 0, engine->iWidth, engine->iHeight, SWP_SHOWWINDOW);
+  }
+  engine->isFullscreen = !engine->isFullscreen;
+}
+
 static LRESULT CALLBACK
 window_proc(HWND Window, UINT Message, WPARAM wParam, LPARAM lParam)
 {
@@ -95,19 +117,22 @@ window_proc(HWND Window, UINT Message, WPARAM wParam, LPARAM lParam)
     } break;
     case WM_KEYDOWN:
     {
-      if (lParam & 0x40000000) { return 0; }
-      engine->input.key[wParam & 0xFF] = true;
-      engine->input.key_press[wParam & 0xFF] = true;
-      if (wParam == VK_ESCAPE)
+      bool_t AlreadyPressed = (lParam >> 30) & 0x1;
+      if(!AlreadyPressed)
       {
-        PostQuitMessage(0);
+        if (wParam == VK_ESCAPE)
+        {
+          PostQuitMessage(0);
+        }
+        engine->input.key[wParam & 0xFF] = true;
+        engine->input.key_press[wParam & 0xFF] = true;
       }
     } break;
     case WM_SYSKEYDOWN:
     {
       if (wParam == VK_RETURN)
       {
-        engine->ToggleFullscreen();
+        ToggleFullscreen(engine);
       }
     } break;
     case WM_KEYUP:
@@ -116,11 +141,12 @@ window_proc(HWND Window, UINT Message, WPARAM wParam, LPARAM lParam)
     } break;
     case WM_INPUT:
     {
-      BYTE lpb[256];
-      UINT dwSize = sizeof(lpb);
-      dwSize = sizeof(lpb);
-      GetRawInputData((HRAWINPUT)lParam, RID_INPUT, lpb, &dwSize, sizeof(RAWINPUTHEADER));
-      engine->input.UpdateRaw((const RAWINPUT*)lpb);
+      HRAWINPUT RawInputHandle = (HRAWINPUT)lParam;
+      BYTE Buffer[sizeof(RAWINPUT)];
+      UINT BufferSize = sizeof(Buffer);
+      GetRawInputData(RawInputHandle, RID_INPUT, Buffer, &BufferSize, sizeof(RAWINPUTHEADER));
+      RAWINPUT* RawInput = (RAWINPUT*)Buffer;
+      engine->input.UpdateRaw(RawInput);
     } break;
     case WM_CLOSE:
     {
@@ -221,7 +247,7 @@ WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
   HDC WindowDC = GetDC(engine.hWnd);
   HGLRC OpenGLContext = create_opengl_context(WindowDC);
   if (GH_START_FULLSCREEN) {
-    engine.ToggleFullscreen();
+    ToggleFullscreen(&engine);
   }
   ShowCursor(!GH_HIDE_MOUSE);
 
