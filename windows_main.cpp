@@ -57,6 +57,26 @@ confine_cursor(HWND Window)
   }
 }
 
+
+#if 0
+static void
+set_fullscreen(HWND Window, bool_t On, int WindowedWidth, int WindowedHeight)
+{
+  if(On)
+  {
+    int ScreenWidth = GetSystenMetrics(SM_CXSCREEN);
+    int ScreenHeight = GetSystenMetrics(SM_CYSCREEN);
+    SetWindowLongPtrW(engine->hWnd, GWL_STYLE, WS_POPUP);
+    SetWindowLongPtrW(engine->hWnd, GWL_EXSTYLE, WS_EX_APPWINDOW);
+    SetWindowPos(engine->hWnd, HWND_TOP, 0, 0, ScreenWidth, ScreenHeight, SWP_SHOWWINDOW);
+    return;
+  }
+  SetWindowLongPtrW(Window, GWL_STYLE, WS_OVERLAPPEDWINDOW);
+  SetWindowLongPtrW(Window, GWL_EXSTYLE, WS_EX_APPWINDOW);
+  SetWindowPos(Window, HWND_TOP, GH_SCREEN_X, GH_SCREEN_Y, WindowedWidth, WindowedHeight, SWP_SHOWWINDOW);
+}
+#endif
+
 static void
 ToggleFullscreen(Engine* engine)
 {
@@ -206,7 +226,7 @@ create_opengl_context(HDC WindowDC)
   return Result;
 }
 
-static GLint
+static void
 InitGLObjects(void)
 {
   glewInit();
@@ -216,24 +236,18 @@ InitGLObjects(void)
   glEnable(GL_DEPTH_TEST);
   glDepthFunc(GL_LESS);
   glDepthMask(GL_TRUE);
-  GLint Result;
-  glGetQueryiv(GL_SAMPLES_PASSED_ARB, GL_QUERY_COUNTER_BITS_ARB, &Result);
   wglSwapIntervalEXT(1);
-  return Result;
 }
 
 static HWND
 create_the_window(void)
 {
-  HINSTANCE Instance = GetModuleHandleW(0);
   WNDCLASSEXW WindowClass = {0};
   WindowClass.cbSize = sizeof(WindowClass);
-  WindowClass.style = CS_OWNDC;
   WindowClass.lpfnWndProc = window_proc;
-  WindowClass.hInstance = Instance;
   WindowClass.lpszClassName = GH_CLASS;
   RegisterClassExW(&WindowClass);
-  HWND Result = CreateWindowExW(0, GH_CLASS, GH_TITLE, 0, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, 0, 0, Instance, 0);
+  HWND Result = CreateWindowExW(0, GH_CLASS, GH_TITLE, 0, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, 0, 0, 0, 0);
   return Result;
 }
 
@@ -241,24 +255,21 @@ int APIENTRY
 WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 {
   enable_dpi_awareness();
-  create_debug_console();
+  //create_debug_console();
+  HWND Window = create_the_window();
+  HDC WindowDC = GetDC(Window);
+  HGLRC ContextGL = create_opengl_context(WindowDC);
   Engine engine;
-  //HWND Window = create_the_window(&engine);
   engine.iWidth = GH_SCREEN_WIDTH;
   engine.iHeight = GH_SCREEN_HEIGHT;
   engine.isFullscreen = GH_START_FULLSCREEN;
-  engine.hWnd = create_the_window();
+  engine.hWnd = Window;
   ToggleFullscreen(&engine);
 
-  HDC WindowDC = GetDC(engine.hWnd);
-  HGLRC OpenGLContext = create_opengl_context(WindowDC);
   ShowCursor(!GH_HIDE_MOUSE);
 
-  //ShowWindow(engine.hWnd, SW_SHOW);
-  //SetForegroundWindow(engine.hWnd);
-  //SetFocus(engine.hWnd);
-
-  engine.occlusionCullingSupported = InitGLObjects();
+  InitGLObjects();
+  glGetQueryiv(GL_SAMPLES_PASSED_ARB, GL_QUERY_COUNTER_BITS_ARB, &engine.occlusionCullingSupported);
   engine.vObjects = std::vector<std::shared_ptr<Object>>();
   engine.vPortals = std::vector<std::shared_ptr<Portal>>();
   engine.sky = std::shared_ptr<Sky>(new Sky);
@@ -352,7 +363,7 @@ label_loop_exit:
   engine.DestroyGLObjects();
   ClipCursor(NULL);
   wglMakeCurrent(WindowDC, NULL);
-  wglDeleteContext(OpenGLContext);
+  wglDeleteContext(ContextGL);
   ReleaseDC(engine.hWnd, WindowDC);
   //DestroyWindow(hWnd);
   return 0;
