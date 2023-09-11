@@ -1,7 +1,5 @@
 class Engine {
 public:
-  ~Engine();
-
   void Update();
   void Render(const Camera& cam, GLuint curFBO, const Portal* skipPortal);
   void LoadScene(int ix);

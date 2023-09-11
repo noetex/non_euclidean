@@ -322,5 +322,10 @@ WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
   }
 label_loop_exit:
   engine.DestroyGLObjects();
+  ClipCursor(NULL);
+  wglMakeCurrent(engine.hDC, NULL);
+  wglDeleteContext(engine.hRC);
+  ReleaseDC(engine.hWnd, engine.hDC);
+  //DestroyWindow(hWnd);
   return 0;
 }

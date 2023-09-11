@@ -4,14 +4,6 @@ const Input* GH_INPUT = nullptr;
 int GH_REC_LEVEL = 0;
 int64_t GH_FRAME = 0;
 
-Engine::~Engine() {
-  ClipCursor(NULL);
-  wglMakeCurrent(NULL, NULL);
-  ReleaseDC(hWnd, hDC);
-  wglDeleteContext(hRC);
-  DestroyWindow(hWnd);
-}
-
 void Engine::LoadScene(int ix) {
   //Clear out old scene
   if (curScene) { curScene->Unload(); }
