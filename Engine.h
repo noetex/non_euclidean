@@ -4,12 +4,7 @@ public:
   void Render(const Camera& cam, GLuint curFBO, const Portal* skipPortal);
   void LoadScene(int ix);
 
-  const Player& GetPlayer() const { return *player; }
   float NearestPortalDist() const;
-
-  //LONG iWidth;
-  //LONG iHeight;
-  //bool isFullscreen;
 
   GLint occlusionCullingSupported;
 
