@@ -7,16 +7,9 @@ public:
   const Player& GetPlayer() const { return *player; }
   float NearestPortalDist() const;
 
-//private:
-  void DestroyGLObjects();
-
   LONG iWidth;
   LONG iHeight;
-  //LONG FullscreenWidth;
-  //LONG FullscreenHeight;
   bool isFullscreen;
-
-  HWND  hWnd;
 
   GLint occlusionCullingSupported;
 

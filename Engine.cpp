@@ -143,12 +143,6 @@ void Engine::Render(const Camera& cam, GLuint curFBO, const Portal* skipPortal) 
 #endif
 }
 
-void Engine::DestroyGLObjects() {
-  curScene->Unload();
-  vObjects.clear();
-  vPortals.clear();
-}
-
 float Engine::NearestPortalDist() const {
   float dist = FLT_MAX;
   for (size_t i = 0; i < vPortals.size(); ++i) {

@@ -76,9 +76,9 @@ window_proc(HWND Window, UINT Message, WPARAM wParam, LPARAM lParam)
     } break;
     case WM_SIZE:
     {
-      engine->iWidth = LOWORD(lParam);
-      engine->iHeight = HIWORD(lParam);
-      PostMessageW(Window, WM_PAINT, 0, 0);
+      //engine->iWidth = LOWORD(lParam);
+      //engine->iHeight = HIWORD(lParam);
+      //PostMessageW(Window, WM_PAINT, 0, 0);
     } break;
     case WM_KEYDOWN:
     {
@@ -154,7 +154,6 @@ create_opengl_context(HDC WindowDC)
   PFD.nVersion = 1;
   PFD.dwFlags = PFD_DRAW_TO_WINDOW | PFD_SUPPORT_OPENGL | PFD_DOUBLEBUFFER;
   PFD.iPixelType = PFD_TYPE_RGBA;
-  //PFD.cStencilBits = 8;
   PFD.cColorBits = 32;
   PFD.cDepthBits = 32;
   int PixelFormat = ChoosePixelFormat(WindowDC, &PFD);
@@ -197,11 +196,10 @@ WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
   HWND Window = create_the_window();
   HDC WindowDC = GetDC(Window);
   HGLRC ContextGL = create_opengl_context(WindowDC);
+  setup_raw_input(Window);
   Engine engine;
   engine.iWidth = GH_SCREEN_WIDTH;
   engine.iHeight = GH_SCREEN_HEIGHT;
-  engine.isFullscreen = GH_START_FULLSCREEN;
-  engine.hWnd = Window;
 
   ShowCursor(!GH_HIDE_MOUSE);
 
@@ -215,7 +213,6 @@ WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
   engine.curScene = std::shared_ptr<Scene>();
   engine.input = {0};
   engine.isFullscreen = false;
-  setup_raw_input(engine.hWnd);
   engine.main_cam.width = 256;
   engine.main_cam.height = 256;
   engine.main_cam.worldView.MakeIdentity();
@@ -256,7 +253,7 @@ WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
       TranslateMessage(&Msg);
       DispatchMessageW(&Msg);
     }
-    confine_cursor(engine.hWnd);
+    confine_cursor(Window);
 
     if (engine.input.key_press['1']) {
       engine.LoadScene(0);
@@ -296,11 +293,13 @@ WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
     SwapBuffers(WindowDC);
   }
 label_loop_exit:
-  engine.DestroyGLObjects();
+  engine.curScene->Unload();
+  engine.vObjects.clear();
+  engine.vPortals.clear();
   ClipCursor(NULL);
   wglMakeCurrent(WindowDC, NULL);
   wglDeleteContext(ContextGL);
-  ReleaseDC(engine.hWnd, WindowDC);
+  ReleaseDC(Window, WindowDC);
   //DestroyWindow(hWnd);
   return 0;
 }
