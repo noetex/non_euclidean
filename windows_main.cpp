@@ -32,19 +32,6 @@ enable_dpi_awareness(void)
 }
 
 static void
-create_debug_console(void)
-{
-#if _DEBUG
-  AllocConsole();
-  HWND Console = GetConsoleWindow();
-  //SetWindowPos(Console, 0, 1920, 200, 0, 0, SWP_NOSIZE | SWP_NOZORDER);
-  DWORD ProcessID = GetCurrentProcessId();
-  AttachConsole(ProcessID);
-  freopen("CON", "w", stdout);
-#endif
-}
-
-static void
 confine_cursor(HWND Window)
 {
   if(GH_HIDE_MOUSE)
@@ -54,54 +41,6 @@ confine_cursor(HWND Window)
     int CursorX = (WindowRect.left + WindowRect.right) / 2;
     int CursorY = (WindowRect.top + WindowRect.bottom) / 2;
     SetCursorPos(CursorX, CursorY);
-  }
-}
-
-
-#if 0
-static void
-set_fullscreen(HWND Window, bool_t On, int WindowedWidth, int WindowedHeight)
-{
-  if(On)
-  {
-    int ScreenWidth = GetSystenMetrics(SM_CXSCREEN);
-    int ScreenHeight = GetSystenMetrics(SM_CYSCREEN);
-    SetWindowLongPtrW(engine->hWnd, GWL_STYLE, WS_POPUP);
-    SetWindowLongPtrW(engine->hWnd, GWL_EXSTYLE, WS_EX_APPWINDOW);
-    SetWindowPos(engine->hWnd, HWND_TOP, 0, 0, ScreenWidth, ScreenHeight, SWP_SHOWWINDOW);
-    return;
-  }
-  SetWindowLongPtrW(Window, GWL_STYLE, WS_OVERLAPPEDWINDOW);
-  SetWindowLongPtrW(Window, GWL_EXSTYLE, WS_EX_APPWINDOW);
-  SetWindowPos(Window, HWND_TOP, GH_SCREEN_X, GH_SCREEN_Y, WindowedWidth, WindowedHeight, SWP_SHOWWINDOW);
-}
-#endif
-
-static void
-ToggleFullscreen(Engine* engine)
-{
-  //int WindowX = engine->isFullscreen ? CW_USEDEFAULT : 0;
-  //int WindowY = engine->isFullscreen ? CW_USEDEFAULT : 0;
-  //int WindowWidth = engine->isFullscreen ? engine->iWidth : GetSystemMetrics(SM_CXSCREEN);
-  //int WindowHeight = engine->isFullscreen ? engine->iHeight : GetSystemMetrics(SM_CYSCREEN);
-  //DWORD NewStyle = (WS_CLIPSIBLINGS | WS_CLIPCHILDREN) | engine->isFullscreen ? WS_OVERLAPPEDWINDOW : 0;
-  //DWORD NewStyleEx = WS_EX_APPWINDOW | (engine->isFullscreen ? WS_EX_WINDOWEDGE : 0);
-  engine->isFullscreen = !engine->isFullscreen;
-  if(engine->isFullscreen)
-  {
-    engine->iWidth = GH_SCREEN_WIDTH;
-    engine->iHeight = GH_SCREEN_HEIGHT;
-    SetWindowLongPtrW(engine->hWnd, GWL_STYLE, WS_OVERLAPPEDWINDOW | WS_CLIPSIBLINGS | WS_CLIPCHILDREN);
-    SetWindowLongPtrW(engine->hWnd, GWL_EXSTYLE, WS_EX_APPWINDOW | WS_EX_WINDOWEDGE);
-    SetWindowPos(engine->hWnd, HWND_TOP, GH_SCREEN_X, GH_SCREEN_Y, engine->iWidth, engine->iHeight, SWP_SHOWWINDOW);
-  }
-  else
-  {
-    engine->iWidth = GetSystemMetrics(SM_CXSCREEN);
-    engine->iHeight = GetSystemMetrics(SM_CYSCREEN);
-    SetWindowLongPtrW(engine->hWnd, GWL_STYLE, WS_POPUP | WS_CLIPSIBLINGS | WS_CLIPCHILDREN);
-    SetWindowLongPtrW(engine->hWnd, GWL_EXSTYLE, WS_EX_APPWINDOW);
-    SetWindowPos(engine->hWnd, HWND_TOP, 0, 0, engine->iWidth, engine->iHeight, SWP_SHOWWINDOW);
   }
 }
 
@@ -158,7 +97,7 @@ window_proc(HWND Window, UINT Message, WPARAM wParam, LPARAM lParam)
     {
       if (wParam == VK_RETURN)
       {
-        ToggleFullscreen(engine);
+        //ToggleFullscreen(engine);
       }
     } break;
     case WM_KEYUP:
@@ -255,7 +194,6 @@ int APIENTRY
 WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 {
   enable_dpi_awareness();
-  //create_debug_console();
   HWND Window = create_the_window();
   HDC WindowDC = GetDC(Window);
   HGLRC ContextGL = create_opengl_context(WindowDC);
@@ -264,7 +202,6 @@ WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
   engine.iHeight = GH_SCREEN_HEIGHT;
   engine.isFullscreen = GH_START_FULLSCREEN;
   engine.hWnd = Window;
-  ToggleFullscreen(&engine);
 
   ShowCursor(!GH_HIDE_MOUSE);
 
@@ -296,17 +233,16 @@ WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
   GH_INPUT = &engine.input;
   GH_PLAYER = engine.player.get();
 
-
-
-
-
   engine.LoadScene(0);
-  SetWindowLongPtrW(engine.hWnd, GWLP_USERDATA, (LONG_PTR)&engine);
-
   //Setup the timer
   const int64_t ticks_per_step = engine.timer.SecondsToTicks(GH_DT);
   int64_t cur_ticks = engine.timer.GetTicks();
   GH_FRAME = 0;
+
+  SetWindowLongPtrW(Window, GWL_STYLE, WS_OVERLAPPEDWINDOW);
+  SetWindowLongPtrW(Window, GWL_EXSTYLE, WS_EX_APPWINDOW);
+  SetWindowLongPtrW(Window, GWLP_USERDATA, (LONG_PTR)&engine);
+  SetWindowPos(Window, HWND_TOP, GH_SCREEN_X, GH_SCREEN_Y, 1280, 720, SWP_SHOWWINDOW);
 
   for(;;)
   {
