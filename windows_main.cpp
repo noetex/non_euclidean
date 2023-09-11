@@ -254,61 +254,58 @@ WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
   int64_t cur_ticks = engine.timer.GetTicks();
   GH_FRAME = 0;
 
-  //Game loop
-  MSG msg;
   for(;;)
   {
-    if (PeekMessageW(&msg, NULL, 0, 0, PM_REMOVE)) {
-      //Handle windows messages
-      if (msg.message == WM_QUIT) {
-        break;
-      } else {
-        TranslateMessage(&msg);
-        DispatchMessageW(&msg);
+    MSG Msg;
+    while(PeekMessageW(&Msg, 0, 0, 0, PM_REMOVE))
+    {
+      if(Msg.message == WM_QUIT)
+      {
+        goto label_loop_exit;
       }
-    } else {
-      //Confine the cursor
-      confine_cursor(engine.hWnd);
-
-      if (engine.input.key_press['1']) {
-        engine.LoadScene(0);
-      } else if (engine.input.key_press['2']) {
-        engine.LoadScene(1);
-      } else if (engine.input.key_press['3']) {
-        engine.LoadScene(2);
-      } else if (engine.input.key_press['4']) {
-        engine.LoadScene(3);
-      } else if (engine.input.key_press['5']) {
-        engine.LoadScene(4);
-      } else if (engine.input.key_press['6']) {
-        engine.LoadScene(5);
-      } else if (engine.input.key_press['7']) {
-        engine.LoadScene(6);
-      }
-
-      //Used fixed time steps for updates
-      const int64_t new_ticks = engine.timer.GetTicks();
-      for (int i = 0; cur_ticks < new_ticks && i < GH_MAX_STEPS; ++i) {
-        engine.Update();
-        cur_ticks += ticks_per_step;
-        GH_FRAME += 1;
-        engine.input.EndFrame();
-      }
-      cur_ticks = (cur_ticks < new_ticks ? new_ticks: cur_ticks);
-
-      //Setup camera for rendering
-      const float n = GH_CLAMP(engine.NearestPortalDist() * 0.5f, GH_NEAR_MIN, GH_NEAR_MAX);
-      engine.main_cam.worldView = engine.player->WorldToCam();
-      engine.main_cam.SetSize(engine.iWidth, engine.iHeight, n, GH_FAR);
-      engine.main_cam.UseViewport();
-
-      //Render scene
-      GH_REC_LEVEL = GH_MAX_RECURSION;
-      engine.Render(engine.main_cam, 0, nullptr);
-      SwapBuffers(engine.hDC);
+      TranslateMessage(&Msg);
+      DispatchMessageW(&Msg);
     }
-  }
+    confine_cursor(engine.hWnd);
 
+    if (engine.input.key_press['1']) {
+      engine.LoadScene(0);
+    } else if (engine.input.key_press['2']) {
+      engine.LoadScene(1);
+    } else if (engine.input.key_press['3']) {
+      engine.LoadScene(2);
+    } else if (engine.input.key_press['4']) {
+      engine.LoadScene(3);
+    } else if (engine.input.key_press['5']) {
+      engine.LoadScene(4);
+    } else if (engine.input.key_press['6']) {
+      engine.LoadScene(5);
+    } else if (engine.input.key_press['7']) {
+      engine.LoadScene(6);
+    }
+
+    //Used fixed time steps for updates
+    const int64_t new_ticks = engine.timer.GetTicks();
+    for (int i = 0; cur_ticks < new_ticks && i < GH_MAX_STEPS; ++i) {
+      engine.Update();
+      cur_ticks += ticks_per_step;
+      GH_FRAME += 1;
+      engine.input.EndFrame();
+    }
+    cur_ticks = (cur_ticks < new_ticks ? new_ticks: cur_ticks);
+
+    //Setup camera for rendering
+    const float n = GH_CLAMP(engine.NearestPortalDist() * 0.5f, GH_NEAR_MIN, GH_NEAR_MAX);
+    engine.main_cam.worldView = engine.player->WorldToCam();
+    engine.main_cam.SetSize(engine.iWidth, engine.iHeight, n, GH_FAR);
+    engine.main_cam.UseViewport();
+
+    //Render scene
+    GH_REC_LEVEL = GH_MAX_RECURSION;
+    engine.Render(engine.main_cam, 0, nullptr);
+    SwapBuffers(engine.hDC);
+  }
+label_loop_exit:
   engine.DestroyGLObjects();
   return 0;
 }
