@@ -156,6 +156,25 @@ setup_raw_input(HWND Window)
   RegisterRawInputDevices(Devices, 3, sizeof(*Devices));
 }
 
+static HGLRC
+create_opengl_context(HDC WindowDC)
+{
+  PIXELFORMATDESCRIPTOR PFD = {0};
+  PFD.nSize = sizeof(PFD);
+  PFD.nVersion = 1;
+  PFD.dwFlags = PFD_DRAW_TO_WINDOW | PFD_SUPPORT_OPENGL | PFD_DOUBLEBUFFER;
+  PFD.iPixelType = PFD_TYPE_RGBA;
+  //PFD.cStencilBits = 8;
+  PFD.cColorBits = 32;
+  PFD.cDepthBits = 32;
+  int PixelFormat = ChoosePixelFormat(WindowDC, &PFD);
+  SetPixelFormat(WindowDC, PixelFormat, &PFD);
+  DescribePixelFormat(WindowDC, PixelFormat, sizeof(PFD), &PFD);
+  HGLRC Result = wglCreateContext(WindowDC);
+  wglMakeCurrent(WindowDC, Result);
+  return Result;
+}
+
 static GLint
 InitGLObjects(void)
 {
@@ -183,8 +202,6 @@ create_the_window(Engine* engine)
   WindowClass.hInstance = Instance;
   WindowClass.lpszClassName = GH_CLASS;
   RegisterClassExW(&WindowClass);
-  engine->iWidth = GH_SCREEN_WIDTH;
-  engine->iHeight = GH_SCREEN_HEIGHT;
   DWORD WindowStyleEx = WS_EX_APPWINDOW | WS_EX_WINDOWEDGE;
   DWORD WindowStyle = WS_OVERLAPPEDWINDOW | WS_CLIPSIBLINGS | WS_CLIPCHILDREN;
   HWND Result = CreateWindowExW(WindowStyleEx, GH_CLASS, GH_TITLE, WindowStyle, GH_SCREEN_X, GH_SCREEN_Y, engine->iWidth, engine->iHeight, 0, 0, Instance, 0);
@@ -198,20 +215,18 @@ WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
   create_debug_console();
 
   Engine engine;
-  HWND Window = create_the_window(&engine);
-
-  //engine.hWnd = engine.CreateGLWindow();
-  engine.hWnd = Window;
+  //HWND Window = create_the_window(&engine);
+  engine.iWidth = GH_SCREEN_WIDTH;
+  engine.iHeight = GH_SCREEN_HEIGHT;
+  engine.hWnd = create_the_window(&engine);
   if (GH_START_FULLSCREEN) {
     engine.ToggleFullscreen();
   }
-  if (GH_HIDE_MOUSE) {
-    ShowCursor(FALSE);
-  }
+  ShowCursor(!GH_HIDE_MOUSE);
 
-  ShowWindow(Window, SW_SHOW);
-  SetForegroundWindow(Window);
-  SetFocus(Window);
+  ShowWindow(engine.hWnd, SW_SHOW);
+  SetForegroundWindow(engine.hWnd);
+  SetFocus(engine.hWnd);
 
   engine.hDC = GetDC(engine.hWnd);
   engine.hRC = create_opengl_context(engine.hDC);

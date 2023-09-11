@@ -13,9 +13,13 @@ public:
   void DestroyGLObjects();
   void ToggleFullscreen();
 
-  HWND  hWnd;				   // window
-  HDC   hDC;           // device context
-  HGLRC hRC;				   // opengl context
+  LONG iWidth;
+  LONG iHeight;
+  bool isFullscreen;
+
+  HWND  hWnd;
+  HDC   hDC;
+  HGLRC hRC;
 
   GLint occlusionCullingSupported;
 
@@ -26,11 +30,7 @@ public:
   std::vector<std::shared_ptr<Scene>> vScenes;
   std::shared_ptr<Scene> curScene;
   Input input;
-  bool isFullscreen;   // fullscreen state
 
   Camera main_cam;
   Timer timer;
-
-  LONG iWidth;         // window width
-  LONG iHeight;        // window height
 };

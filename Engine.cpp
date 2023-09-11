@@ -4,25 +4,6 @@ const Input* GH_INPUT = nullptr;
 int GH_REC_LEVEL = 0;
 int64_t GH_FRAME = 0;
 
-static HGLRC
-create_opengl_context(HDC WindowDC)
-{
-  PIXELFORMATDESCRIPTOR PFD = {0};
-  PFD.nSize = sizeof(PFD);
-  PFD.nVersion = 1;
-  PFD.dwFlags = PFD_DRAW_TO_WINDOW | PFD_SUPPORT_OPENGL | PFD_DOUBLEBUFFER;
-  PFD.iPixelType = PFD_TYPE_RGBA;
-  //PFD.cStencilBits = 8;
-  PFD.cColorBits = 32;
-  PFD.cDepthBits = 32;
-  int PixelFormat = ChoosePixelFormat(WindowDC, &PFD);
-  SetPixelFormat(WindowDC, PixelFormat, &PFD);
-  DescribePixelFormat(WindowDC, PixelFormat, sizeof(PFD), &PFD);
-  HGLRC Result = wglCreateContext(WindowDC);
-  wglMakeCurrent(WindowDC, Result);
-  return Result;
-}
-
 Engine::~Engine() {
   ClipCursor(NULL);
   wglMakeCurrent(NULL, NULL);
