@@ -7,9 +7,9 @@ public:
   const Player& GetPlayer() const { return *player; }
   float NearestPortalDist() const;
 
-  LONG iWidth;
-  LONG iHeight;
-  bool isFullscreen;
+  //LONG iWidth;
+  //LONG iHeight;
+  //bool isFullscreen;
 
   GLint occlusionCullingSupported;
 

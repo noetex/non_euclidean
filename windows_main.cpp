@@ -196,14 +196,11 @@ WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
   HWND Window = create_the_window();
   HDC WindowDC = GetDC(Window);
   HGLRC ContextGL = create_opengl_context(WindowDC);
-  setup_raw_input(Window);
-  Engine engine;
-  engine.iWidth = GH_SCREEN_WIDTH;
-  engine.iHeight = GH_SCREEN_HEIGHT;
-
-  ShowCursor(!GH_HIDE_MOUSE);
-
   InitGLObjects();
+  setup_raw_input(Window);
+  ShowCursor(!GH_HIDE_MOUSE);
+  Engine engine;
+
   glGetQueryiv(GL_SAMPLES_PASSED_ARB, GL_QUERY_COUNTER_BITS_ARB, &engine.occlusionCullingSupported);
   engine.vObjects = std::vector<std::shared_ptr<Object>>();
   engine.vPortals = std::vector<std::shared_ptr<Portal>>();
@@ -212,7 +209,6 @@ WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
   engine.vScenes = std::vector<std::shared_ptr<Scene>>();
   engine.curScene = std::shared_ptr<Scene>();
   engine.input = {0};
-  engine.isFullscreen = false;
   engine.main_cam.width = 256;
   engine.main_cam.height = 256;
   engine.main_cam.worldView.MakeIdentity();
@@ -284,7 +280,7 @@ WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
     //Setup camera for rendering
     const float n = GH_CLAMP(engine.NearestPortalDist() * 0.5f, GH_NEAR_MIN, GH_NEAR_MAX);
     engine.main_cam.worldView = engine.player->WorldToCam();
-    engine.main_cam.SetSize(engine.iWidth, engine.iHeight, n, GH_FAR);
+    engine.main_cam.SetSize(GH_SCREEN_WIDTH, GH_SCREEN_HEIGHT, n, GH_FAR);
     engine.main_cam.UseViewport();
 
     //Render scene
