@@ -127,23 +127,12 @@ window_proc(HWND Window, UINT Message, WPARAM wParam, LPARAM lParam)
 static void
 setup_raw_input(HWND Window)
 {
-  RAWINPUTDEVICE Devices[3];
-  Devices[0].usUsagePage = HID_USAGE_PAGE_GENERIC;
-  Devices[0].usUsage = HID_USAGE_GENERIC_MOUSE;
-  Devices[0].dwFlags = RIDEV_INPUTSINK;
-  Devices[0].hwndTarget = Window;
-
-  Devices[1].usUsagePage = HID_USAGE_PAGE_GENERIC;
-  Devices[1].usUsage = HID_USAGE_GENERIC_JOYSTICK;
-  Devices[1].dwFlags = 0;
-  Devices[1].hwndTarget = 0;
-
-  Devices[2].usUsagePage = HID_USAGE_PAGE_GENERIC;
-  Devices[2].usUsage = HID_USAGE_GENERIC_GAMEPAD;
-  Devices[2].dwFlags = 0;
-  Devices[2].hwndTarget = 0;
-
-  RegisterRawInputDevices(Devices, 3, sizeof(*Devices));
+  RAWINPUTDEVICE Mouse = {0};
+  Mouse.usUsagePage = HID_USAGE_PAGE_GENERIC;
+  Mouse.usUsage = HID_USAGE_GENERIC_MOUSE;
+  Mouse.dwFlags = RIDEV_INPUTSINK;
+  Mouse.hwndTarget = Window;
+  RegisterRawInputDevices(&Mouse, 1, sizeof(Mouse));
 }
 
 static HGLRC
@@ -204,7 +193,7 @@ WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
   glGetQueryiv(GL_SAMPLES_PASSED_ARB, GL_QUERY_COUNTER_BITS_ARB, &engine.occlusionCullingSupported);
   engine.vObjects = std::vector<std::shared_ptr<Object>>();
   engine.vPortals = std::vector<std::shared_ptr<Portal>>();
-  engine.sky = std::shared_ptr<Sky>(new Sky);
+  engine.sky = new Sky;
   engine.player = std::shared_ptr<Player>(new Player);
   engine.vScenes = std::vector<std::shared_ptr<Scene>>();
   engine.curScene = std::shared_ptr<Scene>();
@@ -213,7 +202,6 @@ WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
   engine.main_cam.height = 256;
   engine.main_cam.worldView.MakeIdentity();
   engine.main_cam.projection.MakeIdentity();
-  QueryPerformanceFrequency(&engine.timer.frequency);
 
   engine.vScenes.push_back(std::shared_ptr<Scene>(new Level1));
   engine.vScenes.push_back(std::shared_ptr<Scene>(new Level2(3)));
@@ -225,11 +213,14 @@ WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
   GH_ENGINE = &engine;
   GH_INPUT = &engine.input;
   GH_PLAYER = engine.player.get();
-
   engine.LoadScene(0);
-  //Setup the timer
-  const int64_t ticks_per_step = engine.timer.SecondsToTicks(GH_DT);
-  int64_t cur_ticks = engine.timer.GetTicks();
+
+  LARGE_INTEGER Ticks = {0};
+  LARGE_INTEGER Frequency = {0};
+  QueryPerformanceFrequency(&Frequency);
+  const int64_t ticks_per_step = (int64_t)(Frequency.QuadPart * GH_DT);
+  QueryPerformanceCounter(&Ticks);
+  int64_t cur_ticks = Ticks.QuadPart;
   int64_t GH_FRAME = 0;
 
   SetWindowLongPtrW(Window, GWL_STYLE, WS_OVERLAPPEDWINDOW);
@@ -268,7 +259,8 @@ WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
     }
 
     //Used fixed time steps for updates
-    const int64_t new_ticks = engine.timer.GetTicks();
+    QueryPerformanceCounter(&Ticks);
+    const int64_t new_ticks = Ticks.QuadPart;
     for (int i = 0; cur_ticks < new_ticks && i < GH_MAX_STEPS; ++i) {
       engine.Update();
       cur_ticks += ticks_per_step;

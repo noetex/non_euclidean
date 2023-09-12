@@ -33,7 +33,6 @@
 #include"Mesh.h"
 #include"Resources.h"
 #include"Sky.h"
-#include"Timer.h"
 #include"Sphere.h"
 
 #include"Object.h"

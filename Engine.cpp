@@ -3,14 +3,16 @@ Player* GH_PLAYER = nullptr;
 const Input* GH_INPUT = nullptr;
 int GH_REC_LEVEL = 0;
 
-void Engine::LoadScene(int ix) {
-  //Clear out old scene
-  if (curScene) { curScene->Unload(); }
+void Engine::LoadScene(int ix)
+{
+  if (curScene)
+  {
+    curScene->Unload();
+  }
   vObjects.clear();
   vPortals.clear();
   player->Reset();
 
-  //Create new scene
   curScene = vScenes[ix];
   curScene->Load(vObjects, vPortals, *player);
   vObjects.push_back(player);
