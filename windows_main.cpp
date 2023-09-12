@@ -87,7 +87,6 @@ process_raw_input(Input* input, RAWINPUT* RawInput)
 static LRESULT CALLBACK
 window_proc(HWND Window, UINT Message, WPARAM wParam, LPARAM lParam)
 {
-  Engine* engine = (Engine*)GetWindowLongPtrW(Window, GWLP_USERDATA);
   LRESULT Result = 0;
   switch(Message)
   {
@@ -119,8 +118,8 @@ window_proc(HWND Window, UINT Message, WPARAM wParam, LPARAM lParam)
         {
           PostQuitMessage(0);
         }
-        engine->input.key[wParam & 0xFF] = true;
-        engine->input.key_press[wParam & 0xFF] = true;
+        GH_ENGINE->input.key[wParam & 0xFF] = true;
+        GH_ENGINE->input.key_press[wParam & 0xFF] = true;
       }
     } break;
     case WM_SYSKEYDOWN:
@@ -132,7 +131,7 @@ window_proc(HWND Window, UINT Message, WPARAM wParam, LPARAM lParam)
     } break;
     case WM_KEYUP:
     {
-      engine->input.key[wParam & 0xFF] = false;
+      GH_ENGINE->input.key[wParam & 0xFF] = false;
     } break;
     case WM_INPUT:
     {
@@ -140,8 +139,7 @@ window_proc(HWND Window, UINT Message, WPARAM wParam, LPARAM lParam)
       UINT InputSize = sizeof(RawInput);
       HRAWINPUT RawInputHandle = (HRAWINPUT)lParam;
       GetRawInputData(RawInputHandle, RID_INPUT, (void*)&RawInput, &InputSize, sizeof(RAWINPUTHEADER));
-      //engine->input.UpdateRaw(&RawInput);
-      process_raw_input(&engine->input, &RawInput);
+      process_raw_input(&GH_ENGINE->input, &RawInput);
     } break;
     case WM_CLOSE:
     {
@@ -219,14 +217,11 @@ WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
   InitGLObjects();
   setup_raw_input(Window);
   ShowCursor(!GH_HIDE_MOUSE);
-  Engine engine;
+  Engine engine = {0};
 
   glGetQueryiv(GL_SAMPLES_PASSED_ARB, GL_QUERY_COUNTER_BITS_ARB, &engine.occlusionCullingSupported);
-  engine.vObjects = std::vector<Object_Ptr>();
-  engine.vPortals = std::vector<Portal_Ptr>();
   engine.sky = new Sky;
   engine.player = Player_Ptr(new Player);
-  engine.vScenes = std::vector<Scene_Ptr>();
   engine.curScene = 0;
   engine.input = {0};
   engine.main_cam.width = 256;
