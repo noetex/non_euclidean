@@ -1,6 +1,6 @@
 .vs
 bad
 NonEuclidean
-./*.obj
-./*.exe
-./pdb
+*.obj
+*.exe
+*.pdb
