@@ -63,7 +63,7 @@
 #include"player.cpp"
 #include"camera.cpp"
 #include"collider.cpp"
-#include"input.cpp"
+//#include"input.cpp"
 #include"level1.cpp"
 #include"level2.cpp"
 #include"level3.cpp"
