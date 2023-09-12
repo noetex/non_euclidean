@@ -227,7 +227,7 @@ WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
   engine.sky = new Sky;
   engine.player = std::shared_ptr<Player>(new Player);
   engine.vScenes = std::vector<std::shared_ptr<Scene>>();
-  engine.curScene = std::shared_ptr<Scene>();
+  engine.curScene = 0;
   engine.input = {0};
   engine.main_cam.width = 256;
   engine.main_cam.height = 256;

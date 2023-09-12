@@ -45,7 +45,7 @@ void Engine::LoadScene(int ix)
   vPortals.clear();
   player->Reset();
 
-  curScene = vScenes[ix];
+  curScene = vScenes[ix].get();
   curScene->Load(vObjects, vPortals, *player);
   vObjects.push_back(player);
 }

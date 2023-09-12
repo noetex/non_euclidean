@@ -14,7 +14,7 @@ public:
   Sky* sky;
   std::shared_ptr<Player> player;
   std::vector<std::shared_ptr<Scene>> vScenes;
-  std::shared_ptr<Scene> curScene;
+  Scene* curScene;
   Input input;
 
   Camera main_cam;
