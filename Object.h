@@ -31,9 +31,9 @@ public:
   // Physical scale, only updated by portal scale changes
   float p_scale;
 
-  std::shared_ptr<Mesh> mesh;
-  std::shared_ptr<Texture> texture;
-  std::shared_ptr<Shader> shader;
+  Mesh_Ptr mesh;
+  Texture_Ptr texture;
+  Shader_Ptr shader;
 };
 
 typedef std::shared_ptr<Object> Object_Ptr;

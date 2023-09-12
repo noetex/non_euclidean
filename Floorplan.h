@@ -53,3 +53,5 @@ public:
     pvec.push_back(p6);
   }
 };
+
+typedef std::shared_ptr<Floorplan> Floorplan_Ptr;
