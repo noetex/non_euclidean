@@ -6,7 +6,6 @@
 
 #include"euclid_windows.h"
 
-#include<map>
 #include<cmath>
 #include<vector>
 #include<string>

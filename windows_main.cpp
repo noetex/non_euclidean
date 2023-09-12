@@ -194,7 +194,7 @@ InitGLObjects(void)
   glEnable(GL_DEPTH_TEST);
   glDepthFunc(GL_LESS);
   glDepthMask(GL_TRUE);
-  wglSwapIntervalEXT(1);
+//  wglSwapIntervalEXT(1);
 }
 
 static HWND

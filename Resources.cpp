@@ -1,35 +1,38 @@
-Mesh_Ptr AquireMesh(const char* name) {
+Mesh_Ptr AquireMesh(const char* name)
+{
   static std::unordered_map<std::string, std::weak_ptr<Mesh>> map;
   std::weak_ptr<Mesh>& mesh = map[std::string(name)];
-  if (mesh.expired()) {
+  if (mesh.expired())
+  {
     Mesh_Ptr newMesh = (Mesh_Ptr)(new Mesh(name));
     mesh = newMesh;
     return newMesh;
-  } else {
-    return mesh.lock();
   }
+  return mesh.lock();
 }
 
-Shader_Ptr AquireShader(const char* name) {
+Shader_Ptr AquireShader(const char* name)
+{
   static std::unordered_map<std::string, std::weak_ptr<Shader>> map;
   std::weak_ptr<Shader>& shader = map[std::string(name)];
-  if (shader.expired()) {
+  if (shader.expired())
+  {
     Shader_Ptr newShader = (Shader_Ptr)(new Shader(name));
     shader = newShader;
     return newShader;
-  } else {
-    return shader.lock();
   }
+  return shader.lock();
 }
 
-Texture_Ptr AquireTexture(const char* name, int rows, int cols) {
+Texture_Ptr AquireTexture(const char* name, int rows, int cols)
+{
   static std::unordered_map<std::string, std::weak_ptr<Texture>> map;
   std::weak_ptr<Texture>& tex = map[std::string(name)];
-  if (tex.expired()) {
+  if (tex.expired())
+  {
     Texture_Ptr newTex = (Texture_Ptr)(new Texture(name, rows, cols));
     tex = newTex;
     return newTex;
-  } else {
-    return tex.lock();
   }
+  return tex.lock();
 }

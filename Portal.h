@@ -37,7 +37,6 @@ private:
 };
 
 TYPEDEF_PTR_TYPE(Portal);
-//typedef std::shared_ptr<Portal> Portal_Ptr;
 typedef std::vector<Portal_Ptr> PPortalVec;
 
 //namespace Portal

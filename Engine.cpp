@@ -3,6 +3,21 @@ Player* GH_PLAYER = nullptr;
 const Input* GH_INPUT = nullptr;
 int GH_REC_LEVEL = 0;
 
+#if 0
+void Engine::init_opengl(void)
+{
+  glewInit();
+  glClearColor(0.6f, 0.9f, 1.0f, 1.0f);
+  glEnable(GL_CULL_FACE);
+  glCullFace(GL_BACK);
+  glEnable(GL_DEPTH_TEST);
+  glDepthFunc(GL_LESS);
+  glDepthMask(GL_TRUE);
+  wglSwapIntervalEXT(1);
+
+}
+#endif
+
 void Engine::process_input(void)
 {
   if (this->input.key_press['1'])
