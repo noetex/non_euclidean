@@ -9,12 +9,12 @@ public:
   virtual ~Floorplan() {}
 
   void AddPortals(PPortalVec& pvec) const {
-    std::shared_ptr<Portal> p1(new Portal);
-    std::shared_ptr<Portal> p2(new Portal);
-    std::shared_ptr<Portal> p3(new Portal);
-    std::shared_ptr<Portal> p4(new Portal);
-    std::shared_ptr<Portal> p5(new Portal);
-    std::shared_ptr<Portal> p6(new Portal);
+    Portal_Ptr p1 = (Portal_Ptr)(new Portal);
+    Portal_Ptr p2 = (Portal_Ptr)(new Portal);
+    Portal_Ptr p3 = (Portal_Ptr)(new Portal);
+    Portal_Ptr p4 = (Portal_Ptr)(new Portal);
+    Portal_Ptr p5 = (Portal_Ptr)(new Portal);
+    Portal_Ptr p6 = (Portal_Ptr)(new Portal);
 
     p1->pos = Vector3(33, 10, 25.5f) * scale;
     p1->scale = Vector3(4, 10, 1) * scale;

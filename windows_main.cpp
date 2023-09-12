@@ -223,10 +223,10 @@ WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 
   glGetQueryiv(GL_SAMPLES_PASSED_ARB, GL_QUERY_COUNTER_BITS_ARB, &engine.occlusionCullingSupported);
   engine.vObjects = std::vector<Object_Ptr>();
-  engine.vPortals = std::vector<std::shared_ptr<Portal>>();
+  engine.vPortals = std::vector<Portal_Ptr>();
   engine.sky = new Sky;
-  engine.player = std::shared_ptr<Player>(new Player);
-  engine.vScenes = std::vector<std::shared_ptr<Scene>>();
+  engine.player = Player_Ptr(new Player);
+  engine.vScenes = std::vector<Scene_Ptr>();
   engine.curScene = 0;
   engine.input = {0};
   engine.main_cam.width = 256;
@@ -234,13 +234,13 @@ WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
   engine.main_cam.worldView.MakeIdentity();
   engine.main_cam.projection.MakeIdentity();
 
-  engine.vScenes.push_back(std::shared_ptr<Scene>(new Level1));
-  engine.vScenes.push_back(std::shared_ptr<Scene>(new Level2(3)));
-  engine.vScenes.push_back(std::shared_ptr<Scene>(new Level2(6)));
-  engine.vScenes.push_back(std::shared_ptr<Scene>(new Level3));
-  engine.vScenes.push_back(std::shared_ptr<Scene>(new Level4));
-  engine.vScenes.push_back(std::shared_ptr<Scene>(new Level5));
-  engine.vScenes.push_back(std::shared_ptr<Scene>(new Level6));
+  engine.vScenes.push_back(Scene_Ptr(new Level1));
+  engine.vScenes.push_back(Scene_Ptr(new Level2(3)));
+  engine.vScenes.push_back(Scene_Ptr(new Level2(6)));
+  engine.vScenes.push_back(Scene_Ptr(new Level3));
+  engine.vScenes.push_back(Scene_Ptr(new Level4));
+  engine.vScenes.push_back(Scene_Ptr(new Level5));
+  engine.vScenes.push_back(Scene_Ptr(new Level6));
   GH_ENGINE = &engine;
   GH_INPUT = &engine.input;
   GH_PLAYER = engine.player.get();

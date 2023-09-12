@@ -23,3 +23,5 @@ private:
 
   bool onGround;
 };
+
+typedef std::shared_ptr<Player> Player_Ptr;

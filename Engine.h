@@ -10,10 +10,10 @@ public:
   GLint occlusionCullingSupported;
 
   std::vector<Object_Ptr> vObjects;
-  std::vector<std::shared_ptr<Portal>> vPortals;
+  std::vector<Portal_Ptr> vPortals;
   Sky* sky;
-  std::shared_ptr<Player> player;
-  std::vector<std::shared_ptr<Scene>> vScenes;
+  Player_Ptr player;
+  std::vector<Scene_Ptr> vScenes;
   Scene* curScene;
   Input input;
 

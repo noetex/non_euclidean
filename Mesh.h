@@ -23,3 +23,5 @@ private:
   std::vector<float> uvs;
   std::vector<float> normals;
 };
+
+typedef std::shared_ptr<Mesh> Mesh_Ptr;

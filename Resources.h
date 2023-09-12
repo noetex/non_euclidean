@@ -1,3 +1,3 @@
-std::shared_ptr<Mesh> AquireMesh(const char* name);
-std::shared_ptr<Shader> AquireShader(const char* name);
-std::shared_ptr<Texture> AquireTexture(const char* name, int rows=1, int cols=1);
+Mesh_Ptr AquireMesh(const char* name);
+Shader_Ptr AquireShader(const char* name);
+Texture_Ptr AquireTexture(const char* name, int rows=1, int cols=1);

@@ -8,3 +8,5 @@ private:
   GLuint texId;
   bool is3D;
 };
+
+typedef std::shared_ptr<Texture> Texture_Ptr;
