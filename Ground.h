@@ -12,3 +12,5 @@ public:
   }
   virtual ~Ground() {}
 };
+
+typedef std::shared_ptr<Ground> Ground_Ptr;

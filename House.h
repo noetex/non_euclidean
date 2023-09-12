@@ -32,3 +32,4 @@ public:
     portal.scale = Vector3(2, 0.5f, 1) * scale;
   }
 };
+typedef std::shared_ptr<House> House_Ptr;

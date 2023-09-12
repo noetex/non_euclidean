@@ -222,7 +222,7 @@ WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
   Engine engine;
 
   glGetQueryiv(GL_SAMPLES_PASSED_ARB, GL_QUERY_COUNTER_BITS_ARB, &engine.occlusionCullingSupported);
-  engine.vObjects = std::vector<std::shared_ptr<Object>>();
+  engine.vObjects = std::vector<Object_Ptr>();
   engine.vPortals = std::vector<std::shared_ptr<Portal>>();
   engine.sky = new Sky;
   engine.player = std::shared_ptr<Player>(new Player);

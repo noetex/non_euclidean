@@ -33,4 +33,6 @@ private:
   std::shared_ptr<Shader> errShader;
   FrameBuffer frameBuf[GH_MAX_RECURSION <= 1 ? 1 : GH_MAX_RECURSION - 1];
 };
-typedef std::vector<std::shared_ptr<Portal>> PPortalVec;
+
+typedef std::shared_ptr<Portal> Portal_Ptr;
+typedef std::vector<Portal_Ptr> PPortalVec;

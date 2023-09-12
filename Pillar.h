@@ -8,3 +8,5 @@ public:
   }
   virtual ~Pillar() {}
 };
+
+typedef std::shared_ptr<Pillar> Pillar_Ptr;

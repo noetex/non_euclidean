@@ -41,3 +41,5 @@ public:
 private:
   Type type;
 };
+
+typedef std::shared_ptr<Tunnel> Tunnel_Ptr;

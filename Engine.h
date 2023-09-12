@@ -9,7 +9,7 @@ public:
 
   GLint occlusionCullingSupported;
 
-  std::vector<std::shared_ptr<Object>> vObjects;
+  std::vector<Object_Ptr> vObjects;
   std::vector<std::shared_ptr<Portal>> vPortals;
   Sky* sky;
   std::shared_ptr<Player> player;
