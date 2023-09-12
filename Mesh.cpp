@@ -53,7 +53,7 @@ Mesh::Mesh(const char* fname) {
         if (line[i] == '/') {
           line[i] = ' ';
           if (last_slash_ix == i - 1) {
-            assert(vert_palette.size() == uv_palette.size() || uv_palette.empty());
+            Assert(vert_palette.size() == uv_palette.size() || uv_palette.empty());
             doubleslash = true;
           }
           last_slash_ix = i;
@@ -70,7 +70,7 @@ Mesh::Mesh(const char* fname) {
 
       //Interpret face based on slash
       if (wild) {
-        assert(num_slashes == 0);
+        Assert(num_slashes == 0);
         const uint32_t v_ix = (uint32_t)vert_palette.size() / 3;
         const uint32_t t_ix = (uint32_t)uv_palette.size() / (is3DTex ? 3 : 2);
         if (wild2) {
@@ -108,7 +108,7 @@ Mesh::Mesh(const char* fname) {
           ss >> a >> at >> _tmp >> b >> bt >> _tmp >> c >> ct >> _tmp >> d >> dt >> _tmp;
         }
       } else {
-        assert(false);
+        __debugbreak();
         continue;
       }
 
@@ -166,8 +166,8 @@ void Mesh::AddFace(
   uint32_t a, uint32_t at, uint32_t b, uint32_t bt, uint32_t c, uint32_t ct, bool is3DTex)
 {
   //Merge texture and vertex indicies
-  assert(a > 0 && b > 0 && c > 0);
-  assert(at > 0 && bt > 0 && ct > 0);
+  Assert(a > 0 && b > 0 && c > 0);
+  Assert(at > 0 && bt > 0 && ct > 0);
   a -= 1; b -= 1; c -= 1;
   at -= 1; bt -= 1; ct -= 1;
   const uint32_t v_ix[3] = { a, b, c };
@@ -182,18 +182,18 @@ void Mesh::AddFace(
   for (int i = 0; i < 3; ++i) {
     const uint32_t v = v_ix[i];
     const uint32_t vt = uv_ix[i];
-    assert(v < vert_palette.size() / 3);
+    Assert(v < vert_palette.size() / 3);
     verts.push_back(vert_palette[v * 3]);
     verts.push_back(vert_palette[v * 3 + 1]);
     verts.push_back(vert_palette[v * 3 + 2]);
     if (!uv_palette.empty()) {
       if (is3DTex) {
-        assert(vt < uv_palette.size() / 3);
+        Assert(vt < uv_palette.size() / 3);
         uvs.push_back(uv_palette[vt * 3]);
         uvs.push_back(uv_palette[vt * 3 + 1]);
         uvs.push_back(uv_palette[vt * 3 + 2]);
       } else {
-        assert(vt < uv_palette.size() / 2);
+        Assert(vt < uv_palette.size() / 2);
         uvs.push_back(uv_palette[vt * 2]);
         uvs.push_back(uv_palette[vt * 2 + 1]);
       }

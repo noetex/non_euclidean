@@ -3,6 +3,38 @@ Player* GH_PLAYER = nullptr;
 const Input* GH_INPUT = nullptr;
 int GH_REC_LEVEL = 0;
 
+void Engine::process_input(void)
+{
+  if (this->input.key_press['1'])
+  {
+    this->LoadScene(0);
+  }
+  else if (this->input.key_press['2'])
+  {
+    this->LoadScene(1);
+  }
+  else if (this->input.key_press['3'])
+  {
+    this->LoadScene(2);
+  }
+  else if (this->input.key_press['4'])
+  {
+    this->LoadScene(3);
+  }
+  else if (this->input.key_press['5'])
+  {
+    this->LoadScene(4);
+  }
+  else if (this->input.key_press['6'])
+  {
+    this->LoadScene(5);
+  }
+  else if (this->input.key_press['7'])
+  {
+    this->LoadScene(6);
+  }
+}
+
 void Engine::LoadScene(int ix)
 {
   if (curScene)
@@ -21,7 +53,7 @@ void Engine::LoadScene(int ix)
 void Engine::Update() {
   //Update
   for (size_t i = 0; i < vObjects.size(); ++i) {
-    assert(vObjects[i].get());
+    Assert(vObjects[i].get());
     vObjects[i]->Update();
   }
 
@@ -91,7 +123,7 @@ void Engine::Render(const Camera& cam, GLuint curFBO, const Portal* skipPortal) 
   //Create queries (if applicable)
   GLuint queries[GH_MAX_PORTALS];
   GLuint drawTest[GH_MAX_PORTALS];
-  assert(vPortals.size() <= GH_MAX_PORTALS);
+  Assert(vPortals.size() <= GH_MAX_PORTALS);
   if (occlusionCullingSupported) {
     glGenQueriesARB((GLsizei)vPortals.size(), queries);
   }

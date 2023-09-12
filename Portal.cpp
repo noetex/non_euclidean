@@ -5,8 +5,8 @@ Portal::Portal() : front(this), back(this) {
 }
 
 void Portal::Draw(const Camera& cam, GLuint curFBO) {
-  assert(euler.x == 0.0f);
-  assert(euler.z == 0.0f);
+  Assert(euler.x == 0.0f);
+  Assert(euler.z == 0.0f);
 
   //Draw pink to indicate end of render chain
   if (GH_REC_LEVEL <= 0) {

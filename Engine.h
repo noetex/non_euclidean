@@ -1,5 +1,6 @@
 class Engine {
 public:
+  void process_input(void);
   void Update();
   void Render(const Camera& cam, GLuint curFBO, const Portal* skipPortal);
   void LoadScene(int ix);

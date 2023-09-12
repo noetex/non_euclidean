@@ -1,6 +1,6 @@
 Texture::Texture(const char* fname, int rows, int cols) {
   //Check if this is a 3D texture
-  assert(rows >= 1 && cols >= 1);
+  Assert(rows >= 1 && cols >= 1);
   is3D = (rows > 1 || cols > 1);
 
   //Open the bitmap
@@ -15,8 +15,8 @@ Texture::Texture(const char* fname, int rows, int cols) {
   fin.read(input, 54);
   const GLsizei width = *reinterpret_cast<int32_t*>(&input[18]);
   const GLsizei height = *reinterpret_cast<int32_t*>(&input[22]);
-  assert(width % cols == 0);
-  assert(height % rows == 0);
+  Assert(width % cols == 0);
+  Assert(height % rows == 0);
   const int block_w = width / cols;
   const int block_h = height / rows;
   uint8_t* img = new uint8_t[width * height * 3];

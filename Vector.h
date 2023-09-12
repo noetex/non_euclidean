@@ -108,7 +108,7 @@ public:
     return std::acos(NormalizedSafe().Dot(b.NormalizedSafe()));
   }
   inline void ClipMag(float m) {
-    assert(m > 0.0f);
+    Assert(m > 0.0f);
     const float r = MagSq() / (m * m);
     if (r > 1.0f) {
       (*this) /= std::sqrt(r);

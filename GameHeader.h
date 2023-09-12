@@ -27,6 +27,9 @@
   #define DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE_V2 ((DPI_AWARENESS_CONTEXT)-4)
 #endif
 
+#define Assert(Expression) if(Expression); else __debugbreak()
+//#define Assert(Expression) (void)(Expression)
+
 // https://learn.microsoft.com/en-us/windows-hardware/drivers/hid/hid-usages
 enum raw_input_stuff
 {

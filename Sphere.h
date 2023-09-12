@@ -5,11 +5,11 @@ public:
 
   //Transformations to and frpom sphere coordinates
   Matrix4 UnitToLocal() const {
-    assert(radius > 0.0f);
+    Assert(radius > 0.0f);
     return Matrix4::Trans(center) * Matrix4::Scale(radius);
   }
   Matrix4 LocalToUnit() const {
-    assert(radius > 0.0f);
+    Assert(radius > 0.0f);
     return Matrix4::Scale(1.0f / radius) * Matrix4::Trans(-center);
   }
 

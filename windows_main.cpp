@@ -88,19 +88,9 @@ static LRESULT CALLBACK
 window_proc(HWND Window, UINT Message, WPARAM wParam, LPARAM lParam)
 {
   Engine* engine = (Engine*)GetWindowLongPtrW(Window, GWLP_USERDATA);
-  if(!engine)
-  {
-    return DefWindowProcW(Window, Message, wParam, lParam);
-  }
   LRESULT Result = 0;
   switch(Message)
   {
-    //case WM_CREATE:
-    //{
-    //  CREATESTRUCT* Struct = (CREATESTRUCT*)lParam;
-    //  Engine* engine = (Engine*)Struct->lpCreateParams;
-    //  SetWindowLongPtrW(Window, GWLP_USERDATA, (LONG_PTR)engine);
-    //} break;
     case WM_SYSCOMMAND:
     {
       if (wParam == SC_SCREENSAVE || wParam == SC_MONITORPOWER)
@@ -212,7 +202,7 @@ create_the_window(void)
 {
   WNDCLASSEXW WindowClass = {0};
   WindowClass.cbSize = sizeof(WindowClass);
-  WindowClass.lpfnWndProc = window_proc;
+  WindowClass.lpfnWndProc = DefWindowProcW;
   WindowClass.lpszClassName = GH_CLASS;
   RegisterClassExW(&WindowClass);
   HWND Result = CreateWindowExW(0, GH_CLASS, GH_TITLE, 0, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, 0, 0, 0, 0);
@@ -267,6 +257,7 @@ WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
   SetWindowLongPtrW(Window, GWL_STYLE, WS_OVERLAPPEDWINDOW);
   SetWindowLongPtrW(Window, GWL_EXSTYLE, WS_EX_APPWINDOW);
   SetWindowLongPtrW(Window, GWLP_USERDATA, (LONG_PTR)&engine);
+  SetWindowLongPtrW(Window, GWLP_WNDPROC, (LONG_PTR)window_proc);
   SetWindowPos(Window, HWND_TOP, GH_SCREEN_X, GH_SCREEN_Y, 1280, 720, SWP_SHOWWINDOW);
 
   for(;;)
@@ -282,22 +273,7 @@ WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
       DispatchMessageW(&Msg);
     }
     confine_cursor(Window);
-
-    if (engine.input.key_press['1']) {
-      engine.LoadScene(0);
-    } else if (engine.input.key_press['2']) {
-      engine.LoadScene(1);
-    } else if (engine.input.key_press['3']) {
-      engine.LoadScene(2);
-    } else if (engine.input.key_press['4']) {
-      engine.LoadScene(3);
-    } else if (engine.input.key_press['5']) {
-      engine.LoadScene(4);
-    } else if (engine.input.key_press['6']) {
-      engine.LoadScene(5);
-    } else if (engine.input.key_press['7']) {
-      engine.LoadScene(6);
-    }
+    engine.process_input();
 
     //Used fixed time steps for updates
     QueryPerformanceCounter(&Ticks);

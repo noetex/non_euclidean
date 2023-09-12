@@ -8,7 +8,6 @@
 #include<cmath>
 #include<vector>
 #include<string>
-#include<cassert>
 #include<cstdint>
 #include<fstream>
 #include<sstream>

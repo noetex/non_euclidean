@@ -61,7 +61,7 @@ void Collider::DebugDraw(const Camera& cam, const Matrix4& objMat) {
 }
 
 void Collider::CreateSorted(const Vector3& da, const Vector3& c, const Vector3& db) {
-  assert(std::abs(da.Dot(db)) / (da.Mag() * db.Mag()) < 0.001f);
+  Assert(std::abs(da.Dot(db)) / (da.Mag() * db.Mag()) < 0.001f);
   mat.MakeIdentity();
   mat.SetTranslation(c);
   mat.SetXAxis(da);
