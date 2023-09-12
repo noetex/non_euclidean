@@ -8,4 +8,4 @@ public:
   virtual ~Statue() {}
 };
 
-typedef std::shared_ptr<Statue> Statue_Ptr;
+TYPEDEF_PTR_TYPE(Statue);

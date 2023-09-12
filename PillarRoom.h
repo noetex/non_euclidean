@@ -16,4 +16,4 @@ public:
   virtual ~PillarRoom() {}
 };
 
-typedef std::shared_ptr<PillarRoom> PillarRoom_Ptr;
+TYPEDEF_PTR_TYPE(PillarRoom);

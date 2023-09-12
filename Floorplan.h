@@ -54,4 +54,4 @@ public:
   }
 };
 
-typedef std::shared_ptr<Floorplan> Floorplan_Ptr;
+TYPEDEF_PTR_TYPE(Floorplan);

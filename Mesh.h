@@ -24,4 +24,4 @@ private:
   std::vector<float> normals;
 };
 
-typedef std::shared_ptr<Mesh> Mesh_Ptr;
+TYPEDEF_PTR_TYPE(Mesh);

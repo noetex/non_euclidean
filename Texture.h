@@ -9,4 +9,4 @@ private:
   bool is3D;
 };
 
-typedef std::shared_ptr<Texture> Texture_Ptr;
+TYPEDEF_PTR_TYPE(Texture);

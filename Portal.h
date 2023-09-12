@@ -1,6 +1,6 @@
 class Portal : public Object
 {
-  typedef std::shared_ptr<Portal> Portal_Ptr;
+  TYPEDEF_PTR_TYPE(Portal);
 public:
   //Subclass that represents a warp
   struct Warp {
@@ -36,7 +36,8 @@ private:
   FrameBuffer frameBuf[GH_MAX_RECURSION <= 1 ? 1 : GH_MAX_RECURSION - 1];
 };
 
-typedef std::shared_ptr<Portal> Portal_Ptr;
+TYPEDEF_PTR_TYPE(Portal);
+//typedef std::shared_ptr<Portal> Portal_Ptr;
 typedef std::vector<Portal_Ptr> PPortalVec;
 
 //namespace Portal

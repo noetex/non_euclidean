@@ -36,5 +36,5 @@ public:
   Shader_Ptr shader;
 };
 
-typedef std::shared_ptr<Object> Object_Ptr;
+TYPEDEF_PTR_TYPE(Object);
 typedef std::vector<Object_Ptr> PObjectVec;

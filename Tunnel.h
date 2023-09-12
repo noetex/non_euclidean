@@ -42,4 +42,4 @@ private:
   Type type;
 };
 
-typedef std::shared_ptr<Tunnel> Tunnel_Ptr;
+TYPEDEF_PTR_TYPE(Tunnel);

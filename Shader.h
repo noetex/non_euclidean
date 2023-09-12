@@ -17,4 +17,4 @@ private:
   GLuint mvId;
 };
 
-typedef std::shared_ptr<Shader> Shader_Ptr;
+TYPEDEF_PTR_TYPE(Shader);

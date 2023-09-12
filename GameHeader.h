@@ -30,6 +30,14 @@
 #define Assert(Expression) if(Expression); else __debugbreak()
 //#define Assert(Expression) (void)(Expression)
 
+//#define USE_REAL_POINTERS
+
+#ifdef USE_REAL_POINTERS
+  #define TYPEDEF_PTR_TYPE(Type) typedef Type* Type ## _Ptr
+#else
+  #define TYPEDEF_PTR_TYPE(Type) typedef std::shared_ptr<Type> Type ## _Ptr
+#endif
+
 // https://learn.microsoft.com/en-us/windows-hardware/drivers/hid/hid-usages
 enum raw_input_stuff
 {

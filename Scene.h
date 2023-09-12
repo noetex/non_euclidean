@@ -4,4 +4,4 @@ public:
   virtual void Unload() {};
 };
 
-typedef std::shared_ptr<Scene> Scene_Ptr;
+TYPEDEF_PTR_TYPE(Scene);
