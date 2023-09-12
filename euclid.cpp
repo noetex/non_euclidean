@@ -4,6 +4,8 @@
 #undef near
 #undef far
 
+#include"euclid_windows.h"
+
 #include<map>
 #include<cmath>
 #include<vector>

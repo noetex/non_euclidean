@@ -1,64 +1,16 @@
-#ifndef DPI_ENUMS_DECLARED
-  typedef enum
-  {
-    PROCESS_DPI_UNAWARE = 0,
-    PROCESS_SYSTEM_DPI_AWARE = 1,
-    PROCESS_PER_MONITOR_DPI_AWARE = 2
-  } PROCESS_DPI_AWARENESS;
-  typedef enum
-  {
-    MDT_EFFECTIVE_DPI = 0,
-    MDT_ANGULAR_DPI = 1,
-    MDT_RAW_DPI = 2,
-    MDT_DEFAULT = MDT_EFFECTIVE_DPI
-  } MONITOR_DPI_TYPE;
-#endif
-
-#ifndef _DPI_AWARENESS_CONTEXTS_
-  DECLARE_HANDLE(DPI_AWARENESS_CONTEXT);
-  #define DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE (DPI_AWARENESS_CONTEXT)-3
-#endif
-
-#ifndef DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE
-  #define DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE ((DPI_AWARENESS_CONTEXT)-3)
-#endif
-
-#ifndef DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE_V2
-  #define DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE_V2 ((DPI_AWARENESS_CONTEXT)-4)
-#endif
-
-#define Assert(Expression) if(Expression); else __debugbreak()
-//#define Assert(Expression) (void)(Expression)
-
 //#define USE_REAL_POINTERS
-
 #ifdef USE_REAL_POINTERS
   #define TYPEDEF_PTR_TYPE(Type) typedef Type* Type ## _Ptr
 #else
   #define TYPEDEF_PTR_TYPE(Type) typedef std::shared_ptr<Type> Type ## _Ptr
 #endif
 
-// https://learn.microsoft.com/en-us/windows-hardware/drivers/hid/hid-usages
-enum raw_input_stuff
-{
-  HID_USAGE_PAGE_GENERIC = 0x01,
-  HID_USAGE_PAGE_GAME = 0x05,
-  HID_USAGE_PAGE_LED = 0x08,
-  HID_USAGE_PAGE_BUTTON = 0x09,
-  HID_USAGE_GENERIC_POINTER = 0x01,
-  HID_USAGE_GENERIC_MOUSE = 0x02,
-  HID_USAGE_GENERIC_JOYSTICK = 0x04,
-  HID_USAGE_GENERIC_GAMEPAD = 0x05,
-  HID_USAGE_GENERIC_KEYBOARD = 0x06,
-  HID_USAGE_GENERIC_KEYPAD = 0x07,
-  HID_USAGE_GENERIC_MULTI_AXIS_CONTROLLER = 0x08,
-};
+#define Assert(Expression) if(Expression); else __debugbreak()
+//#define Assert(Expression) (void)(Expression)
 
 typedef int bool_t;
 
 //Windows
-static const wchar_t GH_TITLE[] = L"NonEuclideanDemo";
-static const wchar_t GH_CLASS[] = L"NED";
 
 //General
 static const float GH_PI = 3.141592653589793f;
