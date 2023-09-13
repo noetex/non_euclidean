@@ -11,10 +11,7 @@ public:
     pos = _pos;
     prev_pos = _pos;
   }
-
   bool TryPortal(const Portal& portal);
-
-  //virtual Physical* AsPhysical() override { return this; }
 
   Vector3 gravity;
   Vector3 velocity;

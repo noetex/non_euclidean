@@ -13,12 +13,6 @@ public:
   virtual void Draw(const Camera& cam, uint32_t curFBO);
   virtual void Update() {};
   virtual void OnHit(Object& other, Vector3& push) {};
-
-  //Casts
-#if 0
-  virtual Physical* AsPhysical() { return nullptr; }
-  const Physical* AsPhysical() const { return const_cast<Object*>(this)->AsPhysical(); }
-#endif
   virtual bool is_physical(void) { return false; }
 
   void DebugDraw(const Camera& cam);
