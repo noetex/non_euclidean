@@ -1,6 +1,6 @@
 class Engine {
 public:
-  //Engine(GLint, int64_t);
+  Engine(int64_t);
   //void init_opengl(void);
   void cleanup(void);
   void do_frame(int64_t&, int64_t);
@@ -11,16 +11,16 @@ public:
 
   float NearestPortalDist() const;
 
-  GLint occlusionCullingSupported;
 
   std::vector<Object_Ptr> vObjects;
   std::vector<Portal_Ptr> vPortals;
-  Sky sky;
-  int64_t TicksPerStep;
-  Player_Ptr player;
   std::vector<Scene_Ptr> vScenes;
   size_t CurrentSceneIndex;
+  Player_Ptr player;
+  int64_t TicksPerStep;
+  GLint occlusionCullingSupported;
   Input input;
   int64_t GH_FRAME;
   Camera main_cam;
+  Sky sky;
 };

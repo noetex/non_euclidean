@@ -1,6 +1,7 @@
 class Sky {
 public:
-  Sky() {
+  void load(void)
+  {
     mesh = AquireMesh("quad.obj");
     shader = AquireShader("sky");
   }

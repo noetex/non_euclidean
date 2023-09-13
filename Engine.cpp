@@ -5,17 +5,41 @@ int GH_REC_LEVEL = 0;
 #if 0
 void Engine::init_opengl(void)
 {
-  glewInit();
+
+
+}
+#endif
+
+Engine::Engine(int64_t Frequency)
+: vObjects(std::vector<Object_Ptr>()),
+  vPortals(std::vector<Portal_Ptr>()),
+  vScenes(std::vector<Scene_Ptr>()),
+  CurrentSceneIndex(0),
+  player((Player_Ptr)new Player),
+  TicksPerStep((int64_t)(Frequency * GH_DT)),
+  input({0}),
+  GH_FRAME(0)
+{
+  Assert(glewInit() == GLEW_OK);
   glClearColor(0.6f, 0.9f, 1.0f, 1.0f);
   glEnable(GL_CULL_FACE);
   glCullFace(GL_BACK);
   glEnable(GL_DEPTH_TEST);
   glDepthFunc(GL_LESS);
   glDepthMask(GL_TRUE);
+  glGetQueryiv(GL_SAMPLES_PASSED_ARB, GL_QUERY_COUNTER_BITS_ARB, &this->occlusionCullingSupported);
   wglSwapIntervalEXT(1);
-
+  this->sky.load();
+  this->vScenes.push_back(Scene_Ptr(new Level1));
+  this->vScenes.push_back(Scene_Ptr(new Level2(3)));
+  this->vScenes.push_back(Scene_Ptr(new Level2(6)));
+  this->vScenes.push_back(Scene_Ptr(new Level3));
+  this->vScenes.push_back(Scene_Ptr(new Level4));
+  this->vScenes.push_back(Scene_Ptr(new Level5));
+  this->vScenes.push_back(Scene_Ptr(new Level6));
+  GH_ENGINE = this;
+  GH_INPUT = &this->input;
 }
-#endif
 
 void Engine::cleanup(void)
 {

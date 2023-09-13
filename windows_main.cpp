@@ -182,19 +182,6 @@ create_opengl_context(HDC WindowDC)
   return Result;
 }
 
-static void
-InitGLObjects(void)
-{
-  glewInit();
-  glClearColor(0.6f, 0.9f, 1.0f, 1.0f);
-  glEnable(GL_CULL_FACE);
-  glCullFace(GL_BACK);
-  glEnable(GL_DEPTH_TEST);
-  glDepthFunc(GL_LESS);
-  glDepthMask(GL_TRUE);
-  //wglSwapIntervalEXT(1);
-}
-
 static HWND
 create_the_window(void)
 {
@@ -214,33 +201,13 @@ WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
   HWND Window = create_the_window();
   HDC WindowDC = GetDC(Window);
   HGLRC ContextGL = create_opengl_context(WindowDC);
-  InitGLObjects();
   setup_raw_input(Window);
   ShowCursor(!GH_HIDE_MOUSE);
 
   LARGE_INTEGER Frequency = {0};
   QueryPerformanceFrequency(&Frequency);
-  Engine engine = {0};
-  glGetQueryiv(GL_SAMPLES_PASSED_ARB, GL_QUERY_COUNTER_BITS_ARB, &engine.occlusionCullingSupported);
-  engine.sky = Sky();
-  engine.player = Player_Ptr(new Player);
-  //engine.player = Player();
-  engine.main_cam.width = 256;
-  engine.main_cam.height = 256;
-  engine.main_cam.worldView.MakeIdentity();
-  engine.main_cam.projection.MakeIdentity();
-  engine.GH_FRAME = 0;
+  Engine engine(Frequency.QuadPart);
 
-  engine.TicksPerStep = (int64_t)(Frequency.QuadPart * GH_DT);
-  engine.vScenes.push_back(Scene_Ptr(new Level1));
-  engine.vScenes.push_back(Scene_Ptr(new Level2(3)));
-  engine.vScenes.push_back(Scene_Ptr(new Level2(6)));
-  engine.vScenes.push_back(Scene_Ptr(new Level3));
-  engine.vScenes.push_back(Scene_Ptr(new Level4));
-  engine.vScenes.push_back(Scene_Ptr(new Level5));
-  engine.vScenes.push_back(Scene_Ptr(new Level6));
-  GH_ENGINE = &engine;
-  GH_INPUT = &engine.input;
   engine.LoadScene(0);
 
   LARGE_INTEGER Ticks = {0};
