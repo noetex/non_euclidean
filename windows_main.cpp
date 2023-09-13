@@ -238,7 +238,6 @@ WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
   engine.vScenes.push_back(Scene_Ptr(new Level6));
   GH_ENGINE = &engine;
   GH_INPUT = &engine.input;
-  GH_PLAYER = engine.player.get();
   engine.LoadScene(0);
 
   LARGE_INTEGER Ticks = {0};

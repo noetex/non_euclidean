@@ -1,5 +1,4 @@
 Engine* GH_ENGINE = nullptr;
-Player* GH_PLAYER = nullptr;
 const Input* GH_INPUT = nullptr;
 int GH_REC_LEVEL = 0;
 
@@ -65,11 +64,12 @@ void Engine::LoadScene(int ix)
   vObjects.push_back(player);
 }
 
-void Engine::Update() {
-  //Update
-  for (size_t i = 0; i < vObjects.size(); ++i) {
-    Assert(vObjects[i].get());
-    vObjects[i]->Update();
+void Engine::Update(void)
+{
+  for (auto& Object : vObjects)
+  {
+    Assert(Object.get());
+    Object->Update();
   }
 
   //Collisions
