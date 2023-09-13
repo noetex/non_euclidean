@@ -220,11 +220,9 @@ WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
   Engine engine = {0};
 
   glGetQueryiv(GL_SAMPLES_PASSED_ARB, GL_QUERY_COUNTER_BITS_ARB, &engine.occlusionCullingSupported);
-  //engine.sky = new Sky;
   engine.sky = Sky();
   engine.player = Player_Ptr(new Player);
-  engine.curScene = 0;
-  engine.input = {0};
+  //engine.player = Player();
   engine.main_cam.width = 256;
   engine.main_cam.height = 256;
   engine.main_cam.worldView.MakeIdentity();
@@ -293,7 +291,7 @@ WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
     SwapBuffers(WindowDC);
   }
 label_loop_exit:
-  engine.curScene->Unload();
+  //engine.curScene->Unload();
   engine.vObjects.clear();
   engine.vPortals.clear();
   ClipCursor(NULL);

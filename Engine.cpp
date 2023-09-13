@@ -51,17 +51,14 @@ void Engine::process_input(void)
 
 void Engine::LoadScene(int ix)
 {
-  if (curScene)
-  {
-    curScene->Unload();
-  }
+  //TODO: Deallocate memory
   vObjects.clear();
   vPortals.clear();
   player->Reset();
 
-  curScene = vScenes[ix].get();
-  curScene->Load(vObjects, vPortals, *player);
-  vObjects.push_back(player);
+  Scene_Ptr CurrentScene = this->vScenes[this->CurrentSceneIndex];
+  CurrentScene->Load(this->vObjects, this->vPortals, *this->player);
+  this->vObjects.push_back(player);
 }
 
 void Engine::Update(void)
@@ -197,7 +194,7 @@ void Engine::Render(const Camera& cam, GLuint curFBO, const Portal* skipPortal)
 float Engine::NearestPortalDist() const {
   float dist = FLT_MAX;
   for (size_t i = 0; i < vPortals.size(); ++i) {
-    dist = GH_MIN(dist, vPortals[i]->DistTo(player->pos));
+    dist = GH_MIN(dist, vPortals[i]->DistTo(this->player->pos));
   }
   return dist;
 }
