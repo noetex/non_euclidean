@@ -12,7 +12,7 @@ public:
 
   std::vector<Object_Ptr> vObjects;
   std::vector<Portal_Ptr> vPortals;
-  Sky* sky;
+  Sky sky;
   Player_Ptr player;
   std::vector<Scene_Ptr> vScenes;
   Scene* curScene;

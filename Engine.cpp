@@ -126,12 +126,15 @@ void Engine::Update(void)
   }
 }
 
-void Engine::Render(const Camera& cam, GLuint curFBO, const Portal* skipPortal) {
-  //Clear buffers
-  if (GH_USE_SKY) {
+void Engine::Render(const Camera& cam, GLuint curFBO, const Portal* skipPortal)
+{
+  if (GH_USE_SKY)
+  {
     glClear(GL_DEPTH_BUFFER_BIT);
-    sky->Draw(cam);
-  } else {
+    sky.Draw(cam);
+  }
+  else
+  {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   }
 

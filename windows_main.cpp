@@ -192,7 +192,7 @@ InitGLObjects(void)
   glEnable(GL_DEPTH_TEST);
   glDepthFunc(GL_LESS);
   glDepthMask(GL_TRUE);
-//  wglSwapIntervalEXT(1);
+  //wglSwapIntervalEXT(1);
 }
 
 static HWND
@@ -203,7 +203,7 @@ create_the_window(void)
   WindowClass.lpfnWndProc = DefWindowProcW;
   WindowClass.lpszClassName = GH_CLASS;
   RegisterClassExW(&WindowClass);
-  HWND Result = CreateWindowExW(0, GH_CLASS, GH_TITLE, 0, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, 0, 0, 0, 0);
+  HWND Result = CreateWindowExW(0, GH_CLASS, GH_TITLE, 0, 0, 0, 0, 0, 0, 0, 0, 0);
   return Result;
 }
 
@@ -220,7 +220,8 @@ WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
   Engine engine = {0};
 
   glGetQueryiv(GL_SAMPLES_PASSED_ARB, GL_QUERY_COUNTER_BITS_ARB, &engine.occlusionCullingSupported);
-  engine.sky = new Sky;
+  //engine.sky = new Sky;
+  engine.sky = Sky();
   engine.player = Player_Ptr(new Player);
   engine.curScene = 0;
   engine.input = {0};
@@ -298,7 +299,7 @@ label_loop_exit:
   ClipCursor(NULL);
   wglMakeCurrent(WindowDC, NULL);
   wglDeleteContext(ContextGL);
-  ReleaseDC(Window, WindowDC);
+  //ReleaseDC(Window, WindowDC);
   //DestroyWindow(hWnd);
   return 0;
 }
