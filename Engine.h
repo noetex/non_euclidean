@@ -2,6 +2,7 @@ class Engine {
 public:
   //Engine(GLint, int64_t);
   //void init_opengl(void);
+  void cleanup(void);
   void do_frame(int64_t&, int64_t);
   void process_input(void);
   void Update();

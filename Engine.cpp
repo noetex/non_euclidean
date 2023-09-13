@@ -17,6 +17,13 @@ void Engine::init_opengl(void)
 }
 #endif
 
+void Engine::cleanup(void)
+{
+  //this->curScene->Unload();
+  this->vObjects.clear();
+  this->vPortals.clear();
+}
+
 void Engine::process_input(void)
 {
   if (this->input.key_press['1'])

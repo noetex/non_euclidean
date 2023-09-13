@@ -272,9 +272,7 @@ WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
     SwapBuffers(WindowDC);
   }
 label_loop_exit:
-  //engine.curScene->Unload();
-  engine.vObjects.clear();
-  engine.vPortals.clear();
+  engine.cleanup();
   ClipCursor(NULL);
   wglMakeCurrent(WindowDC, NULL);
   wglDeleteContext(ContextGL);
