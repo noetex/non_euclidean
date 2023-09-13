@@ -147,7 +147,7 @@ window_proc(HWND Window, UINT Message, WPARAM wParam, LPARAM lParam)
     } break;
     default:
     {
-      Result = DefWindowProc(Window, Message, wParam, lParam);
+      Result = DefWindowProcW(Window, Message, wParam, lParam);
     }
   }
   return Result;
@@ -217,8 +217,10 @@ WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
   InitGLObjects();
   setup_raw_input(Window);
   ShowCursor(!GH_HIDE_MOUSE);
-  Engine engine = {0};
 
+  LARGE_INTEGER Frequency = {0};
+  QueryPerformanceFrequency(&Frequency);
+  Engine engine = {0};
   glGetQueryiv(GL_SAMPLES_PASSED_ARB, GL_QUERY_COUNTER_BITS_ARB, &engine.occlusionCullingSupported);
   engine.sky = Sky();
   engine.player = Player_Ptr(new Player);
@@ -227,7 +229,9 @@ WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
   engine.main_cam.height = 256;
   engine.main_cam.worldView.MakeIdentity();
   engine.main_cam.projection.MakeIdentity();
+  engine.GH_FRAME = 0;
 
+  engine.TicksPerStep = (int64_t)(Frequency.QuadPart * GH_DT);
   engine.vScenes.push_back(Scene_Ptr(new Level1));
   engine.vScenes.push_back(Scene_Ptr(new Level2(3)));
   engine.vScenes.push_back(Scene_Ptr(new Level2(6)));
@@ -240,12 +244,8 @@ WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
   engine.LoadScene(0);
 
   LARGE_INTEGER Ticks = {0};
-  LARGE_INTEGER Frequency = {0};
-  QueryPerformanceFrequency(&Frequency);
-  const int64_t ticks_per_step = (int64_t)(Frequency.QuadPart * GH_DT);
   QueryPerformanceCounter(&Ticks);
   int64_t cur_ticks = Ticks.QuadPart;
-  int64_t GH_FRAME = 0;
 
   SetWindowLongPtrW(Window, GWL_STYLE, WS_OVERLAPPEDWINDOW);
   SetWindowLongPtrW(Window, GWL_EXSTYLE, WS_EX_APPWINDOW);
@@ -266,28 +266,9 @@ WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
       DispatchMessageW(&Msg);
     }
     confine_cursor(Window);
-    engine.process_input();
-
-    //Used fixed time steps for updates
     QueryPerformanceCounter(&Ticks);
-    const int64_t new_ticks = Ticks.QuadPart;
-    for (int i = 0; cur_ticks < new_ticks && i < GH_MAX_STEPS; ++i) {
-      engine.Update();
-      cur_ticks += ticks_per_step;
-      GH_FRAME += 1;
-      engine.input.EndFrame();
-    }
-    cur_ticks = (cur_ticks < new_ticks ? new_ticks: cur_ticks);
-
-    //Setup camera for rendering
-    const float n = GH_CLAMP(engine.NearestPortalDist() * 0.5f, GH_NEAR_MIN, GH_NEAR_MAX);
-    engine.main_cam.worldView = engine.player->WorldToCam();
-    engine.main_cam.SetSize(GH_SCREEN_WIDTH, GH_SCREEN_HEIGHT, n, GH_FAR);
-    engine.main_cam.UseViewport();
-
-    //Render scene
-    GH_REC_LEVEL = GH_MAX_RECURSION;
-    engine.Render(engine.main_cam, 0, nullptr);
+    int64_t new_ticks = Ticks.QuadPart;
+    engine.do_frame(cur_ticks, new_ticks);
     SwapBuffers(WindowDC);
   }
 label_loop_exit:

@@ -191,6 +191,30 @@ void Engine::Render(const Camera& cam, GLuint curFBO, const Portal* skipPortal)
 #endif
 }
 
+void Engine::do_frame(int64_t& cur_ticks, int64_t new_ticks)
+{
+  this->process_input();
+
+  //Used fixed time steps for updates
+  for (int i = 0; cur_ticks < new_ticks && i < GH_MAX_STEPS; ++i) {
+    this->Update();
+    cur_ticks += this->TicksPerStep;
+    this->GH_FRAME += 1;
+    this->input.EndFrame();
+  }
+  cur_ticks = (cur_ticks < new_ticks ? new_ticks: cur_ticks);
+
+  //Setup camera for rendering
+  const float n = GH_CLAMP(this->NearestPortalDist() * 0.5f, GH_NEAR_MIN, GH_NEAR_MAX);
+  this->main_cam.worldView = this->player->WorldToCam();
+  this->main_cam.SetSize(GH_SCREEN_WIDTH, GH_SCREEN_HEIGHT, n, GH_FAR);
+  this->main_cam.UseViewport();
+
+  //Render scene
+  GH_REC_LEVEL = GH_MAX_RECURSION;
+  this->Render(this->main_cam, 0, nullptr);
+}
+
 float Engine::NearestPortalDist() const {
   float dist = FLT_MAX;
   for (size_t i = 0; i < vPortals.size(); ++i) {
