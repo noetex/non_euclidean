@@ -9,6 +9,9 @@ struct scene_level1
   Portal portal4;
 };
 
+static void
+load_level1()
+
 void Level1::Load(PObjectVec& objs, PPortalVec& portals, Player& player) {
   Ground_Ptr ground = (Ground_Ptr)(new Ground());
   Tunnel_Ptr tunnel1 = (Tunnel_Ptr)(new Tunnel(Tunnel::NORMAL));

@@ -14,8 +14,8 @@ Engine::Engine(int64_t Frequency)
   Assert(glewInit() == GLEW_OK);
   glClearColor(0.6f, 0.9f, 1.0f, 1.0f);
   glEnable(GL_CULL_FACE);
-  glCullFace(GL_BACK);
   glEnable(GL_DEPTH_TEST);
+  glCullFace(GL_BACK);
   glDepthFunc(GL_LESS);
   glDepthMask(GL_TRUE);
   glGetQueryiv(GL_SAMPLES_PASSED_ARB, GL_QUERY_COUNTER_BITS_ARB, &this->occlusionCullingSupported);
