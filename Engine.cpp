@@ -4,7 +4,7 @@ int GH_REC_LEVEL = 0;
 Engine::Engine(int64_t Frequency)
 : vObjects(std::vector<Object_Ptr>()),
   vPortals(std::vector<Portal_Ptr>()),
-  vScenes(std::vector<Scene_Ptr>()),
+  vScenes(std::vector<Scene*>()),
   CurrentSceneIndex(0),
   player((Player_Ptr)new Player),
   TicksPerStep((int64_t)(Frequency * GH_DT)),
@@ -21,13 +21,13 @@ Engine::Engine(int64_t Frequency)
   glGetQueryiv(GL_SAMPLES_PASSED_ARB, GL_QUERY_COUNTER_BITS_ARB, &this->occlusionCullingSupported);
   wglSwapIntervalEXT(1);
   this->sky.load();
-  this->vScenes.push_back(Scene_Ptr(new Level1));
-  this->vScenes.push_back(Scene_Ptr(new Level2(3)));
-  this->vScenes.push_back(Scene_Ptr(new Level2(6)));
-  this->vScenes.push_back(Scene_Ptr(new Level3));
-  this->vScenes.push_back(Scene_Ptr(new Level4));
-  this->vScenes.push_back(Scene_Ptr(new Level5));
-  this->vScenes.push_back(Scene_Ptr(new Level6));
+  this->vScenes.push_back(new Level1);
+  this->vScenes.push_back(new Level2(3));
+  this->vScenes.push_back(new Level2(6));
+  this->vScenes.push_back(new Level3);
+  this->vScenes.push_back(new Level4);
+  this->vScenes.push_back(new Level5);
+  this->vScenes.push_back(new Level6);
   GH_ENGINE = this;
 }
 
@@ -70,14 +70,14 @@ void Engine::process_input(void)
   }
 }
 
-void Engine::LoadScene(int ix)
+void Engine::LoadScene(size_t Index)
 {
   //TODO: Deallocate memory
   vObjects.clear();
   vPortals.clear();
   player->Reset();
-
-  Scene_Ptr CurrentScene = this->vScenes[this->CurrentSceneIndex];
+  this->CurrentSceneIndex = Index;
+  Scene* CurrentScene = this->vScenes[this->CurrentSceneIndex];
   CurrentScene->Load(this->vObjects, this->vPortals, *this->player);
   this->vObjects.push_back(player);
 }

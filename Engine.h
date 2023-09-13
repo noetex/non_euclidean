@@ -7,14 +7,14 @@ public:
   void process_input(void);
   void Update();
   void Render(const Camera& cam, GLuint curFBO, const Portal* skipPortal);
-  void LoadScene(int ix);
+  void LoadScene(size_t);
 
   float NearestPortalDist() const;
 
 
   std::vector<Object_Ptr> vObjects;
   std::vector<Portal_Ptr> vPortals;
-  std::vector<Scene_Ptr> vScenes;
+  std::vector<Scene*> vScenes;
   size_t CurrentSceneIndex;
   Player_Ptr player;
   int64_t TicksPerStep;
