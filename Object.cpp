@@ -1,8 +1,6 @@
-Object::Object() :
-  pos(0.0f),
-  euler(0.0f),
-  scale(1.0f),
-  p_scale(1.0f) {
+Object::Object(void)
+{
+  this->Reset();
 }
 
 void Object::Reset() {

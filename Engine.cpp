@@ -1,14 +1,5 @@
 Engine* GH_ENGINE = nullptr;
-const Input* GH_INPUT = nullptr;
 int GH_REC_LEVEL = 0;
-
-#if 0
-void Engine::init_opengl(void)
-{
-
-
-}
-#endif
 
 Engine::Engine(int64_t Frequency)
 : vObjects(std::vector<Object_Ptr>()),
@@ -38,7 +29,6 @@ Engine::Engine(int64_t Frequency)
   this->vScenes.push_back(Scene_Ptr(new Level5));
   this->vScenes.push_back(Scene_Ptr(new Level6));
   GH_ENGINE = this;
-  GH_INPUT = &this->input;
 }
 
 void Engine::cleanup(void)
@@ -103,8 +93,11 @@ void Engine::Update(void)
   //Collisions
   //For each physics object
   for (size_t i = 0; i < vObjects.size(); ++i) {
-    Physical* physical = vObjects[i]->AsPhysical();
-    if (!physical) { continue; }
+    if(!vObjects[i]->is_physical())
+    {
+      continue;
+    }
+    Physical* physical = (Physical*)vObjects[i].get();
     Matrix4 worldToLocal = physical->WorldToLocal();
 
     //For each object to collide with
@@ -143,8 +136,9 @@ void Engine::Update(void)
 
   //Portals
   for (size_t i = 0; i < vObjects.size(); ++i) {
-    Physical* physical = vObjects[i]->AsPhysical();
-    if (physical) {
+    if(vObjects[i]->is_physical())
+    {
+      Physical* physical = (Physical*)vObjects[i].get();
       for (size_t j = 0; j < vPortals.size(); ++j) {
         if (physical->TryPortal(*vPortals[j])) {
           break;

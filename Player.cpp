@@ -30,31 +30,32 @@ void Player::Update() {
   }
 
   //Physics
+  Input* input = &GH_ENGINE->input;
   Physical::Update();
 
   //Looking
-  Look(GH_INPUT->mouse_dx, GH_INPUT->mouse_dy);
+  Look(input->mouse_dx, input->mouse_dy);
 
   //Movement
   float moveF = 0.0f;
   float moveL = 0.0f;
-  if (GH_INPUT->key['W']) {
+  if (input->key['W']) {
     moveF += 1.0f;
   }
-  if (GH_INPUT->key['S']) {
+  if (input->key['S']) {
     moveF -= 1.0f;
   }
-  if (GH_INPUT->key['A']) {
+  if (input->key['A']) {
     moveL += 1.0f;
   }
-  if (GH_INPUT->key['D']) {
+  if (input->key['D']) {
     moveL -= 1.0f;
   }
   Move(moveF, moveL);
 
 #if 1
   //Jumping
-  if (onGround && GH_INPUT->key[VK_SPACE]) {
+  if (onGround && input->key[VK_SPACE]) {
     velocity.y += 2.0f * p_scale;
   }
 #endif

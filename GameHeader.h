@@ -51,7 +51,6 @@ class Engine;
 class Input;
 class Player;
 extern Engine* GH_ENGINE;
-extern const Input* GH_INPUT;
 extern int GH_REC_LEVEL;
 
 //Functions

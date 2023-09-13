@@ -6,7 +6,7 @@ public:
   virtual void Reset() override;
   virtual void Update() override;
   virtual void OnCollide(Object& other, const Vector3& push);
-
+  bool is_physical(void) final override { return true; }
   void SetPosition(const Vector3& _pos) {
     pos = _pos;
     prev_pos = _pos;
@@ -14,7 +14,7 @@ public:
 
   bool TryPortal(const Portal& portal);
 
-  virtual Physical* AsPhysical() override { return this; }
+  //virtual Physical* AsPhysical() override { return this; }
 
   Vector3 gravity;
   Vector3 velocity;
