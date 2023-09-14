@@ -3,7 +3,6 @@ public:
   Engine(int64_t);
   void cleanup(void);
   void do_frame(int64_t&, int64_t);
-  void process_input(void);
   void Update();
   void Render(const Camera& cam, GLuint curFBO, const Portal* skipPortal);
   void load_scene(size_t);

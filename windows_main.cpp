@@ -114,9 +114,23 @@ window_proc(HWND Window, UINT Message, WPARAM wParam, LPARAM lParam)
       bool_t AlreadyPressed = (lParam >> 30) & 0x1;
       if(!AlreadyPressed)
       {
-        if (wParam == VK_ESCAPE)
+        switch(wParam)
         {
-          PostQuitMessage(0);
+          case '1':
+          case '2':
+          case '3':
+          case '4':
+          case '5':
+          case '6':
+          case '7':
+          {
+            size_t SceneIndex = wParam - '1';
+            GH_ENGINE->load_scene(SceneIndex);
+          } break;
+          case VK_ESCAPE:
+          {
+            PostQuitMessage(0);
+          } break;
         }
         GH_ENGINE->input.key[wParam & 0xFF] = true;
         GH_ENGINE->input.key_press[wParam & 0xFF] = true;
