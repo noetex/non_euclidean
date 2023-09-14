@@ -76,10 +76,10 @@ void Engine::LoadScene(size_t Index)
   vObjects.clear();
   vPortals.clear();
   player->Reset();
-  this->CurrentSceneIndex = Index;
-  Scene* CurrentScene = this->vScenes[this->CurrentSceneIndex];
+  Scene* CurrentScene = this->vScenes[Index];
   CurrentScene->Load(this->vObjects, this->vPortals, *this->player);
   this->vObjects.push_back(player);
+  this->CurrentSceneIndex = Index;
 }
 
 void Engine::Update(void)
