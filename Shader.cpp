@@ -4,8 +4,9 @@ Shader::Shader(const char* name) {
   const std::string frag = "Shaders/" + std::string(name) + ".frag";
 
   //Load the shaders from disk
-  GLuint vertId = LoadShader(vert.c_str(), GL_VERTEX_SHADER);
-  GLuint fragId = LoadShader(frag.c_str(), GL_FRAGMENT_SHADER);
+  std::vector<std::string> attribs;
+  GLuint vertId = LoadShader(vert.c_str(), GL_VERTEX_SHADER, attribs);
+  GLuint fragId = LoadShader(frag.c_str(), GL_FRAGMENT_SHADER, attribs);
 
   //Create the program
   progId = glCreateProgram();
@@ -55,7 +56,7 @@ void Shader::Use() {
   glUseProgram(progId);
 }
 
-GLuint Shader::LoadShader(const char* fname, GLenum type) {
+GLuint Shader::LoadShader(const char* fname, GLenum type, std::vector<std::string>& attribs) {
   //Read shader source from disk
   std::ifstream fin(fname);
   std::stringstream buff;
