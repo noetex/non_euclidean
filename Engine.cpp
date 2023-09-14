@@ -4,8 +4,6 @@ int GH_REC_LEVEL = 0;
 Engine::Engine(int64_t Frequency)
 : vObjects(std::vector<Object_Ptr>()),
   vPortals(std::vector<Portal_Ptr>()),
-  vScenes(std::vector<Scene*>()),
-  CurrentSceneIndex(0),
   player((Player_Ptr)new Player),
   TicksPerStep((int64_t)(Frequency * GH_DT)),
   input({0}),
@@ -21,13 +19,6 @@ Engine::Engine(int64_t Frequency)
   glGetQueryiv(GL_SAMPLES_PASSED_ARB, GL_QUERY_COUNTER_BITS_ARB, &this->occlusionCullingSupported);
   wglSwapIntervalEXT(1);
   this->sky.load();
-  this->vScenes.push_back(new Level1);
-  this->vScenes.push_back(new Level2(3));
-  this->vScenes.push_back(new Level2(6));
-  this->vScenes.push_back(new Level3);
-  this->vScenes.push_back(new Level4);
-  this->vScenes.push_back(new Level5);
-  this->vScenes.push_back(new Level6);
   GH_ENGINE = this;
 }
 
@@ -42,44 +33,315 @@ void Engine::process_input(void)
 {
   if (this->input.key_press['1'])
   {
-    this->LoadScene(0);
+    this->load_scene(0);
   }
   else if (this->input.key_press['2'])
   {
-    this->LoadScene(1);
+    this->load_scene(1);
   }
   else if (this->input.key_press['3'])
   {
-    this->LoadScene(2);
+    this->load_scene(2);
   }
   else if (this->input.key_press['4'])
   {
-    this->LoadScene(3);
+    this->load_scene(3);
   }
   else if (this->input.key_press['5'])
   {
-    this->LoadScene(4);
+    this->load_scene(4);
   }
   else if (this->input.key_press['6'])
   {
-    this->LoadScene(5);
+    this->load_scene(5);
   }
   else if (this->input.key_press['7'])
   {
-    this->LoadScene(6);
+    this->load_scene(6);
   }
 }
 
-void Engine::LoadScene(size_t Index)
+void Engine::load_scene(size_t Index)
 {
-  //TODO: Deallocate memory
   vObjects.clear();
   vPortals.clear();
   player->Reset();
-  Scene* CurrentScene = this->vScenes[Index];
-  CurrentScene->Load(this->vObjects, this->vPortals, *this->player);
   this->vObjects.push_back(player);
-  this->CurrentSceneIndex = Index;
+
+  switch (Index)
+  {
+    case 0:
+    {
+        Ground_Ptr ground = (Ground_Ptr)(new Ground());
+        Tunnel_Ptr tunnel1 = (Tunnel_Ptr)(new Tunnel(Tunnel::NORMAL));
+        Tunnel_Ptr tunnel2 = (Tunnel_Ptr)(new Tunnel(Tunnel::NORMAL));
+        Portal_Ptr portal1 = (Portal_Ptr)(new Portal());
+        Portal_Ptr portal2 = (Portal_Ptr)(new Portal());
+        Portal_Ptr portal3 = (Portal_Ptr)(new Portal());
+        Portal_Ptr portal4 = (Portal_Ptr)(new Portal());
+        tunnel1->pos = Vector3(-2.4f, 0, -1.8f);
+        tunnel1->scale = Vector3(1, 1, 4.8f);
+
+        tunnel2->pos = Vector3(2.4f, 0, 0);
+        tunnel2->scale = Vector3(1, 1, 0.6f);
+
+        ground->scale *= 1.2f;
+
+        tunnel1->SetDoor1(*portal1);
+
+        tunnel2->SetDoor1(*portal2);
+
+        tunnel1->SetDoor2(*portal3);
+
+        tunnel2->SetDoor2(*portal4);
+
+        Portal::Connect(portal1, portal2);
+        Portal::Connect(portal3, portal4);
+        player->SetPosition(Vector3(0, GH_PLAYER_HEIGHT, 5));
+
+        vObjects.push_back(tunnel1);
+        vObjects.push_back(tunnel2);
+        vObjects.push_back(ground);
+
+        vPortals.push_back(portal1);
+        vPortals.push_back(portal2);
+        vPortals.push_back(portal3);
+        vPortals.push_back(portal4);
+    } break;
+    case 1:
+    {
+        House_Ptr house1 = (House_Ptr)(new House("three_room.bmp"));
+        house1->pos = Vector3(0, 0, -20);
+
+        Portal_Ptr portal1 = (Portal_Ptr)(new Portal());
+        Portal_Ptr portal2 = (Portal_Ptr)(new Portal());
+        house1->SetDoor3(*portal1);
+
+        house1->SetDoor4(*portal2);
+        Portal::Connect(portal1, portal2);
+        player->SetPosition(Vector3(3, GH_PLAYER_HEIGHT, 3));
+        vObjects.push_back(house1);
+
+        vPortals.push_back(portal1);
+        vPortals.push_back(portal2);
+    } break;
+    case 2:
+    {
+        House_Ptr house1 = (House_Ptr)(new House("three_room.bmp"));
+        House_Ptr house2 = (House_Ptr)(new House("three_room2.bmp"));
+        house1->pos = Vector3(0, 0, -20);
+
+        house2->pos = Vector3(200, 0, -20);
+
+        Portal_Ptr portal1 = (Portal_Ptr)(new Portal());
+        Portal_Ptr portal2 = (Portal_Ptr)(new Portal());
+        Portal_Ptr portal3 = (Portal_Ptr)(new Portal());
+        house1->SetDoor4(*portal1);
+
+        house2->SetDoor3(*portal2);
+
+        house2->SetDoor1(*portal3);
+
+        Portal::Connect(portal1->front, portal2->back);
+        Portal::Connect(portal2->front, portal3->back);
+        Portal::Connect(portal3->front, portal1->back);
+        player->SetPosition(Vector3(3, GH_PLAYER_HEIGHT, 3));
+
+        vObjects.push_back(house1);
+        vObjects.push_back(house2);
+
+        vPortals.push_back(portal1);
+        vPortals.push_back(portal2);
+        vPortals.push_back(portal3);
+    } break;
+    case 3:
+    {
+        //Room 1
+        Pillar_Ptr pillar1 = (Pillar_Ptr)(new Pillar);
+        PillarRoom_Ptr pillarRoom1 = (PillarRoom_Ptr)(new PillarRoom);
+        Ground_Ptr ground1 = (Ground_Ptr)(new Ground);
+        Statue_Ptr statue1 = (Statue_Ptr)(new Statue("teapot.obj"));
+        Pillar_Ptr pillar2 = (Pillar_Ptr)(new Pillar);
+        PillarRoom_Ptr pillarRoom2 = (PillarRoom_Ptr)(new PillarRoom);
+        Ground_Ptr ground2 = (Ground_Ptr)(new Ground);
+        Statue_Ptr statue2 = (Statue_Ptr)(new Statue("bunny.obj"));
+        Pillar_Ptr pillar3 = (Pillar_Ptr)(new Pillar);
+        PillarRoom_Ptr pillarRoom3 = (PillarRoom_Ptr)(new PillarRoom);
+        Ground_Ptr ground3 = (Ground_Ptr)(new Ground);
+        Statue_Ptr statue3 = (Statue_Ptr)(new Statue("suzanne.obj"));
+        Portal_Ptr portal1 = (Portal_Ptr)(new Portal);
+        Portal_Ptr portal2 = (Portal_Ptr)(new Portal);
+        Portal_Ptr portal3 = (Portal_Ptr)(new Portal);
+
+
+        ground1->scale *= 2.0f;
+
+        statue1->pos = Vector3(0, 0.5f, 9);
+        statue1->scale = Vector3(0.5f);
+        statue1->euler.y = GH_PI / 2;
+
+        //Room 2
+        pillar2->pos = Vector3(200, 0, 0);
+
+        pillarRoom2->pos = Vector3(200, 0, 0);
+
+        ground2->pos = Vector3(200, 0, 0);
+        ground2->scale *= 2.0f;
+
+        statue2->pos = Vector3(200, -0.4f, 9);
+        statue2->scale = Vector3(14.0f);
+        statue2->euler.y = GH_PI;
+
+        //Room 3
+        pillar3->pos = Vector3(400, 0, 0);
+
+        pillarRoom3->pos = Vector3(400, 0, 0);
+
+        ground3->pos = Vector3(400, 0, 0);
+        ground3->scale *= 2.0f;
+
+        statue3->pos = Vector3(400, 0.9f, 9);
+        statue3->scale = Vector3(1.2f);
+        statue3->euler.y = GH_PI;
+
+        //Portals
+        pillarRoom1->SetPortal(*portal1);
+
+        pillarRoom2->SetPortal(*portal2);
+
+        pillarRoom3->SetPortal(*portal3);
+
+        Portal::Connect(portal1->front, portal2->back);
+        Portal::Connect(portal2->front, portal3->back);
+        Portal::Connect(portal3->front, portal1->back);
+        player->SetPosition(Vector3(0, GH_PLAYER_HEIGHT, 3));
+
+        vObjects.push_back(pillar1);
+        vObjects.push_back(pillarRoom1);
+        vObjects.push_back(ground1);
+        vObjects.push_back(statue1);
+        vObjects.push_back(pillar2);
+        vObjects.push_back(pillarRoom2);
+        vObjects.push_back(ground2);
+        vObjects.push_back(statue2);
+        vObjects.push_back(pillar3);
+        vObjects.push_back(pillarRoom3);
+        vObjects.push_back(ground3);
+        vObjects.push_back(statue3);
+
+        vPortals.push_back(portal1);
+        vPortals.push_back(portal2);
+        vPortals.push_back(portal3);
+    } break;
+    case 4:
+    {
+        Ground_Ptr ground1 = (Ground_Ptr)(new Ground(true));
+        Ground_Ptr ground2 = (Ground_Ptr)(new Ground(true));
+        Tunnel_Ptr tunnel1 = (Tunnel_Ptr)(new Tunnel(Tunnel::SLOPE));
+        Tunnel_Ptr tunnel2 = (Tunnel_Ptr)(new Tunnel(Tunnel::SLOPE));
+        Portal_Ptr portal1 = (Portal_Ptr)(new Portal());
+        Portal_Ptr portal2 = (Portal_Ptr)(new Portal());
+        Portal_Ptr portal3 = (Portal_Ptr)(new Portal());
+        Portal_Ptr portal4 = (Portal_Ptr)(new Portal());
+
+        tunnel1->pos = Vector3(0, 0, 0);
+        tunnel1->scale = Vector3(1, 1, 5);
+        tunnel1->euler.y = GH_PI;
+
+        ground1->scale *= Vector3(1, 2, 1);
+
+        tunnel2->pos = Vector3(200, 0, 0);
+        tunnel2->scale = Vector3(1, 1, 5);
+
+        ground2->pos = Vector3(200, 0, 0);
+        ground2->scale *= Vector3(1, 2, 1);
+        ground2->euler.y = GH_PI;
+
+        tunnel1->SetDoor1(*portal1);
+
+        tunnel1->SetDoor2(*portal2);
+
+        tunnel2->SetDoor1(*portal3);
+        portal3->euler.y -= GH_PI;
+
+        tunnel2->SetDoor2(*portal4);
+        portal4->euler.y -= GH_PI;
+
+        Portal::Connect(portal1, portal4);
+        Portal::Connect(portal2, portal3);
+
+        player->SetPosition(Vector3(0, GH_PLAYER_HEIGHT - 2, 8));
+
+        vObjects.push_back(tunnel1);
+        vObjects.push_back(ground1);
+        vObjects.push_back(tunnel2);
+        vObjects.push_back(ground2);
+
+        vPortals.push_back(portal1);
+        vPortals.push_back(portal2);
+        vPortals.push_back(portal3);
+        vPortals.push_back(portal4);
+    } break;
+    case 5:
+    {
+        Ground_Ptr ground1 = (Ground_Ptr)(new Ground());
+        Ground_Ptr ground2 = (Ground_Ptr)(new Ground());
+        Tunnel_Ptr tunnel1 = (Tunnel_Ptr)(new Tunnel(Tunnel::SCALE));
+        Tunnel_Ptr tunnel2 = (Tunnel_Ptr)(new Tunnel(Tunnel::NORMAL));
+        Tunnel_Ptr tunnel3 = (Tunnel_Ptr)(new Tunnel(Tunnel::NORMAL));
+        Portal_Ptr portal1 = (Portal_Ptr)(new Portal());
+        Portal_Ptr portal2 = (Portal_Ptr)(new Portal());
+        Portal_Ptr portal3 = (Portal_Ptr)(new Portal());
+        Portal_Ptr portal4 = (Portal_Ptr)(new Portal());
+
+        tunnel1->pos = Vector3(-1.2f, 0, 0);
+        tunnel1->scale = Vector3(1, 1, 2.4f);
+
+        ground1->scale *= 1.2f;
+
+        tunnel2->pos = Vector3(201.2f, 0, 0);
+        tunnel2->scale = Vector3(1, 1, 2.4f);
+
+        ground2->pos = Vector3(200, 0, 0);
+        ground2->scale *= 1.2f;
+
+        tunnel1->SetDoor1(*portal1);
+
+        tunnel2->SetDoor1(*portal2);
+
+        tunnel1->SetDoor2(*portal3);
+
+        tunnel2->SetDoor2(*portal4);
+
+        Portal::Connect(portal1, portal2);
+        Portal::Connect(portal3, portal4);
+
+        tunnel3->pos = Vector3(-1, 0, -4.2f);
+        tunnel3->scale = Vector3(0.25f, 0.25f, 0.6f);
+        tunnel3->euler.y = GH_PI / 2;
+
+        player->SetPosition(Vector3(0, GH_PLAYER_HEIGHT, 5));
+
+        vObjects.push_back(tunnel1);
+        vObjects.push_back(ground1);
+        vObjects.push_back(tunnel2);
+        vObjects.push_back(ground2);
+        vObjects.push_back(tunnel3);
+
+        vPortals.push_back(portal1);
+        vPortals.push_back(portal2);
+        vPortals.push_back(portal3);
+        vPortals.push_back(portal4);
+    } break;
+    case 6:
+    {
+        Floorplan_Ptr floorplan(new Floorplan);
+        floorplan->AddPortals(vPortals);
+
+        player->SetPosition(Vector3(2, GH_PLAYER_HEIGHT, 2));
+        vObjects.push_back(floorplan);
+    } break;
+  }
 }
 
 void Engine::Update(void)

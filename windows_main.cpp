@@ -207,7 +207,7 @@ WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
   QueryPerformanceFrequency(&Frequency);
   Engine engine(Frequency.QuadPart);
 
-  engine.LoadScene(0);
+  engine.load_scene(0);
 
   LARGE_INTEGER Ticks = {0};
   QueryPerformanceCounter(&Ticks);

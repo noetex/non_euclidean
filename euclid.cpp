@@ -45,15 +45,6 @@
 #include"Tunnel.h"
 #include"Physical.h"
 #include"Player.h"
-
-#include"Scene.h"
-#include"level1.h"
-#include"level2.h"
-#include"level3.h"
-#include"level4.h"
-#include"level5.h"
-#include"level6.h"
-
 #include"Engine.h"
 
 #include"framebuffer.cpp"
@@ -68,13 +59,6 @@
 #include"portal.cpp"
 #include"physical.cpp"
 #include"player.cpp"
-
-#include"level1.cpp"
-#include"level2.cpp"
-#include"level3.cpp"
-#include"level4.cpp"
-#include"level5.cpp"
-#include"level6.cpp"
 
 #include"engine.cpp"
 #include"windows_main.cpp"
