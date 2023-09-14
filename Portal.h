@@ -16,7 +16,6 @@ public:
   };
 
   Portal();
-  virtual ~Portal() {}
 
   virtual void Draw(const Camera& cam, GLuint curFBO) override;
   void DrawPink(const Camera& cam);

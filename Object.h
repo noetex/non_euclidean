@@ -1,17 +1,8 @@
-//Forward declarations
-class Physical;
-class Mesh;
-class Texture;
-class Shader;
-
 class Object {
 public:
   Object();
-  virtual ~Object() {}
-
   virtual void Reset();
   virtual void Draw(const Camera& cam, uint32_t curFBO);
-  virtual void Update() {};
   virtual void OnHit(Object& other, Vector3& push) {};
   virtual bool is_physical(void) { return false; }
 
@@ -24,9 +15,7 @@ public:
   Vector3 pos;
   Vector3 euler;
   Vector3 scale;
-
-  // Physical scale, only updated by portal scale changes
-  float p_scale;
+  float p_scale;  // Physical scale, only updated by portal scale changes
 
   Mesh_Ptr mesh;
   Texture_Ptr texture;

@@ -87,7 +87,11 @@ void Engine::Update(void)
   for (auto& Object : vObjects)
   {
     Assert(Object.get());
-    Object->Update();
+    if(Object->is_physical())
+    {
+      Physical* physical = reinterpret_cast<Physical*>(Object.get());
+      physical->Update();
+    }
   }
 
   //Collisions

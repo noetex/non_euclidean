@@ -1,7 +1,6 @@
 class Player : public Physical {
 public:
   Player();
-  virtual ~Player() override {}
 
   virtual void Reset() override;
   virtual void Update() override;
