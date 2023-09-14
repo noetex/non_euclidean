@@ -7,7 +7,7 @@ public:
   void SetMVP(const float* mvp, const float* mv);
 
 private:
-  GLuint LoadShader(const char* fname, GLenum type, std::vector<std::string>& attribs);
+  static GLuint Load(const char* fname, GLenum type, std::vector<std::string>& attribs);
 
   GLuint progId;
   GLuint mvpId;
