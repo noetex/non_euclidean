@@ -52,8 +52,7 @@ void Engine::Update(void)
     Matrix4 worldToLocal = physical->WorldToLocal();
 
     //For each object to collide with
-    for (size_t j = 0; j < vObjects.size(); ++j) {
-      if (i == j) { continue; }
+    for (size_t j = (i+1); j < vObjects.size(); ++j) {
       Object& obj = *vObjects[j];
       if (!obj.mesh) { continue; }
 
