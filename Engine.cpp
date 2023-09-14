@@ -125,7 +125,6 @@ void Engine::Update(void)
           if (collider.Collide(localToUnit, push)) {
             //If push is too small, just ignore
             push = unitToWorld.MulDirection(push);
-            vObjects[j]->OnHit(*physical, push);
             physical->OnCollide(*vObjects[j], push);
 
             worldToLocal = physical->WorldToLocal();

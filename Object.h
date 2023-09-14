@@ -3,7 +3,6 @@ public:
   Object();
   virtual void Reset();
   virtual void Draw(const Camera& cam, uint32_t curFBO);
-  virtual void OnHit(Object& other, Vector3& push) {};
   virtual bool is_physical(void) { return false; }
 
   void DebugDraw(const Camera& cam);

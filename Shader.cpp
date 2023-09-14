@@ -4,8 +4,8 @@ Shader::Shader(const char* name) {
   const std::string frag = "Shaders/" + std::string(name) + ".frag";
 
   //Load the shaders from disk
-  vertId = LoadShader(vert.c_str(), GL_VERTEX_SHADER);
-  fragId = LoadShader(frag.c_str(), GL_FRAGMENT_SHADER);
+  GLuint vertId = LoadShader(vert.c_str(), GL_VERTEX_SHADER);
+  GLuint fragId = LoadShader(frag.c_str(), GL_FRAGMENT_SHADER);
 
   //Create the program
   progId = glCreateProgram();
@@ -19,6 +19,10 @@ Shader::Shader(const char* name) {
 
   //Link the program
   glLinkProgram(progId);
+  glDetachShader(progId, vertId);
+  glDetachShader(progId, fragId);
+  glDeleteShader(vertId);
+  glDeleteShader(fragId);
 
   //Check for linking errors
   GLint isLinked;
@@ -44,11 +48,7 @@ Shader::Shader(const char* name) {
 }
 
 Shader::~Shader() {
-  glDetachShader(progId, vertId);
-  glDetachShader(progId, fragId);
   glDeleteProgram(progId);
-  glDeleteShader(vertId);
-  glDeleteShader(fragId);
 }
 
 void Shader::Use() {
