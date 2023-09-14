@@ -44,46 +44,6 @@ confine_cursor(HWND Window)
   }
 }
 
-static void
-process_raw_input(Input* input, RAWINPUT* RawInput)
-{
-  if (RawInput->header.dwType == RIM_TYPEMOUSE)
-  {
-    if (RawInput->data.mouse.usFlags == MOUSE_MOVE_RELATIVE)
-    {
-      input->mouse_ddx += RawInput->data.mouse.lLastX;
-      input->mouse_ddy += RawInput->data.mouse.lLastY;
-    }
-    if (RawInput->data.mouse.usButtonFlags & RI_MOUSE_LEFT_BUTTON_DOWN)
-    {
-      input->mouse_button[0] = true;
-      input->mouse_button_press[0] = true;
-    }
-    if (RawInput->data.mouse.usButtonFlags & RI_MOUSE_MIDDLE_BUTTON_DOWN)
-    {
-      input->mouse_button[1] = true;
-      input->mouse_button_press[1] = true;
-    }
-    if (RawInput->data.mouse.usButtonFlags & RI_MOUSE_RIGHT_BUTTON_DOWN)
-    {
-      input->mouse_button[2] = true;
-      input->mouse_button_press[2] = true;
-    }
-    if (RawInput->data.mouse.usButtonFlags & RI_MOUSE_LEFT_BUTTON_UP)
-    {
-      input->mouse_button[0] = false;
-    }
-    if (RawInput->data.mouse.usButtonFlags & RI_MOUSE_MIDDLE_BUTTON_UP)
-    {
-      input->mouse_button[1] = false;
-    }
-    if (RawInput->data.mouse.usButtonFlags & RI_MOUSE_RIGHT_BUTTON_UP)
-    {
-      input->mouse_button[2] = false;
-    }
-  }
-}
-
 static LRESULT CALLBACK
 window_proc(HWND Window, UINT Message, WPARAM wParam, LPARAM lParam)
 {
@@ -153,7 +113,11 @@ window_proc(HWND Window, UINT Message, WPARAM wParam, LPARAM lParam)
       UINT InputSize = sizeof(RawInput);
       HRAWINPUT RawInputHandle = (HRAWINPUT)lParam;
       GetRawInputData(RawInputHandle, RID_INPUT, (void*)&RawInput, &InputSize, sizeof(RAWINPUTHEADER));
-      process_raw_input(&GH_ENGINE->input, &RawInput);
+      if(RawInput.data.mouse.usFlags == MOUSE_MOVE_RELATIVE)
+      {
+        GH_ENGINE->input.mouse_ddx += RawInput.data.mouse.lLastX;
+        GH_ENGINE->input.mouse_ddy += RawInput.data.mouse.lLastY;
+      }
     } break;
     case WM_CLOSE:
     {
