@@ -31,61 +31,47 @@ void Engine::cleanup(void)
 
 void Engine::Update(void)
 {
-  this->player->Update();
-  //Matrix4 worldToLocal = this->player->WorldToLocal();
+  player->Update();
+  Matrix4 worldToLocal = player->WorldToLocal();
 
-  //Collisions
-  //For each physics object
-  for (size_t i = 0; i < vObjects.size(); ++i) {
-    if(!vObjects[i]->is_physical())
-    {
-      continue;
-    }
-    Physical* physical = (Physical*)vObjects[i].get();
-    Matrix4 worldToLocal = physical->WorldToLocal();
+  //For each object to collide with
+  for(auto& object : vObjects)
+  {
+    Object& obj = *object;
+    if (!obj.mesh) { continue; }
 
-    //For each object to collide with
-    for (size_t j = (i+1); j < vObjects.size(); ++j) {
-      Object& obj = *vObjects[j];
-      if (!obj.mesh) { continue; }
+    //For each hit sphere
+    for (size_t s = 0; s < player->hitSpheres.size(); ++s) {
+      //Brings point from collider's local coordinates to hits's local coordinates.
+      const Sphere& sphere = player->hitSpheres[s];
+      Matrix4 worldToUnit = sphere.LocalToUnit() * worldToLocal;
+      Matrix4 localToUnit = worldToUnit * obj.LocalToWorld();
+      Matrix4 unitToWorld = worldToUnit.Inverse();
 
-      //For each hit sphere
-      for (size_t s = 0; s < physical->hitSpheres.size(); ++s) {
-        //Brings point from collider's local coordinates to hits's local coordinates.
-        const Sphere& sphere = physical->hitSpheres[s];
-        Matrix4 worldToUnit = sphere.LocalToUnit() * worldToLocal;
-        Matrix4 localToUnit = worldToUnit * obj.LocalToWorld();
-        Matrix4 unitToWorld = worldToUnit.Inverse();
+      //For each collider
+      for (size_t c = 0; c < obj.mesh->colliders.size(); ++c) {
+        Vector3 push;
+        const Collider& collider = obj.mesh->colliders[c];
+        if (collider.Collide(localToUnit, push)) {
+          //If push is too small, just ignore
+          push = unitToWorld.MulDirection(push);
+          player->OnCollide(obj, push);
 
-        //For each collider
-        for (size_t c = 0; c < obj.mesh->colliders.size(); ++c) {
-          Vector3 push;
-          const Collider& collider = obj.mesh->colliders[c];
-          if (collider.Collide(localToUnit, push)) {
-            //If push is too small, just ignore
-            push = unitToWorld.MulDirection(push);
-            physical->OnCollide(*vObjects[j], push);
-
-            worldToLocal = physical->WorldToLocal();
-            worldToUnit = sphere.LocalToUnit() * worldToLocal;
-            localToUnit = worldToUnit * obj.LocalToWorld();
-            unitToWorld = worldToUnit.Inverse();
-          }
+          //worldToLocal = physical->WorldToLocal();
+          worldToUnit = sphere.LocalToUnit() * worldToLocal;
+          localToUnit = worldToUnit * obj.LocalToWorld();
+          unitToWorld = worldToUnit.Inverse();
         }
       }
     }
   }
 
   //Portals
-  for (size_t i = 0; i < vObjects.size(); ++i) {
-    if(vObjects[i]->is_physical())
+  for(auto& portal : vPortals)
+  {
+    if(player->TryPortal(*portal))
     {
-      Physical* physical = (Physical*)vObjects[i].get();
-      for (size_t j = 0; j < vPortals.size(); ++j) {
-        if (physical->TryPortal(*vPortals[j])) {
-          break;
-        }
-      }
+      break;
     }
   }
 }
@@ -195,7 +181,7 @@ void Engine::load_scene(size_t Index)
   vObjects.clear();
   vPortals.clear();
   player->Reset();
-  this->vObjects.push_back(player);
+  //this->vObjects.push_back(player);
 
   switch (Index)
   {
