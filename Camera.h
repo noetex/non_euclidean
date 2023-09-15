@@ -16,6 +16,6 @@ public:
 
   int width;
   int height;
-  float near;
-  float far;
+  float zNear;
+  float zFar;
 };

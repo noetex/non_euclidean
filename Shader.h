@@ -1,3 +1,13 @@
+#if 0
+struct my_shader
+{
+  GLuint Program;
+  GLuint MVP;
+  GLuint MV;
+};
+#endif
+
+
 class Shader {
 public:
   Shader(const char* name);
