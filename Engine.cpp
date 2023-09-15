@@ -31,15 +31,8 @@ void Engine::cleanup(void)
 
 void Engine::Update(void)
 {
-  for (auto& Object : vObjects)
-  {
-    Assert(Object.get());
-    if(Object->is_physical())
-    {
-      Physical* physical = reinterpret_cast<Physical*>(Object.get());
-      physical->Update();
-    }
-  }
+  this->player->Update();
+  //Matrix4 worldToLocal = this->player->WorldToLocal();
 
   //Collisions
   //For each physics object
