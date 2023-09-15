@@ -41,6 +41,7 @@ void Physical::OnCollide(Object& other, const Vector3& push) {
   velocity = (velocity - push_proj) * (1.0f - kinetic_friction) - push_proj * bounce;
 }
 
+#if 0
 bool Physical::TryPortal(const Portal& portal) {
   const Vector3 bump = portal.GetBump(prev_pos) * (2 * GH_NEAR_MIN * p_scale);
   const Portal::Warp* warp = portal.Intersects(prev_pos, pos, bump);
@@ -61,3 +62,4 @@ bool Physical::TryPortal(const Portal& portal) {
   }
   return false;
 }
+#endif

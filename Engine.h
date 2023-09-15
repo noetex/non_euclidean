@@ -11,7 +11,7 @@ public:
 
   std::vector<Object_Ptr> vObjects;
   std::vector<Portal_Ptr> vPortals;
-  Player_Ptr player;
+  Player player;
   int64_t TicksPerStep;
   GLint occlusionCullingSupported;
   Input input;

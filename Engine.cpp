@@ -4,7 +4,7 @@ int GH_REC_LEVEL = 0;
 Engine::Engine(int64_t Frequency)
 : vObjects(std::vector<Object_Ptr>()),
   vPortals(std::vector<Portal_Ptr>()),
-  player((Player_Ptr)new Player),
+  player(Player()),
   TicksPerStep((int64_t)(Frequency * GH_DT)),
   input({0}),
   GH_FRAME(0)
@@ -31,8 +31,8 @@ void Engine::cleanup(void)
 
 void Engine::Update(void)
 {
-  player->Update();
-  Matrix4 worldToLocal = player->WorldToLocal();
+  player.Update();
+  Matrix4 worldToLocal = player.WorldToLocal();
 
   //For each object to collide with
   for(auto& object : vObjects)
@@ -41,9 +41,9 @@ void Engine::Update(void)
     if (!obj.mesh) { continue; }
 
     //For each hit sphere
-    for (size_t s = 0; s < player->hitSpheres.size(); ++s) {
+    for (size_t s = 0; s < player.hitSpheres.size(); ++s) {
       //Brings point from collider's local coordinates to hits's local coordinates.
-      const Sphere& sphere = player->hitSpheres[s];
+      const Sphere& sphere = player.hitSpheres[s];
       Matrix4 worldToUnit = sphere.LocalToUnit() * worldToLocal;
       Matrix4 localToUnit = worldToUnit * obj.LocalToWorld();
       Matrix4 unitToWorld = worldToUnit.Inverse();
@@ -55,7 +55,7 @@ void Engine::Update(void)
         if (collider.Collide(localToUnit, push)) {
           //If push is too small, just ignore
           push = unitToWorld.MulDirection(push);
-          player->OnCollide(obj, push);
+          player.OnCollide(obj, push);
 
           //worldToLocal = physical->WorldToLocal();
           worldToUnit = sphere.LocalToUnit() * worldToLocal;
@@ -69,8 +69,22 @@ void Engine::Update(void)
   //Portals
   for(auto& portal : vPortals)
   {
-    if(player->TryPortal(*portal))
+    const Vector3 bump = portal->GetBump(player.prev_pos) * (2 * GH_NEAR_MIN * player.p_scale);
+    const Portal::Warp* warp = portal->Intersects(player.prev_pos, player.pos, bump);
+    if (warp)
     {
+      //Teleport object
+      player.pos = warp->deltaInv.MulPoint(player.pos - bump * 2);
+      player.velocity = warp->deltaInv.MulDirection(player.velocity);
+      player.prev_pos = player.pos;
+
+      //Update camera direction
+      const Vector3 forward(-std::sin(player.euler.y), 0, -std::cos(player.euler.y));
+      const Vector3 newDir = warp->deltaInv.MulDirection(forward);
+      player.euler.y = -std::atan2(newDir.x, -newDir.z);
+
+      //Update object scale
+      player.p_scale *= warp->deltaInv.XAxis().Mag();
       break;
     }
   }
@@ -158,7 +172,7 @@ void Engine::do_frame(int64_t& cur_ticks, int64_t new_ticks)
 
   //Setup camera for rendering
   const float n = GH_CLAMP(this->NearestPortalDist() * 0.5f, GH_NEAR_MIN, GH_NEAR_MAX);
-  this->main_cam.worldView = this->player->WorldToCam();
+  this->main_cam.worldView = this->player.WorldToCam();
   this->main_cam.SetSize(GH_SCREEN_WIDTH, GH_SCREEN_HEIGHT, n, GH_FAR);
   this->main_cam.UseViewport();
 
@@ -170,7 +184,7 @@ void Engine::do_frame(int64_t& cur_ticks, int64_t new_ticks)
 float Engine::NearestPortalDist() const {
   float dist = FLT_MAX;
   for (size_t i = 0; i < vPortals.size(); ++i) {
-    dist = GH_MIN(dist, vPortals[i]->DistTo(this->player->pos));
+    dist = GH_MIN(dist, vPortals[i]->DistTo(this->player.pos));
   }
   return dist;
 }
@@ -180,8 +194,7 @@ void Engine::load_scene(size_t Index)
 {
   vObjects.clear();
   vPortals.clear();
-  player->Reset();
-  //this->vObjects.push_back(player);
+  player.Reset();
 
   switch (Index)
   {
@@ -212,7 +225,7 @@ void Engine::load_scene(size_t Index)
 
         Portal::Connect(portal1, portal2);
         Portal::Connect(portal3, portal4);
-        player->SetPosition(Vector3(0, GH_PLAYER_HEIGHT, 5));
+        player.SetPosition(Vector3(0, GH_PLAYER_HEIGHT, 5));
 
         vObjects.push_back(tunnel1);
         vObjects.push_back(tunnel2);
@@ -234,7 +247,7 @@ void Engine::load_scene(size_t Index)
 
         house1->SetDoor4(*portal2);
         Portal::Connect(portal1, portal2);
-        player->SetPosition(Vector3(3, GH_PLAYER_HEIGHT, 3));
+        player.SetPosition(Vector3(3, GH_PLAYER_HEIGHT, 3));
         vObjects.push_back(house1);
 
         vPortals.push_back(portal1);
@@ -260,7 +273,7 @@ void Engine::load_scene(size_t Index)
         Portal::Connect(portal1->front, portal2->back);
         Portal::Connect(portal2->front, portal3->back);
         Portal::Connect(portal3->front, portal1->back);
-        player->SetPosition(Vector3(3, GH_PLAYER_HEIGHT, 3));
+        player.SetPosition(Vector3(3, GH_PLAYER_HEIGHT, 3));
 
         vObjects.push_back(house1);
         vObjects.push_back(house2);
@@ -329,7 +342,7 @@ void Engine::load_scene(size_t Index)
         Portal::Connect(portal1->front, portal2->back);
         Portal::Connect(portal2->front, portal3->back);
         Portal::Connect(portal3->front, portal1->back);
-        player->SetPosition(Vector3(0, GH_PLAYER_HEIGHT, 3));
+        player.SetPosition(Vector3(0, GH_PLAYER_HEIGHT, 3));
 
         vObjects.push_back(pillar1);
         vObjects.push_back(pillarRoom1);
@@ -385,7 +398,7 @@ void Engine::load_scene(size_t Index)
         Portal::Connect(portal1, portal4);
         Portal::Connect(portal2, portal3);
 
-        player->SetPosition(Vector3(0, GH_PLAYER_HEIGHT - 2, 8));
+        player.SetPosition(Vector3(0, GH_PLAYER_HEIGHT - 2, 8));
 
         vObjects.push_back(tunnel1);
         vObjects.push_back(ground1);
@@ -435,7 +448,7 @@ void Engine::load_scene(size_t Index)
         tunnel3->scale = Vector3(0.25f, 0.25f, 0.6f);
         tunnel3->euler.y = GH_PI / 2;
 
-        player->SetPosition(Vector3(0, GH_PLAYER_HEIGHT, 5));
+        player.SetPosition(Vector3(0, GH_PLAYER_HEIGHT, 5));
 
         vObjects.push_back(tunnel1);
         vObjects.push_back(ground1);
@@ -453,7 +466,7 @@ void Engine::load_scene(size_t Index)
         Floorplan_Ptr floorplan(new Floorplan);
         floorplan->AddPortals(vPortals);
 
-        player->SetPosition(Vector3(2, GH_PLAYER_HEIGHT, 2));
+        player.SetPosition(Vector3(2, GH_PLAYER_HEIGHT, 2));
         vObjects.push_back(floorplan);
     } break;
   }
