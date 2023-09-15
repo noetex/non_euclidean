@@ -33,7 +33,6 @@ void Engine::Update(void)
   player.Update();
   Matrix4 worldToLocal = player.WorldToLocal();
 
-  //For each object to collide with
   for(auto& object : vObjects)
   {
     Object& obj = *object;
@@ -62,7 +61,6 @@ void Engine::Update(void)
     }
   }
 
-  //Portals
   for(auto& portal : vPortals)
   {
     const Vector3 bump = portal->GetBump(player.prev_pos) * (2 * GH_NEAR_MIN * player.p_scale);
@@ -179,8 +177,9 @@ void Engine::do_frame(int64_t& cur_ticks, int64_t new_ticks)
 
 float Engine::NearestPortalDist() const {
   float dist = FLT_MAX;
-  for (size_t i = 0; i < vPortals.size(); ++i) {
-    dist = GH_MIN(dist, vPortals[i]->DistTo(this->player.pos));
+  for(auto& portal : vPortals)
+  {
+    dist = GH_MIN(dist, portal->DistTo(this->player.pos));
   }
   return dist;
 }

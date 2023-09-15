@@ -40,26 +40,3 @@ void Physical::OnCollide(Object& other, const Vector3& push) {
   const Vector3 push_proj = push * (velocity.Dot(push) / push.Dot(push));
   velocity = (velocity - push_proj) * (1.0f - kinetic_friction) - push_proj * bounce;
 }
-
-#if 0
-bool Physical::TryPortal(const Portal& portal) {
-  const Vector3 bump = portal.GetBump(prev_pos) * (2 * GH_NEAR_MIN * p_scale);
-  const Portal::Warp* warp = portal.Intersects(prev_pos, pos, bump);
-  if (warp) {
-    //Teleport object
-    pos = warp->deltaInv.MulPoint(pos - bump * 2);
-    velocity = warp->deltaInv.MulDirection(velocity);
-    prev_pos = pos;
-
-    //Update camera direction
-    const Vector3 forward(-std::sin(euler.y), 0, -std::cos(euler.y));
-    const Vector3 newDir = warp->deltaInv.MulDirection(forward);
-    euler.y = -std::atan2(newDir.x, -newDir.z);
-
-    //Update object scale
-    p_scale *= warp->deltaInv.XAxis().Mag();
-    return true;
-  }
-  return false;
-}
-#endif

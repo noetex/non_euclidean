@@ -10,7 +10,6 @@ public:
     pos = _pos;
     prev_pos = _pos;
   }
-  //bool TryPortal(const Portal& portal);
 
   Vector3 gravity;
   Vector3 velocity;
