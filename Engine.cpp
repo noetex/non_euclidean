@@ -96,42 +96,39 @@ void Engine::Render(const Camera& cam, GLuint curFBO, const Portal* skipPortal)
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   }
 
-  //Create queries (if applicable)
-  GLuint queries[GH_MAX_PORTALS];
-  GLuint drawTest[GH_MAX_PORTALS];
-  Assert(vPortals.size() <= GH_MAX_PORTALS);
-  if (occlusionCullingSupported) {
-    glGenQueriesARB((GLsizei)vPortals.size(), queries);
-  }
-
   //Draw scene
   for(auto& object : vObjects)
   {
     object->Draw(cam, curFBO);
   }
 
-  //Draw portals if possible
-  if (GH_REC_LEVEL > 0) {
-    //Draw portals
+  GLuint drawTest[GH_MAX_PORTALS];
+  Assert(vPortals.size() <= GH_MAX_PORTALS);
+
+  //Portal recursive rendering
+  if (GH_REC_LEVEL > 0)
+  {
+    GLuint Query;
+    if (occlusionCullingSupported)
+    {
+      glGenQueriesARB(1, &Query);
+    }
     GH_REC_LEVEL -= 1;
-    if (occlusionCullingSupported && GH_REC_LEVEL > 0) {
+    if (occlusionCullingSupported && GH_REC_LEVEL > 0)
+    {
       glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
       glDepthMask(GL_FALSE);
       for (size_t i = 0; i < vPortals.size(); ++i) {
         if (vPortals[i].get() != skipPortal) {
-          glBeginQueryARB(GL_SAMPLES_PASSED_ARB, queries[i]);
+          glBeginQueryARB(GL_SAMPLES_PASSED_ARB, Query);
           vPortals[i]->DrawPink(cam);
           glEndQueryARB(GL_SAMPLES_PASSED_ARB);
+          glGetQueryObjectuivARB(Query, GL_QUERY_RESULT_ARB, &drawTest[i]);
         }
       }
-      for (size_t i = 0; i < vPortals.size(); ++i) {
-        if (vPortals[i].get() != skipPortal) {
-          glGetQueryObjectuivARB(queries[i], GL_QUERY_RESULT_ARB, &drawTest[i]);
-        }
-      };
+      glDeleteQueriesARB(1, &Query);
       glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
       glDepthMask(GL_TRUE);
-      glDeleteQueriesARB((GLsizei)vPortals.size(), queries);
     }
     for (size_t i = 0; i < vPortals.size(); ++i) {
       if (vPortals[i].get() != skipPortal) {
@@ -146,9 +143,9 @@ void Engine::Render(const Camera& cam, GLuint curFBO, const Portal* skipPortal)
   }
 
 #if 0
-  //Debug draw colliders
-  for (size_t i = 0; i < vObjects.size(); ++i) {
-    vObjects[i]->DebugDraw(cam);
+  for(auto& object : vObjects)
+  {
+    object->DebugDraw(cam);
   }
 #endif
 }
