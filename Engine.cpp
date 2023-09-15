@@ -118,8 +118,9 @@ void Engine::Render(const Camera& cam, GLuint curFBO, const Portal* skipPortal)
   }
 
   //Draw scene
-  for (size_t i = 0; i < vObjects.size(); ++i) {
-    vObjects[i]->Draw(cam, curFBO);
+  for(auto& object : vObjects)
+  {
+    object->Draw(cam, curFBO);
   }
 
   //Draw portals if possible
