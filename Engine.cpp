@@ -24,7 +24,6 @@ Engine::Engine(int64_t Frequency)
 
 void Engine::cleanup(void)
 {
-  //this->curScene->Unload();
   this->vObjects.clear();
   this->vPortals.clear();
 }
@@ -40,24 +39,21 @@ void Engine::Update(void)
     Object& obj = *object;
     if (!obj.mesh) { continue; }
 
-    //For each hit sphere
-    for (size_t s = 0; s < player.hitSpheres.size(); ++s) {
+    for(auto& sphere : player.hitSpheres)
+    {
       //Brings point from collider's local coordinates to hits's local coordinates.
-      const Sphere& sphere = player.hitSpheres[s];
       Matrix4 worldToUnit = sphere.LocalToUnit() * worldToLocal;
       Matrix4 localToUnit = worldToUnit * obj.LocalToWorld();
       Matrix4 unitToWorld = worldToUnit.Inverse();
 
-      //For each collider
-      for (size_t c = 0; c < obj.mesh->colliders.size(); ++c) {
+      for(auto& collider : obj.mesh->colliders)
+      {
         Vector3 push;
-        const Collider& collider = obj.mesh->colliders[c];
         if (collider.Collide(localToUnit, push)) {
           //If push is too small, just ignore
           push = unitToWorld.MulDirection(push);
           player.OnCollide(obj, push);
 
-          //worldToLocal = physical->WorldToLocal();
           worldToUnit = sphere.LocalToUnit() * worldToLocal;
           localToUnit = worldToUnit * obj.LocalToWorld();
           unitToWorld = worldToUnit.Inverse();
