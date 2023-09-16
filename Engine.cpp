@@ -33,17 +33,20 @@ void Engine::Update(void)
   player.Update();
   Matrix4 worldToLocal = player.WorldToLocal();
 
-  for(auto& object : vObjects)
-  {
-    Object& obj = *object;
-    if (!obj.mesh) { continue; }
 
-    for(auto& sphere : player.hitSpheres)
+  for(auto& sphere : player.hitSpheres)
+  {
+    //Brings point from collider's local coordinates to hits's local coordinates.
+    Matrix4 worldToUnit = sphere.LocalToUnit() * worldToLocal;
+    Matrix4 unitToWorld = worldToUnit.Inverse();
+    for(auto& object : vObjects)
     {
-      //Brings point from collider's local coordinates to hits's local coordinates.
-      Matrix4 worldToUnit = sphere.LocalToUnit() * worldToLocal;
+      Object& obj = *object;
+      if (!obj.mesh)
+      {
+        continue;
+      }
       Matrix4 localToUnit = worldToUnit * obj.LocalToWorld();
-      Matrix4 unitToWorld = worldToUnit.Inverse();
 
       for(auto& collider : obj.mesh->colliders)
       {
