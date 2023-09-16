@@ -116,15 +116,18 @@ void Engine::Render(const Camera& cam, GLuint curFBO, const Portal* skipPortal)
     GH_REC_LEVEL -= 1;
     if (occlusionCullingSupported && GH_REC_LEVEL > 0)
     {
-      glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
       glDepthMask(GL_FALSE);
-      for (size_t i = 0; i < vPortals.size(); ++i) {
-        if (vPortals[i].get() != skipPortal) {
-          glBeginQueryARB(GL_SAMPLES_PASSED_ARB, Query);
-          vPortals[i]->DrawPink(cam);
-          glEndQueryARB(GL_SAMPLES_PASSED_ARB);
-          glGetQueryObjectuivARB(Query, GL_QUERY_RESULT_ARB, &drawTest[i]);
+      glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
+      for (size_t i = 0; i < vPortals.size(); ++i)
+      {
+        if (vPortals[i].get() == skipPortal)
+        {
+          continue;
         }
+        glBeginQueryARB(GL_SAMPLES_PASSED_ARB, Query);
+        vPortals[i]->DrawPink(cam);
+        glEndQueryARB(GL_SAMPLES_PASSED_ARB);
+        glGetQueryObjectuivARB(Query, GL_QUERY_RESULT_ARB, &drawTest[i]);
       }
       glDeleteQueriesARB(1, &Query);
       glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
