@@ -33,10 +33,8 @@ void Engine::Update(void)
   player.Update();
   Matrix4 worldToLocal = player.WorldToLocal();
 
-
   for(auto& sphere : player.hitSpheres)
   {
-    //Brings point from collider's local coordinates to hits's local coordinates.
     Matrix4 worldToUnit = sphere.LocalToUnit() * worldToLocal;
     Matrix4 unitToWorld = worldToUnit.Inverse();
     for(auto& object : vObjects)
@@ -46,19 +44,16 @@ void Engine::Update(void)
       {
         continue;
       }
-      Matrix4 localToUnit = worldToUnit * obj.LocalToWorld();
 
+      Matrix4 localToUnit = worldToUnit * obj.LocalToWorld();
       for(auto& collider : obj.mesh->colliders)
       {
         Vector3 push;
-        if (collider.Collide(localToUnit, push)) {
+        if (collider.Collide(localToUnit, push))
+        {
           //If push is too small, just ignore
           push = unitToWorld.MulDirection(push);
           player.OnCollide(obj, push);
-
-          worldToUnit = sphere.LocalToUnit() * worldToLocal;
-          localToUnit = worldToUnit * obj.LocalToWorld();
-          unitToWorld = worldToUnit.Inverse();
         }
       }
     }
