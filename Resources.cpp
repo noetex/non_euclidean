@@ -36,3 +36,18 @@ Texture_Ptr AquireTexture(const char* name, int rows, int cols)
   }
   return tex.lock();
 }
+
+#if 0
+template<typename resource_type>
+static resource_type*
+aquire_shared_resource(const char* name)
+{
+  static std::unordered_map<std::string, std::weak_ptr<resource_type>> map;
+  std::weak_ptr<resource_type>& Resource = map[std::string(name)];
+  if(Resource.expired())
+  {
+    resource_type* NewResource = new
+  }
+
+}
+#endif
