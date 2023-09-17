@@ -24,7 +24,7 @@ public:
   const Warp* Intersects(const Vector3& a, const Vector3& b, const Vector3& bump) const;
   float DistTo(const Vector3& pt) const;
 
-  static void Connect(Portal_Ptr& a, Portal_Ptr& b);
+  static void Connect(Portal* a, Portal* b);
   static void Connect(Warp& a, Warp& b);
 
   Warp front;

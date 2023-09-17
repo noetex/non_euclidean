@@ -98,7 +98,7 @@ float Portal::DistTo(const Vector3& pt) const {
   return (v - closest).Mag();
 }
 
-void Portal::Connect(Portal_Ptr& a, Portal_Ptr& b) {
+void Portal::Connect(Portal* a, Portal* b) {
   Connect(a->front, b->back);
   Connect(b->front, a->back);
 }

@@ -3,7 +3,7 @@ int GH_REC_LEVEL = 0;
 
 Engine::Engine(int64_t Frequency)
 : vObjects(std::vector<Object_Ptr>()),
-  vPortals(std::vector<Portal_Ptr>()),
+  vPortals(std::vector<Portal*>()),
   player(Player()),
   TicksPerStep((int64_t)(Frequency * GH_DT)),
   input({0}),
@@ -44,7 +44,6 @@ void Engine::Update(void)
       {
         continue;
       }
-
       Matrix4 localToUnit = worldToUnit * obj.LocalToWorld();
       for(auto& collider : obj.mesh->colliders)
       {
@@ -119,7 +118,7 @@ void Engine::Render(const Camera& cam, GLuint curFBO, const Portal* skipPortal)
       glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
       for (size_t i = 0; i < vPortals.size(); ++i)
       {
-        if (vPortals[i].get() == skipPortal)
+        if (vPortals[i] == skipPortal)
         {
           continue;
         }
@@ -133,7 +132,7 @@ void Engine::Render(const Camera& cam, GLuint curFBO, const Portal* skipPortal)
       glDepthMask(GL_TRUE);
     }
     for (size_t i = 0; i < vPortals.size(); ++i) {
-      if (vPortals[i].get() != skipPortal) {
+      if (vPortals[i] != skipPortal) {
         if (occlusionCullingSupported && (GH_REC_LEVEL > 0) && (drawTest[i] == 0)) {
           continue;
         } else {
@@ -197,10 +196,10 @@ void Engine::load_scene(size_t Index)
         Ground_Ptr ground = (Ground_Ptr)(new Ground());
         Tunnel_Ptr tunnel1 = (Tunnel_Ptr)(new Tunnel(Tunnel::NORMAL));
         Tunnel_Ptr tunnel2 = (Tunnel_Ptr)(new Tunnel(Tunnel::NORMAL));
-        Portal_Ptr portal1 = (Portal_Ptr)(new Portal());
-        Portal_Ptr portal2 = (Portal_Ptr)(new Portal());
-        Portal_Ptr portal3 = (Portal_Ptr)(new Portal());
-        Portal_Ptr portal4 = (Portal_Ptr)(new Portal());
+        Portal* portal1 = new Portal();
+        Portal* portal2 = new Portal();
+        Portal* portal3 = new Portal();
+        Portal* portal4 = new Portal();
         tunnel1->pos = Vector3(-2.4f, 0, -1.8f);
         tunnel1->scale = Vector3(1, 1, 4.8f);
 
@@ -235,8 +234,8 @@ void Engine::load_scene(size_t Index)
         House_Ptr house1 = (House_Ptr)(new House("three_room.bmp"));
         house1->pos = Vector3(0, 0, -20);
 
-        Portal_Ptr portal1 = (Portal_Ptr)(new Portal());
-        Portal_Ptr portal2 = (Portal_Ptr)(new Portal());
+        Portal* portal1 = new Portal();
+        Portal* portal2 = new Portal();
         house1->SetDoor3(*portal1);
 
         house1->SetDoor4(*portal2);
@@ -255,9 +254,9 @@ void Engine::load_scene(size_t Index)
 
         house2->pos = Vector3(200, 0, -20);
 
-        Portal_Ptr portal1 = (Portal_Ptr)(new Portal());
-        Portal_Ptr portal2 = (Portal_Ptr)(new Portal());
-        Portal_Ptr portal3 = (Portal_Ptr)(new Portal());
+        Portal* portal1 = new Portal();
+        Portal* portal2 = new Portal();
+        Portal* portal3 = new Portal();
         house1->SetDoor4(*portal1);
 
         house2->SetDoor3(*portal2);
@@ -291,9 +290,9 @@ void Engine::load_scene(size_t Index)
         PillarRoom_Ptr pillarRoom3 = (PillarRoom_Ptr)(new PillarRoom);
         Ground_Ptr ground3 = (Ground_Ptr)(new Ground);
         Statue_Ptr statue3 = (Statue_Ptr)(new Statue("suzanne.obj"));
-        Portal_Ptr portal1 = (Portal_Ptr)(new Portal);
-        Portal_Ptr portal2 = (Portal_Ptr)(new Portal);
-        Portal_Ptr portal3 = (Portal_Ptr)(new Portal);
+        Portal* portal1 = new Portal();
+        Portal* portal2 = new Portal();
+        Portal* portal3 = new Portal();
 
 
         ground1->scale *= 2.0f;
@@ -361,10 +360,10 @@ void Engine::load_scene(size_t Index)
         Ground_Ptr ground2 = (Ground_Ptr)(new Ground(true));
         Tunnel_Ptr tunnel1 = (Tunnel_Ptr)(new Tunnel(Tunnel::SLOPE));
         Tunnel_Ptr tunnel2 = (Tunnel_Ptr)(new Tunnel(Tunnel::SLOPE));
-        Portal_Ptr portal1 = (Portal_Ptr)(new Portal());
-        Portal_Ptr portal2 = (Portal_Ptr)(new Portal());
-        Portal_Ptr portal3 = (Portal_Ptr)(new Portal());
-        Portal_Ptr portal4 = (Portal_Ptr)(new Portal());
+        Portal* portal1 = new Portal();
+        Portal* portal2 = new Portal();
+        Portal* portal3 = new Portal();
+        Portal* portal4 = new Portal();
 
         tunnel1->pos = Vector3(0, 0, 0);
         tunnel1->scale = Vector3(1, 1, 5);
@@ -411,10 +410,10 @@ void Engine::load_scene(size_t Index)
         Tunnel_Ptr tunnel1 = (Tunnel_Ptr)(new Tunnel(Tunnel::SCALE));
         Tunnel_Ptr tunnel2 = (Tunnel_Ptr)(new Tunnel(Tunnel::NORMAL));
         Tunnel_Ptr tunnel3 = (Tunnel_Ptr)(new Tunnel(Tunnel::NORMAL));
-        Portal_Ptr portal1 = (Portal_Ptr)(new Portal());
-        Portal_Ptr portal2 = (Portal_Ptr)(new Portal());
-        Portal_Ptr portal3 = (Portal_Ptr)(new Portal());
-        Portal_Ptr portal4 = (Portal_Ptr)(new Portal());
+        Portal* portal1 = new Portal();
+        Portal* portal2 = new Portal();
+        Portal* portal3 = new Portal();
+        Portal* portal4 = new Portal();
 
         tunnel1->pos = Vector3(-1.2f, 0, 0);
         tunnel1->scale = Vector3(1, 1, 2.4f);
@@ -458,12 +457,12 @@ void Engine::load_scene(size_t Index)
     case 6:
     {
       Floorplan_Ptr floorplan(new Floorplan);
-      Portal_Ptr p1 = (Portal_Ptr)(new Portal);
-      Portal_Ptr p2 = (Portal_Ptr)(new Portal);
-      Portal_Ptr p3 = (Portal_Ptr)(new Portal);
-      Portal_Ptr p4 = (Portal_Ptr)(new Portal);
-      Portal_Ptr p5 = (Portal_Ptr)(new Portal);
-      Portal_Ptr p6 = (Portal_Ptr)(new Portal);
+      Portal* p1 = new Portal();
+      Portal* p2 = new Portal();
+      Portal* p3 = new Portal();
+      Portal* p4 = new Portal();
+      Portal* p5 = new Portal();
+      Portal* p6 = new Portal();
 
       p1->pos = Vector3(33, 10, 25.5f) * floorplan->scale;
       p1->scale = Vector3(4, 10, 1) * floorplan->scale;
