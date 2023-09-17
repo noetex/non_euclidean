@@ -457,11 +457,52 @@ void Engine::load_scene(size_t Index)
     } break;
     case 6:
     {
-        Floorplan_Ptr floorplan(new Floorplan);
-        floorplan->AddPortals(vPortals);
+      Floorplan_Ptr floorplan(new Floorplan);
+      Portal_Ptr p1 = (Portal_Ptr)(new Portal);
+      Portal_Ptr p2 = (Portal_Ptr)(new Portal);
+      Portal_Ptr p3 = (Portal_Ptr)(new Portal);
+      Portal_Ptr p4 = (Portal_Ptr)(new Portal);
+      Portal_Ptr p5 = (Portal_Ptr)(new Portal);
+      Portal_Ptr p6 = (Portal_Ptr)(new Portal);
 
-        player.SetPosition(Vector3(2, GH_PLAYER_HEIGHT, 2));
-        vObjects.push_back(floorplan);
+      p1->pos = Vector3(33, 10, 25.5f) * floorplan->scale;
+      p1->scale = Vector3(4, 10, 1) * floorplan->scale;
+
+      p2->pos = Vector3(74, 10, 25.5f) * floorplan->scale;
+      p2->scale = Vector3(4, 10, 1) * floorplan->scale;
+
+      p3->pos = Vector3(33, 10, 66.5f) * floorplan->scale;
+      p3->scale = Vector3(4, 10, 1) * floorplan->scale;
+
+      p4->pos = Vector3(63.5f, 10, 48) * floorplan->scale;
+      p4->scale = Vector3(4, 10, 1) * floorplan->scale;
+      p4->euler.y = GH_PI/2;
+
+      p5->pos = Vector3(63.5f, 10, 7) * floorplan->scale;
+      p5->scale = Vector3(4, 10, 1) * floorplan->scale;
+      p5->euler.y = GH_PI / 2;
+
+      p6->pos = Vector3(22.5f, 10, 48) * floorplan->scale;
+      p6->scale = Vector3(4, 10, 1) * floorplan->scale;
+      p6->euler.y = GH_PI / 2;
+
+      Portal::Connect(p1->front, p3->back);
+      Portal::Connect(p1->back, p2->front);
+      Portal::Connect(p3->front, p2->back);
+
+      Portal::Connect(p4->front, p6->back);
+      Portal::Connect(p4->back, p5->front);
+      Portal::Connect(p6->front, p5->back);
+
+      vPortals.push_back(p1);
+      vPortals.push_back(p2);
+      vPortals.push_back(p3);
+      vPortals.push_back(p4);
+      vPortals.push_back(p5);
+      vPortals.push_back(p6);
+
+      player.SetPosition(Vector3(2, GH_PLAYER_HEIGHT, 2));
+      vObjects.push_back(floorplan);
     } break;
   }
 }
