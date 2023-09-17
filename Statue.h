@@ -7,5 +7,3 @@ public:
   }
   virtual ~Statue() {}
 };
-
-TYPEDEF_PTR_TYPE(Statue);

@@ -32,4 +32,3 @@ public:
     portal.scale = Vector3(2, 0.5f, 1) * scale;
   }
 };
-TYPEDEF_PTR_TYPE(House);

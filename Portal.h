@@ -1,8 +1,6 @@
 class Portal : public Object
 {
-  TYPEDEF_PTR_TYPE(Portal);
 public:
-  //Subclass that represents a warp
   struct Warp {
     Warp(const Portal* fromPortal) : fromPortal(fromPortal), toPortal(nullptr) {
       delta.MakeIdentity();
@@ -34,6 +32,3 @@ private:
   Shader_Ptr errShader;
   FrameBuffer frameBuf[GH_MAX_RECURSION <= 1 ? 1 : GH_MAX_RECURSION - 1];
 };
-
-TYPEDEF_PTR_TYPE(Portal);
-typedef std::vector<Portal_Ptr> PPortalVec;

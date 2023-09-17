@@ -22,5 +22,3 @@ private:
 
   bool onGround;
 };
-
-TYPEDEF_PTR_TYPE(Player);

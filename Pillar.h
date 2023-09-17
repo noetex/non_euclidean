@@ -8,5 +8,3 @@ public:
   }
   virtual ~Pillar() {}
 };
-
-TYPEDEF_PTR_TYPE(Pillar);

@@ -41,5 +41,3 @@ public:
 private:
   Type type;
 };
-
-TYPEDEF_PTR_TYPE(Tunnel);

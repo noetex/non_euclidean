@@ -12,5 +12,3 @@ public:
   }
   virtual ~Ground() {}
 };
-
-TYPEDEF_PTR_TYPE(Ground);

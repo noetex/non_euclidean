@@ -2,7 +2,7 @@ Engine* GH_ENGINE = nullptr;
 int GH_REC_LEVEL = 0;
 
 Engine::Engine(int64_t Frequency)
-: vObjects(std::vector<Object_Ptr>()),
+: vObjects(std::vector<Object*>()),
   vPortals(std::vector<Portal*>()),
   player(Player()),
   TicksPerStep((int64_t)(Frequency * GH_DT)),
@@ -193,9 +193,9 @@ void Engine::load_scene(size_t Index)
   {
     case 0:
     {
-        Ground_Ptr ground = (Ground_Ptr)(new Ground());
-        Tunnel_Ptr tunnel1 = (Tunnel_Ptr)(new Tunnel(Tunnel::NORMAL));
-        Tunnel_Ptr tunnel2 = (Tunnel_Ptr)(new Tunnel(Tunnel::NORMAL));
+        Ground* ground = new Ground();
+        Tunnel* tunnel1 = new Tunnel(Tunnel::NORMAL);
+        Tunnel* tunnel2 = new Tunnel(Tunnel::NORMAL);
         Portal* portal1 = new Portal();
         Portal* portal2 = new Portal();
         Portal* portal3 = new Portal();
@@ -231,7 +231,7 @@ void Engine::load_scene(size_t Index)
     } break;
     case 1:
     {
-        House_Ptr house1 = (House_Ptr)(new House("three_room.bmp"));
+        House* house1 = new House("three_room.bmp");
         house1->pos = Vector3(0, 0, -20);
 
         Portal* portal1 = new Portal();
@@ -248,8 +248,8 @@ void Engine::load_scene(size_t Index)
     } break;
     case 2:
     {
-        House_Ptr house1 = (House_Ptr)(new House("three_room.bmp"));
-        House_Ptr house2 = (House_Ptr)(new House("three_room2.bmp"));
+        House* house1 = new House("three_room.bmp");
+        House* house2 = new House("three_room2.bmp");
         house1->pos = Vector3(0, 0, -20);
 
         house2->pos = Vector3(200, 0, -20);
@@ -278,18 +278,18 @@ void Engine::load_scene(size_t Index)
     case 3:
     {
         //Room 1
-        Pillar_Ptr pillar1 = (Pillar_Ptr)(new Pillar);
-        PillarRoom_Ptr pillarRoom1 = (PillarRoom_Ptr)(new PillarRoom);
-        Ground_Ptr ground1 = (Ground_Ptr)(new Ground);
-        Statue_Ptr statue1 = (Statue_Ptr)(new Statue("teapot.obj"));
-        Pillar_Ptr pillar2 = (Pillar_Ptr)(new Pillar);
-        PillarRoom_Ptr pillarRoom2 = (PillarRoom_Ptr)(new PillarRoom);
-        Ground_Ptr ground2 = (Ground_Ptr)(new Ground);
-        Statue_Ptr statue2 = (Statue_Ptr)(new Statue("bunny.obj"));
-        Pillar_Ptr pillar3 = (Pillar_Ptr)(new Pillar);
-        PillarRoom_Ptr pillarRoom3 = (PillarRoom_Ptr)(new PillarRoom);
-        Ground_Ptr ground3 = (Ground_Ptr)(new Ground);
-        Statue_Ptr statue3 = (Statue_Ptr)(new Statue("suzanne.obj"));
+        Pillar* pillar1 = new Pillar;
+        Pillar* pillar2 = new Pillar;
+        Pillar* pillar3 = new Pillar;
+        Ground* ground1 = new Ground;
+        Ground* ground2 = new Ground;
+        Statue* statue1 = new Statue("teapot.obj");
+        Statue* statue2 = new Statue("bunny.obj");
+        PillarRoom* pillarRoom1 = new PillarRoom;
+        PillarRoom* pillarRoom2 = new PillarRoom;
+        PillarRoom* pillarRoom3 = new PillarRoom;
+        Ground* ground3 = new Ground;
+        Statue* statue3 = new Statue("suzanne.obj");
         Portal* portal1 = new Portal();
         Portal* portal2 = new Portal();
         Portal* portal3 = new Portal();
@@ -356,10 +356,10 @@ void Engine::load_scene(size_t Index)
     } break;
     case 4:
     {
-        Ground_Ptr ground1 = (Ground_Ptr)(new Ground(true));
-        Ground_Ptr ground2 = (Ground_Ptr)(new Ground(true));
-        Tunnel_Ptr tunnel1 = (Tunnel_Ptr)(new Tunnel(Tunnel::SLOPE));
-        Tunnel_Ptr tunnel2 = (Tunnel_Ptr)(new Tunnel(Tunnel::SLOPE));
+        Ground* ground1 = new Ground(true);
+        Ground* ground2 = new Ground(true);
+        Tunnel* tunnel1 = new Tunnel(Tunnel::SLOPE);
+        Tunnel* tunnel2 = new Tunnel(Tunnel::SLOPE);
         Portal* portal1 = new Portal();
         Portal* portal2 = new Portal();
         Portal* portal3 = new Portal();
@@ -405,11 +405,11 @@ void Engine::load_scene(size_t Index)
     } break;
     case 5:
     {
-        Ground_Ptr ground1 = (Ground_Ptr)(new Ground());
-        Ground_Ptr ground2 = (Ground_Ptr)(new Ground());
-        Tunnel_Ptr tunnel1 = (Tunnel_Ptr)(new Tunnel(Tunnel::SCALE));
-        Tunnel_Ptr tunnel2 = (Tunnel_Ptr)(new Tunnel(Tunnel::NORMAL));
-        Tunnel_Ptr tunnel3 = (Tunnel_Ptr)(new Tunnel(Tunnel::NORMAL));
+        Ground* ground1 = new Ground();
+        Ground* ground2 = new Ground();
+        Tunnel* tunnel1 = new Tunnel(Tunnel::SCALE);
+        Tunnel* tunnel2 = new Tunnel(Tunnel::NORMAL);
+        Tunnel* tunnel3 = new Tunnel(Tunnel::NORMAL);
         Portal* portal1 = new Portal();
         Portal* portal2 = new Portal();
         Portal* portal3 = new Portal();
@@ -456,7 +456,8 @@ void Engine::load_scene(size_t Index)
     } break;
     case 6:
     {
-      Floorplan_Ptr floorplan(new Floorplan);
+      Floorplan* floorplan = new Floorplan;
+      //Floorplan_Ptr floorplan(new Floorplan);
       Portal* p1 = new Portal();
       Portal* p2 = new Portal();
       Portal* p3 = new Portal();

@@ -15,5 +15,3 @@ public:
   }
   virtual ~PillarRoom() {}
 };
-
-TYPEDEF_PTR_TYPE(PillarRoom);
