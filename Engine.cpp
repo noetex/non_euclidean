@@ -63,22 +63,23 @@ void Engine::Update(void)
   {
     const Vector3 bump = portal->GetBump(player.prev_pos) * (2 * GH_NEAR_MIN * player.p_scale);
     const Portal::Warp* warp = portal->Intersects(player.prev_pos, player.pos, bump);
-    if (warp)
+    if(!warp)
     {
-      //Teleport object
-      player.pos = warp->deltaInv.MulPoint(player.pos - bump * 2);
-      player.velocity = warp->deltaInv.MulDirection(player.velocity);
-      player.prev_pos = player.pos;
-
-      //Update camera direction
-      const Vector3 forward(-std::sin(player.euler.y), 0, -std::cos(player.euler.y));
-      const Vector3 newDir = warp->deltaInv.MulDirection(forward);
-      player.euler.y = -std::atan2(newDir.x, -newDir.z);
-
-      //Update object scale
-      player.p_scale *= warp->deltaInv.XAxis().Mag();
-      break;
+      continue;
     }
+    //Teleport object
+    player.pos = warp->deltaInv.MulPoint(player.pos - bump * 2);
+    player.velocity = warp->deltaInv.MulDirection(player.velocity);
+    player.prev_pos = player.pos;
+
+    //Update camera direction
+    const Vector3 forward(-std::sin(player.euler.y), 0, -std::cos(player.euler.y));
+    const Vector3 newDir = warp->deltaInv.MulDirection(forward);
+    player.euler.y = -std::atan2(newDir.x, -newDir.z);
+
+    //Update object scale
+    player.p_scale *= warp->deltaInv.XAxis().Mag();
+    break;
   }
 }
 
