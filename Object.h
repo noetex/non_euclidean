@@ -3,7 +3,6 @@ public:
   Object();
   virtual void Reset();
   virtual void Draw(const Camera& cam, uint32_t curFBO);
-  virtual bool is_physical(void) { return false; }
 
   void DebugDraw(const Camera& cam);
 
@@ -20,6 +19,3 @@ public:
   Texture_Ptr texture;
   Shader_Ptr shader;
 };
-
-TYPEDEF_PTR_TYPE(Object);
-typedef std::vector<Object_Ptr> PObjectVec;
