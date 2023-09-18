@@ -14,13 +14,6 @@ void Physical::Reset() {
   p_scale = 1;
 }
 
-void Physical::Update() {
-  prev_pos = pos;
-  velocity += gravity * p_scale * GH_DT;
-  velocity *= (1.0f - drag);
-  pos += velocity * GH_DT;
-}
-
 Matrix4 Physical::LocalToWorld() const {
   return Matrix4::Trans(pos) * Matrix4::RotY(euler.y) * Matrix4::RotX(euler.x) * Matrix4::RotZ(euler.z) * Matrix4::Scale(scale * p_scale);
 }

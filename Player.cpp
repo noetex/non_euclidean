@@ -31,7 +31,10 @@ void Player::Update() {
 
   //Physics
   Input* input = &GH_ENGINE->input;
-  Physical::Update();
+  prev_pos = pos;
+  velocity += gravity * p_scale * GH_DT;
+  velocity *= (1.0f - drag);
+  pos += velocity * GH_DT;
 
   //Looking
   Look(input->mouse_dx, input->mouse_dy);

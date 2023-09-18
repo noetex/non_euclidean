@@ -3,7 +3,6 @@ public:
   Physical();
 
   void Reset() override;
-  void Update();
   void OnCollide(Object& other, const Vector3& push);
   Matrix4 LocalToWorld() const;
   Matrix4 WorldToLocal() const;
