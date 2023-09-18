@@ -11,6 +11,7 @@ void Physical::Reset() {
   high_friction = 0.0f;
   drag = 0.0f;
   prev_pos.SetZero();
+  p_scale = 1;
 }
 
 void Physical::Update() {
@@ -18,6 +19,14 @@ void Physical::Update() {
   velocity += gravity * p_scale * GH_DT;
   velocity *= (1.0f - drag);
   pos += velocity * GH_DT;
+}
+
+Matrix4 Physical::LocalToWorld() const {
+  return Matrix4::Trans(pos) * Matrix4::RotY(euler.y) * Matrix4::RotX(euler.x) * Matrix4::RotZ(euler.z) * Matrix4::Scale(scale * p_scale);
+}
+
+Matrix4 Physical::WorldToLocal() const {
+  return Matrix4::Scale(1.0f / (scale * p_scale)) * Matrix4::RotZ(-euler.z) * Matrix4::RotX(-euler.x) * Matrix4::RotY(-euler.y) * Matrix4::Trans(-pos);
 }
 
 void Physical::OnCollide(Object& other, const Vector3& push) {

@@ -2,7 +2,7 @@ class Object {
 public:
   Object();
   virtual void Reset();
-  virtual void Draw(const Camera& cam, uint32_t curFBO);
+  virtual void Draw(const Camera& cam, GLuint curFBO);
 
   void DebugDraw(const Camera& cam);
 
@@ -13,7 +13,6 @@ public:
   Vector3 pos;
   Vector3 euler;
   Vector3 scale;
-  float p_scale;  // Physical scale, only updated by portal scale changes
 
   Mesh_Ptr mesh;
   Texture_Ptr texture;

@@ -3,8 +3,8 @@ public:
   Player();
 
   virtual void Reset() override;
-  virtual void Update() override;
-  virtual void OnCollide(Object& other, const Vector3& push) override;
+  virtual void Update();
+  virtual void OnCollide(Object& other, const Vector3& push);
 
   void Look(float mouseDx, float mouseDy);
   void Move(float moveF, float moveL);
