@@ -143,3 +143,11 @@ Vector3 Player::CamOffset() const {
   const float y = bob_mag * GH_BOB_OFFS * (1.0f - std::cos(theta));
   return Vector3(0, y, 0);
 }
+
+Matrix4 Player::LocalToWorld() const {
+  return Matrix4::Trans(pos) * Matrix4::RotY(euler.y) * Matrix4::RotX(euler.x) * Matrix4::RotZ(euler.z) * Matrix4::Scale(scale * p_scale);
+}
+
+Matrix4 Player::WorldToLocal() const {
+  return Matrix4::Scale(1.0f / (scale * p_scale)) * Matrix4::RotZ(-euler.z) * Matrix4::RotX(-euler.x) * Matrix4::RotY(-euler.y) * Matrix4::Trans(-pos);
+}

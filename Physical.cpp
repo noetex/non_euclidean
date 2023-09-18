@@ -14,14 +14,6 @@ void Physical::Reset() {
   p_scale = 1;
 }
 
-Matrix4 Physical::LocalToWorld() const {
-  return Matrix4::Trans(pos) * Matrix4::RotY(euler.y) * Matrix4::RotX(euler.x) * Matrix4::RotZ(euler.z) * Matrix4::Scale(scale * p_scale);
-}
-
-Matrix4 Physical::WorldToLocal() const {
-  return Matrix4::Scale(1.0f / (scale * p_scale)) * Matrix4::RotZ(-euler.z) * Matrix4::RotX(-euler.x) * Matrix4::RotY(-euler.y) * Matrix4::Trans(-pos);
-}
-
 void Physical::OnCollide(Object& other, const Vector3& push) {
   //Update position to avoid collision
   pos += push;

@@ -5,6 +5,8 @@ public:
   virtual void Reset() override;
   virtual void Update();
   virtual void OnCollide(Object& other, const Vector3& push);
+  Matrix4 LocalToWorld() const;
+  Matrix4 WorldToLocal() const;
 
   void Look(float mouseDx, float mouseDy);
   void Move(float moveF, float moveL);
