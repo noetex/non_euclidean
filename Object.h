@@ -5,7 +5,6 @@ public:
 
   Matrix4 LocalToWorld() const;
   Matrix4 WorldToLocal() const;
-  Vector3 Forward() const;
 
   Vector3 pos;
   Vector3 euler;

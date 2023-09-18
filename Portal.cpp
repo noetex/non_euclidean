@@ -4,6 +4,10 @@ Portal::Portal() : front(this), back(this) {
   errShader = AquireShader("pink");
 }
 
+Vector3 Portal::Forward() const {
+  return -(Matrix4::RotZ(euler.z) * Matrix4::RotX(euler.x) * Matrix4::RotY(euler.y)).ZAxis();
+}
+
 void Portal::Draw(const Camera& cam, GLuint curFBO) {
   Assert(euler.x == 0.0f);
   Assert(euler.z == 0.0f);

@@ -17,6 +17,8 @@ public:
 
   virtual void Draw(const Camera& cam, GLuint curFBO);
   void DrawPink(const Camera& cam);
+  Vector3 Forward() const;
+
 
   Vector3 GetBump(const Vector3& a) const;
   const Warp* Intersects(const Vector3& a, const Vector3& b, const Vector3& bump) const;

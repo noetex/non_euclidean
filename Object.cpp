@@ -9,10 +9,6 @@ void Object::Reset() {
   scale.SetOnes();
 }
 
-Vector3 Object::Forward() const {
-  return -(Matrix4::RotZ(euler.z) * Matrix4::RotX(euler.x) * Matrix4::RotY(euler.y)).ZAxis();
-}
-
 Matrix4 Object::LocalToWorld() const {
   return Matrix4::Trans(pos) * Matrix4::RotY(euler.y) * Matrix4::RotX(euler.x) * Matrix4::RotZ(euler.z) * Matrix4::Scale(scale);
 }
