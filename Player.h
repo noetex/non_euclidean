@@ -8,6 +8,10 @@ public:
 
   void Look(float mouseDx, float mouseDy);
   void Move(float moveF, float moveL);
+  void SetPosition(const Vector3& _pos) {
+    pos = _pos;
+    prev_pos = _pos;
+  }
 
   Matrix4 WorldToCam() const;
   Matrix4 CamToWorld() const;

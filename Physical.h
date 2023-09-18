@@ -5,10 +5,6 @@ public:
   virtual void Reset() override;
   virtual void Update();
   virtual void OnCollide(Object& other, const Vector3& push);
-  void SetPosition(const Vector3& _pos) {
-    pos = _pos;
-    prev_pos = _pos;
-  }
 
   Vector3 gravity;
   Vector3 velocity;
