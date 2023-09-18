@@ -1,20 +1,4 @@
-Physical::Physical() {
-  Reset();
-}
-
-void Physical::Reset() {
-  Object::Reset();
-  velocity.SetZero();
-  gravity.Set(0.0f, GH_GRAVITY, 0.0f);
-  bounce = 0.0f;
-  friction = 0.0f;
-  high_friction = 0.0f;
-  drag = 0.0f;
-  prev_pos.SetZero();
-  p_scale = 1;
-}
-
-void Physical::OnCollide(Object& other, const Vector3& push) {
+void Physical::OnCollide(const Vector3& push) {
   //Update position to avoid collision
   pos += push;
 

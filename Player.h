@@ -4,7 +4,7 @@ public:
 
   virtual void Reset() override;
   virtual void Update();
-  virtual void OnCollide(Object& other, Vector3 push);
+  virtual void OnCollide(Vector3 push);
   Matrix4 LocalToWorld() const;
   Matrix4 WorldToLocal() const;
 

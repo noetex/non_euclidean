@@ -1,9 +1,6 @@
 class Physical : public Object {
 public:
-  Physical();
-
-  void Reset() override;
-  void OnCollide(Object& other, const Vector3& push);
+  void OnCollide(const Vector3& push);
 
   Vector3 gravity;
   Vector3 velocity;

@@ -110,7 +110,7 @@ void Player::Move(float moveF, float moveL) {
   velocity.y = tempY;
 }
 
-void Player::OnCollide(Object& other, Vector3 push) {
+void Player::OnCollide(Vector3 push) {
   //Prevent player from rolling down hills if they're not too steep
   if (push.Normalized().y > 0.7f) {
     push.x = 0.0f;
@@ -125,7 +125,7 @@ void Player::OnCollide(Object& other, Vector3 push) {
   }
 
   //Base call
-  Physical::OnCollide(other, push);
+  Physical::OnCollide(push);
   friction = cur_friction;
 }
 

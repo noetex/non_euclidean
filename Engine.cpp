@@ -52,7 +52,7 @@ void Engine::Update(void)
         {
           //If push is too small, just ignore
           push = unitToWorld.MulDirection(push);
-          player.OnCollide(obj, push);
+          player.OnCollide(push);
         }
       }
     }
