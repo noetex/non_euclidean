@@ -5,7 +5,13 @@ Player::Player() {
 }
 
 void Player::Reset() {
-  Physical::Reset();
+  Object::Reset();
+  velocity.SetZero();
+  gravity.Set(0.0f, GH_GRAVITY, 0.0f);
+  bounce = 0.0f;
+  high_friction = 0.0f;
+  prev_pos.SetZero();
+  p_scale = 1;
   cam_rx = 0.0f;
   cam_ry = 0.0f;
   bob_mag = 0.0f;
@@ -104,12 +110,11 @@ void Player::Move(float moveF, float moveL) {
   velocity.y = tempY;
 }
 
-void Player::OnCollide(Object& other, const Vector3& push) {
+void Player::OnCollide(Object& other, Vector3 push) {
   //Prevent player from rolling down hills if they're not too steep
-  Vector3 newPush = push;
   if (push.Normalized().y > 0.7f) {
-    newPush.x = 0.0f;
-    newPush.z = 0.0f;
+    push.x = 0.0f;
+    push.z = 0.0f;
     onGround = true;
   }
 
@@ -120,7 +125,7 @@ void Player::OnCollide(Object& other, const Vector3& push) {
   }
 
   //Base call
-  Physical::OnCollide(other, newPush);
+  Physical::OnCollide(other, push);
   friction = cur_friction;
 }
 

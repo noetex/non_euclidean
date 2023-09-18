@@ -4,7 +4,7 @@ public:
 
   virtual void Reset() override;
   virtual void Update();
-  virtual void OnCollide(Object& other, const Vector3& push);
+  virtual void OnCollide(Object& other, Vector3 push);
   Matrix4 LocalToWorld() const;
   Matrix4 WorldToLocal() const;
 
@@ -25,6 +25,7 @@ private:
 
   float bob_mag;
   float bob_phi;
+  //float p_scale;  // Physical scale, only updated by portal scale changes
 
   bool onGround;
 };
