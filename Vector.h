@@ -1,7 +1,7 @@
 class Vector3 {
 public:
   //Constructors
-  Vector3() {}
+  Vector3() = default;
   explicit Vector3(float b) : x(b), y(b), z(b) {}
   explicit Vector3(const float* b) : x(b[0]), y(b[1]), z(b[2]) {}
   explicit Vector3(float x, float y, float z) : x(x), y(y), z(z) {}
@@ -116,9 +116,9 @@ public:
   }
 
   //Other
-  inline bool IsNDC() const {
-    return (x > -1.0f && x < 1.0f && y > -1.0f && y < 1.0f && z > -1.0f && z < 1.0f);
-  }
+  //inline bool IsNDC() const {
+  //  return (x > -1.0f && x < 1.0f && y > -1.0f && y < 1.0f && z > -1.0f && z < 1.0f);
+  //}
 
   //Components
   float x, y, z;

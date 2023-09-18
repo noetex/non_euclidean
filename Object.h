@@ -2,9 +2,6 @@ class Object {
 public:
   Object();
   virtual void Reset();
-  virtual void Draw(const Camera& cam, GLuint curFBO);
-
-  void DebugDraw(const Camera& cam);
 
   Matrix4 LocalToWorld() const;
   Matrix4 WorldToLocal() const;
@@ -13,8 +10,36 @@ public:
   Vector3 pos;
   Vector3 euler;
   Vector3 scale;
+};
 
+class Geometric : public Object
+{
+public:
   Mesh_Ptr mesh;
-  Texture_Ptr texture;
   Shader_Ptr shader;
+};
+
+class Rigid : public Geometric
+{
+public:
+  void Draw(const Camera& cam, uint32_t curFBO) {
+    if (shader && mesh) {
+      const Matrix4 mv = WorldToLocal().Transposed();
+      const Matrix4 mvp = cam.Matrix() * LocalToWorld();
+      shader->Use();
+      if (texture) {
+        texture->Use();
+      }
+      shader->SetMVP(mvp.m, mv.m);
+      mesh->Draw();
+    }
+  }
+
+  void DebugDraw(const Camera& cam) {
+    if (mesh) {
+      mesh->DebugDraw(cam, LocalToWorld());
+    }
+  }
+
+  Texture_Ptr texture;
 };

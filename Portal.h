@@ -1,4 +1,4 @@
-class Portal : public Object
+class Portal : public Geometric
 {
 public:
   struct Warp {
@@ -15,7 +15,7 @@ public:
 
   Portal();
 
-  virtual void Draw(const Camera& cam, GLuint curFBO) override;
+  virtual void Draw(const Camera& cam, GLuint curFBO);
   void DrawPink(const Camera& cam);
 
   Vector3 GetBump(const Vector3& a) const;

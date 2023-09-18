@@ -8,7 +8,7 @@ public:
   void load_scene(size_t);
   float NearestPortalDist() const;
 
-  std::vector<Object*> vObjects;
+  std::vector<Rigid*> vObjects;
   std::vector<Portal*> vPortals;
   Player player;
   int64_t TicksPerStep;

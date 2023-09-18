@@ -1,4 +1,4 @@
-class House : public Object {
+class House : public Rigid {
 public:
   House(const char* tex) {
     mesh = AquireMesh("square_rooms.obj");

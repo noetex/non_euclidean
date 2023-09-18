@@ -1,4 +1,4 @@
-class Ground : public Object {
+class Ground : public Rigid {
 public:
   Ground(bool slope=false) {
     if (slope) {

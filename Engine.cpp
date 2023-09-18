@@ -2,7 +2,7 @@ Engine* GH_ENGINE = nullptr;
 int GH_REC_LEVEL = 0;
 
 Engine::Engine(int64_t Frequency)
-: vObjects(std::vector<Object*>()),
+: vObjects(std::vector<Rigid*>()),
   vPortals(std::vector<Portal*>()),
   player(Player()),
   TicksPerStep((int64_t)(Frequency * GH_DT)),
@@ -39,7 +39,7 @@ void Engine::Update(void)
     Matrix4 unitToWorld = worldToUnit.Inverse();
     for(auto& object : vObjects)
     {
-      Object& obj = *object;
+      Rigid& obj = *object;
       if (!obj.mesh)
       {
         continue;

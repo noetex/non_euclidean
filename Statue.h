@@ -1,4 +1,4 @@
-class Statue : public Object {
+class Statue : public Rigid {
 public:
   Statue(const char* model) {
     mesh = AquireMesh(model);

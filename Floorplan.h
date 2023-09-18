@@ -1,4 +1,4 @@
-class Floorplan : public Object {
+class Floorplan : public Rigid {
 public:
   Floorplan() {
     mesh = AquireMesh("floorplan.obj");

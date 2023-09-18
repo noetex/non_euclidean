@@ -1,4 +1,4 @@
-class Pillar : public Object {
+class Pillar : public Rigid {
 public:
   Pillar() {
     mesh = AquireMesh("pillar.obj");

@@ -1,4 +1,4 @@
-class Tunnel : public Object {
+class Tunnel : public Rigid {
 public:
   enum Type {
     NORMAL = 0,
