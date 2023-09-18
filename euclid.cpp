@@ -41,7 +41,6 @@
 #include"Portal.h"
 #include"Floorplan.h"
 #include"Tunnel.h"
-#include"Physical.h"
 #include"Player.h"
 #include"Engine.h"
 
@@ -55,7 +54,6 @@
 #include"collider.cpp"
 #include"object.cpp"
 #include"portal.cpp"
-#include"physical.cpp"
 #include"player.cpp"
 
 #include"engine.cpp"

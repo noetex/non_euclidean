@@ -1,4 +1,4 @@
-class Player : public Physical {
+class Player : public Object {
 public:
   Player();
 
@@ -18,6 +18,18 @@ public:
   Matrix4 WorldToCam() const;
   Matrix4 CamToWorld() const;
   Vector3 CamOffset() const;
+
+  Vector3 gravity;
+  Vector3 velocity;
+  float bounce;
+  float friction;
+  float high_friction;
+  float drag;
+  float p_scale;  // Physical scale, only updated by portal scale changes
+
+  Vector3 prev_pos;
+
+  std::vector<Sphere> hitSpheres;
 
 private:
   float cam_rx;
