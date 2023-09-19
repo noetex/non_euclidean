@@ -39,14 +39,15 @@ void Portal::Draw(const Camera& cam, GLuint curFBO) {
   portalCam.height = GH_FBO_SIZE;
 
   //Render portal's view from new camera
-  frameBuf[GH_ENGINE->GH_REC_LEVEL - 1].Render(portalCam, curFBO, warp->toPortal);
+  FrameBuffer CurrentFB = frameBuf[GH_ENGINE->GH_REC_LEVEL - 1];
+  CurrentFB.Render(portalCam, curFBO, warp->toPortal);
   cam.UseViewport();
 
   //Now we can render the portal texture to the screen
   const Matrix4 mv = object_local_to_world(&Geom.Obj);
   const Matrix4 mvp = cam.Matrix() * mv;
   Geom.shader->Use();
-  frameBuf[GH_ENGINE->GH_REC_LEVEL - 1].Use();
+  CurrentFB.Use();
   Geom.shader->SetMVP(mvp.m, mv.m);
   Geom.mesh->Draw();
 }
