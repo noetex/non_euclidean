@@ -48,7 +48,6 @@ static const float GH_GRAVITY = -9.8f;
 
 //Global variables
 extern class Engine* GH_ENGINE;
-extern int GH_REC_LEVEL;
 
 //Functions
 template<class T>

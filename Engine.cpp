@@ -1,9 +1,7 @@
 Engine* GH_ENGINE = nullptr;
-int GH_REC_LEVEL = 0;
 
 Engine::Engine(int64_t Frequency)
-: //player(Player()),
-  TicksPerStep((int64_t)(Frequency * GH_DT)),
+: TicksPerStep((int64_t)(Frequency * GH_DT)),
   input({0}),
   GH_FRAME(0)
 {
