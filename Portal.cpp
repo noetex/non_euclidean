@@ -40,14 +40,20 @@ void Portal::Draw(const Camera& cam, GLuint curFBO) {
 
   //Render portal's view from new camera
   FrameBuffer CurrentFB = frameBuf[GH_ENGINE->GH_REC_LEVEL - 1];
-  CurrentFB.Render(portalCam, curFBO, warp->toPortal);
+  //CurrentFB.Render(portalCam, curFBO, warp->toPortal);
+
+  glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, CurrentFB.fbo);
+  glViewport(0, 0, GH_FBO_SIZE, GH_FBO_SIZE);
+  GH_ENGINE->Render(portalCam, CurrentFB.fbo, warp->toPortal);
+  glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, curFBO);
+
   cam.UseViewport();
 
   //Now we can render the portal texture to the screen
   const Matrix4 mv = object_local_to_world(&Geom.Obj);
   const Matrix4 mvp = cam.Matrix() * mv;
   Geom.shader->Use();
-  CurrentFB.Use();
+  glBindTexture(GL_TEXTURE_2D, CurrentFB.texId);
   Geom.shader->SetMVP(mvp.m, mv.m);
   Geom.mesh->Draw();
 }

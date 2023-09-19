@@ -30,7 +30,7 @@ void Engine::Update(void)
   player.update_bob_and_stuff();
   player.Look(input.mouse_dx, input.mouse_dy);
   player.process_input(this->input);
-  Matrix4 worldToLocal = object_world_to_local(&player.Obj);
+  Matrix4 worldToLocal = player.WorldToLocal();
 
   for(auto& sphere : player.hitSpheres)
   {
