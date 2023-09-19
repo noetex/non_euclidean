@@ -21,7 +21,8 @@ void Player::Reset() {
   onGround = true;
 }
 
-void Player::Update() {
+void Player::update_bob_and_stuff(void)
+{
   //Update bobbing motion
   float magT = (prev_pos - pos).Mag() / (GH_DT * p_scale);
   if (!onGround) { magT = 0.0f; }
@@ -35,42 +36,18 @@ void Player::Update() {
     }
   }
 
-  //Physics
-  Input* input = &GH_ENGINE->input;
   prev_pos = pos;
   velocity += gravity * p_scale * GH_DT;
   velocity *= (1.0f - drag);
   pos += velocity * GH_DT;
+}
 
-  //Looking
-  Look(input->mouse_dx, input->mouse_dy);
-
-  //Movement
-  float moveF = 0.0f;
-  float moveL = 0.0f;
-  if (input->key['W']) {
-    moveF += 1.0f;
-  }
-  if (input->key['S']) {
-    moveF -= 1.0f;
-  }
-  if (input->key['A']) {
-    moveL += 1.0f;
-  }
-  if (input->key['D']) {
-    moveL -= 1.0f;
-  }
-  Move(moveF, moveL);
-
-#if 1
-  //Jumping
-  if (onGround && input->key[VK_SPACE]) {
+void Player::jump(void)
+{
+  if (onGround) {
     velocity.y += 2.0f * p_scale;
+    onGround = false;
   }
-#endif
-
-  //Reset ground state after update finishes
-  onGround = false;
 }
 
 void Player::Look(float mouseDx, float mouseDy) {

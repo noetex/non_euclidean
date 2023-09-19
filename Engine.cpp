@@ -2,9 +2,7 @@ Engine* GH_ENGINE = nullptr;
 int GH_REC_LEVEL = 0;
 
 Engine::Engine(int64_t Frequency)
-: vObjects(std::vector<Rigid*>()),
-  vPortals(std::vector<Portal*>()),
-  player(Player()),
+: player(Player()),
   TicksPerStep((int64_t)(Frequency * GH_DT)),
   input({0}),
   GH_FRAME(0)
@@ -30,7 +28,31 @@ void Engine::cleanup(void)
 
 void Engine::Update(void)
 {
-  player.Update();
+  player.update_bob_and_stuff();
+  player.Look(input.mouse_dx, input.mouse_dy);
+
+  //Movement
+  float moveF = 0.0f;
+  float moveL = 0.0f;
+  if (input.key['W']) {
+    moveF += 1.0f;
+  }
+  if (input.key['S']) {
+    moveF -= 1.0f;
+  }
+  if (input.key['A']) {
+    moveL += 1.0f;
+  }
+  if (input.key['D']) {
+    moveL -= 1.0f;
+  }
+  player.Move(moveF, moveL);
+
+  //Jumping
+  if (input.key[VK_SPACE]) {
+    player.jump();
+  }
+
   Matrix4 worldToLocal = player.WorldToLocal();
 
   for(auto& sphere : player.hitSpheres)
