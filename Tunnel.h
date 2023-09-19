@@ -7,6 +7,7 @@ public:
   };
 
   Tunnel(Type type) : type(type) {
+    Object::Reset();
     if (type == SCALE) {
       mesh = AquireMesh("tunnel_scale.obj");
     } else if (type == SLOPE) {

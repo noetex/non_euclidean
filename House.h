@@ -1,6 +1,7 @@
 class House : public Rigid {
 public:
   House(const char* tex) {
+    Object::Reset();
     mesh = AquireMesh("square_rooms.obj");
     shader = AquireShader("texture");
     texture = AquireTexture(tex);

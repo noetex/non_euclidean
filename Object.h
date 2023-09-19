@@ -1,6 +1,5 @@
 class Object {
 public:
-  Object();
   virtual void Reset();
 
   Matrix4 LocalToWorld() const;

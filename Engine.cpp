@@ -30,29 +30,7 @@ void Engine::Update(void)
 {
   player.update_bob_and_stuff();
   player.Look(input.mouse_dx, input.mouse_dy);
-
-  //Movement
-  float moveF = 0.0f;
-  float moveL = 0.0f;
-  if (input.key['W']) {
-    moveF += 1.0f;
-  }
-  if (input.key['S']) {
-    moveF -= 1.0f;
-  }
-  if (input.key['A']) {
-    moveL += 1.0f;
-  }
-  if (input.key['D']) {
-    moveL -= 1.0f;
-  }
-  player.Move(moveF, moveL);
-
-  //Jumping
-  if (input.key[VK_SPACE]) {
-    player.jump();
-  }
-
+  player.process_input(this->input);
   Matrix4 worldToLocal = player.WorldToLocal();
 
   for(auto& sphere : player.hitSpheres)

@@ -1,4 +1,5 @@
 Portal::Portal() : front(this), back(this) {
+  Object::Reset();
   mesh = AquireMesh("double_quad.obj");
   shader = AquireShader("portal");
   errShader = AquireShader("pink");

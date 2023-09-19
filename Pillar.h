@@ -1,6 +1,7 @@
 class Pillar : public Rigid {
 public:
   Pillar() {
+    Object::Reset();
     mesh = AquireMesh("pillar.obj");
     shader = AquireShader("texture");
     texture = AquireTexture("white.bmp");

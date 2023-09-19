@@ -1,8 +1,3 @@
-Object::Object(void)
-{
-  this->Reset();
-}
-
 void Object::Reset() {
   pos.SetZero();
   euler.SetZero();

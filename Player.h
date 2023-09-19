@@ -7,6 +7,7 @@ public:
   Matrix4 LocalToWorld() const;
   Matrix4 WorldToLocal() const;
   void update_bob_and_stuff(void);
+  void process_input(Input&);
   void Look(float mouseDx, float mouseDy);
   void Move(float moveF, float moveL);
   void jump(void);

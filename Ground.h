@@ -1,6 +1,7 @@
 class Ground : public Rigid {
 public:
   Ground(bool slope=false) {
+    Object::Reset();
     if (slope) {
       mesh = AquireMesh("ground_slope.obj");
     } else {

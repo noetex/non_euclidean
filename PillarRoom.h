@@ -1,6 +1,7 @@
 class PillarRoom : public Rigid {
 public:
   PillarRoom() {
+    Object::Reset();
     mesh = AquireMesh("pillar_room.obj");
     shader = AquireShader("texture");
     texture = AquireTexture("three_room.bmp");

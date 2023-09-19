@@ -119,6 +119,30 @@ void Player::OnCollide(Vector3 push) {
   friction = cur_friction;
 }
 
+void Player::process_input(Input& input)
+{
+  float moveF = 0.0f;
+  float moveL = 0.0f;
+  if (input.key['W']) {
+    moveF += 1.0f;
+  }
+  if (input.key['S']) {
+    moveF -= 1.0f;
+  }
+  if (input.key['A']) {
+    moveL += 1.0f;
+  }
+  if (input.key['D']) {
+    moveL -= 1.0f;
+  }
+  this->Move(moveF, moveL);
+
+  //Jumping
+  if (input.key[VK_SPACE]) {
+    this->jump();
+  }
+}
+
 Matrix4 Player::WorldToCam() const {
   return Matrix4::RotX(-cam_rx) * Matrix4::RotY(-cam_ry) * Matrix4::Trans(-CamOffset()) * WorldToLocal();
 }
