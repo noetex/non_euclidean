@@ -1,8 +1,7 @@
 class Player {
 public:
-  Player();
-
   void Reset();
+  void init(void);
   void OnCollide(Vector3 push);
   Matrix4 LocalToWorld() const;
   Matrix4 WorldToLocal() const;

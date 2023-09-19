@@ -2,7 +2,7 @@ Engine* GH_ENGINE = nullptr;
 int GH_REC_LEVEL = 0;
 
 Engine::Engine(int64_t Frequency)
-: player(Player()),
+: //player(Player()),
   TicksPerStep((int64_t)(Frequency * GH_DT)),
   input({0}),
   GH_FRAME(0)
@@ -16,6 +16,7 @@ Engine::Engine(int64_t Frequency)
   glDepthMask(GL_TRUE);
   glGetQueryiv(GL_SAMPLES_PASSED_ARB, GL_QUERY_COUNTER_BITS_ARB, &this->occlusionCullingSupported);
   wglSwapIntervalEXT(1);
+  player.init();
   this->sky.load();
   GH_ENGINE = this;
 }
