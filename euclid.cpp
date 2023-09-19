@@ -33,12 +33,12 @@
 #include"Sphere.h"
 
 #include"Object.h"
+#include"Portal.h"
 #include"Statue.h"
 #include"House.h"
 #include"Ground.h"
 #include"Pillar.h"
 #include"PillarRoom.h"
-#include"Portal.h"
 #include"Floorplan.h"
 #include"Tunnel.h"
 #include"Player.h"

@@ -7,35 +7,38 @@ public:
   };
 
   Tunnel(Type type) : type(type) {
-    Object::Reset();
+    object_reset(&Geom.Obj);
     if (type == SCALE) {
-      mesh = AquireMesh("tunnel_scale.obj");
+      Geom.mesh = AquireMesh("tunnel_scale.obj");
     } else if (type == SLOPE) {
-      mesh = AquireMesh("tunnel_slope.obj");
+      Geom.mesh = AquireMesh("tunnel_slope.obj");
     } else {
-      mesh = AquireMesh("tunnel.obj");
+      Geom.mesh = AquireMesh("tunnel.obj");
     }
-    shader = AquireShader("texture");
+    Geom.shader = AquireShader("texture");
     texture = AquireTexture("checker_gray.bmp");
   }
-  virtual ~Tunnel() {}
 
-  void SetDoor1(Object& portal) const {
-    portal.pos = LocalToWorld().MulPoint(Vector3(0, 1, 1));
-    portal.euler = euler;
-    portal.scale = Vector3(0.6f, 0.999f, 1) * scale.x;
+  void SetDoor1(Portal& portal)
+  {
+    Matrix4 ltw = object_local_to_world(&Geom.Obj);
+    portal.Geom.Obj.pos = ltw.MulPoint(Vector3(0, 1, 1));
+    portal.Geom.Obj.euler = Geom.Obj.euler;
+    portal.Geom.Obj.scale = Vector3(0.6f, 0.999f, 1) * Geom.Obj.scale.x;
   }
-  void SetDoor2(Object& portal) const {
-    portal.euler = euler;
+  void SetDoor2(Portal& portal)
+  {
+    Matrix4 ltw = object_local_to_world(&Geom.Obj);
+    portal.Geom.Obj.euler = Geom.Obj.euler;
     if (type == SCALE) {
-      portal.pos = LocalToWorld().MulPoint(Vector3(0, 0.5f, -1));
-      portal.scale = Vector3(0.3f, 0.499f, 0.5f) * scale.x;
+      portal.Geom.Obj.pos = ltw.MulPoint(Vector3(0, 0.5f, -1));
+      portal.Geom.Obj.scale = Vector3(0.3f, 0.499f, 0.5f) * Geom.Obj.scale.x;
     } else if (type == SLOPE) {
-      portal.pos = LocalToWorld().MulPoint(Vector3(0, -1, -1));
-      portal.scale = Vector3(0.6f, 0.999f, 1) * scale.x;
+      portal.Geom.Obj.pos = ltw.MulPoint(Vector3(0, -1, -1));
+      portal.Geom.Obj.scale = Vector3(0.6f, 0.999f, 1) * Geom.Obj.scale.x;
     } else {
-      portal.pos = LocalToWorld().MulPoint(Vector3(0, 1, -1));
-      portal.scale = Vector3(0.6f, 0.999f, 1) * scale.x;
+      portal.Geom.Obj.pos = ltw.MulPoint(Vector3(0, 1, -1));
+      portal.Geom.Obj.scale = Vector3(0.6f, 0.999f, 1) * Geom.Obj.scale.x;
     }
   }
 

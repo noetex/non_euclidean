@@ -5,7 +5,7 @@ Player::Player() {
 }
 
 void Player::Reset() {
-  Object::Reset();
+  object_reset(&Obj);
   velocity.SetZero();
   gravity.Set(0.0f, GH_GRAVITY, 0.0f);
   bounce = 0.0f;
@@ -24,7 +24,7 @@ void Player::Reset() {
 void Player::update_bob_and_stuff(void)
 {
   //Update bobbing motion
-  float magT = (prev_pos - pos).Mag() / (GH_DT * p_scale);
+  float magT = (prev_pos - Obj.pos).Mag() / (GH_DT * p_scale);
   if (!onGround) { magT = 0.0f; }
   bob_mag = bob_mag*(1.0f - GH_BOB_DAMP) + magT*GH_BOB_DAMP;
   if (bob_mag < GH_BOB_MIN) {
@@ -36,10 +36,10 @@ void Player::update_bob_and_stuff(void)
     }
   }
 
-  prev_pos = pos;
+  prev_pos = Obj.pos;
   velocity += gravity * p_scale * GH_DT;
   velocity *= (1.0f - drag);
-  pos += velocity * GH_DT;
+  Obj.pos += velocity * GH_DT;
 }
 
 void Player::jump(void)
@@ -102,7 +102,7 @@ void Player::OnCollide(Vector3 push) {
   }
 
   //Base call
-  pos += push;
+  Obj.pos += push;
   if (push.MagSq() > 1e-8f * p_scale)
   {
     //Calculate kinetic friction
@@ -164,9 +164,9 @@ Vector3 Player::CamOffset() const {
 }
 
 Matrix4 Player::LocalToWorld() const {
-  return Matrix4::Trans(pos) * Matrix4::RotY(euler.y) * Matrix4::RotX(euler.x) * Matrix4::RotZ(euler.z) * Matrix4::Scale(scale * p_scale);
+  return Matrix4::Trans(Obj.pos) * Matrix4::RotY(Obj.euler.y) * Matrix4::RotX(Obj.euler.x) * Matrix4::RotZ(Obj.euler.z) * Matrix4::Scale(Obj.scale * p_scale);
 }
 
 Matrix4 Player::WorldToLocal() const {
-  return Matrix4::Scale(1.0f / (scale * p_scale)) * Matrix4::RotZ(-euler.z) * Matrix4::RotX(-euler.x) * Matrix4::RotY(-euler.y) * Matrix4::Trans(-pos);
+  return Matrix4::Scale(1.0f / (Obj.scale * p_scale)) * Matrix4::RotZ(-Obj.euler.z) * Matrix4::RotX(-Obj.euler.x) * Matrix4::RotY(-Obj.euler.y) * Matrix4::Trans(-Obj.pos);
 }

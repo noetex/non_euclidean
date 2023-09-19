@@ -31,7 +31,7 @@ void Engine::Update(void)
   player.update_bob_and_stuff();
   player.Look(input.mouse_dx, input.mouse_dy);
   player.process_input(this->input);
-  Matrix4 worldToLocal = player.WorldToLocal();
+  Matrix4 worldToLocal = object_world_to_local(&player.Obj);
 
   for(auto& sphere : player.hitSpheres)
   {
@@ -40,12 +40,12 @@ void Engine::Update(void)
     for(auto& object : vObjects)
     {
       Rigid& obj = *object;
-      if (!obj.mesh)
+      if (!obj.Geom.mesh)
       {
         continue;
       }
-      Matrix4 localToUnit = worldToUnit * obj.LocalToWorld();
-      for(auto& collider : obj.mesh->colliders)
+      Matrix4 localToUnit = worldToUnit * object_local_to_world(&obj.Geom.Obj);
+      for(auto& collider : obj.Geom.mesh->colliders)
       {
         Vector3 push;
         if (collider.Collide(localToUnit, push))
@@ -61,20 +61,20 @@ void Engine::Update(void)
   for(auto& portal : vPortals)
   {
     const Vector3 bump = portal->GetBump(player.prev_pos) * (2 * GH_NEAR_MIN * player.p_scale);
-    const Portal::Warp* warp = portal->Intersects(player.prev_pos, player.pos, bump);
+    const Portal::Warp* warp = portal->Intersects(player.prev_pos, player.Obj.pos, bump);
     if(!warp)
     {
       continue;
     }
     //Teleport object
-    player.pos = warp->deltaInv.MulPoint(player.pos - bump * 2);
+    player.Obj.pos = warp->deltaInv.MulPoint(player.Obj.pos - bump * 2);
     player.velocity = warp->deltaInv.MulDirection(player.velocity);
-    player.prev_pos = player.pos;
+    player.prev_pos = player.Obj.pos;
 
     //Update camera direction
-    const Vector3 forward(-std::sin(player.euler.y), 0, -std::cos(player.euler.y));
+    const Vector3 forward(-std::sin(player.Obj.euler.y), 0, -std::cos(player.Obj.euler.y));
     const Vector3 newDir = warp->deltaInv.MulDirection(forward);
-    player.euler.y = -std::atan2(newDir.x, -newDir.z);
+    player.Obj.euler.y = -std::atan2(newDir.x, -newDir.z);
 
     //Update object scale
     player.p_scale *= warp->deltaInv.XAxis().Mag();
@@ -177,7 +177,7 @@ float Engine::NearestPortalDist() const {
   float dist = FLT_MAX;
   for(auto& portal : vPortals)
   {
-    dist = GH_MIN(dist, portal->DistTo(this->player.pos));
+    dist = GH_MIN(dist, portal->DistTo(this->player.Obj.pos));
   }
   return dist;
 }
@@ -200,13 +200,13 @@ void Engine::load_scene(size_t Index)
         Portal* portal2 = new Portal();
         Portal* portal3 = new Portal();
         Portal* portal4 = new Portal();
-        tunnel1->pos = Vector3(-2.4f, 0, -1.8f);
-        tunnel1->scale = Vector3(1, 1, 4.8f);
+        tunnel1->Geom.Obj.pos = Vector3(-2.4f, 0, -1.8f);
+        tunnel1->Geom.Obj.scale = Vector3(1, 1, 4.8f);
 
-        tunnel2->pos = Vector3(2.4f, 0, 0);
-        tunnel2->scale = Vector3(1, 1, 0.6f);
+        tunnel2->Geom.Obj.pos = Vector3(2.4f, 0, 0);
+        tunnel2->Geom.Obj.scale = Vector3(1, 1, 0.6f);
 
-        ground->scale *= 1.2f;
+        ground->Geom.Obj.scale *= 1.2f;
 
         tunnel1->SetDoor1(*portal1);
 
@@ -232,7 +232,7 @@ void Engine::load_scene(size_t Index)
     case 1:
     {
         House* house1 = new House("three_room.bmp");
-        house1->pos = Vector3(0, 0, -20);
+        house1->Geom.Obj.pos = Vector3(0, 0, -20);
 
         Portal* portal1 = new Portal();
         Portal* portal2 = new Portal();
@@ -250,9 +250,9 @@ void Engine::load_scene(size_t Index)
     {
         House* house1 = new House("three_room.bmp");
         House* house2 = new House("three_room2.bmp");
-        house1->pos = Vector3(0, 0, -20);
+        house1->Geom.Obj.pos = Vector3(0, 0, -20);
 
-        house2->pos = Vector3(200, 0, -20);
+        house2->Geom.Obj.pos = Vector3(200, 0, -20);
 
         Portal* portal1 = new Portal();
         Portal* portal2 = new Portal();
@@ -295,35 +295,35 @@ void Engine::load_scene(size_t Index)
         Portal* portal3 = new Portal();
 
 
-        ground1->scale *= 2.0f;
+        ground1->Geom.Obj.scale *= 2.0f;
 
-        statue1->pos = Vector3(0, 0.5f, 9);
-        statue1->scale = Vector3(0.5f);
-        statue1->euler.y = GH_PI / 2;
+        statue1->Geom.Obj.pos = Vector3(0, 0.5f, 9);
+        statue1->Geom.Obj.scale = Vector3(0.5f);
+        statue1->Geom.Obj.euler.y = GH_PI / 2;
 
         //Room 2
-        pillar2->pos = Vector3(200, 0, 0);
+        pillar2->Geom.Obj.pos = Vector3(200, 0, 0);
 
-        pillarRoom2->pos = Vector3(200, 0, 0);
+        pillarRoom2->Geom.Obj.pos = Vector3(200, 0, 0);
 
-        ground2->pos = Vector3(200, 0, 0);
-        ground2->scale *= 2.0f;
+        ground2->Geom.Obj.pos = Vector3(200, 0, 0);
+        ground2->Geom.Obj.scale *= 2.0f;
 
-        statue2->pos = Vector3(200, -0.4f, 9);
-        statue2->scale = Vector3(14.0f);
-        statue2->euler.y = GH_PI;
+        statue2->Geom.Obj.pos = Vector3(200, -0.4f, 9);
+        statue2->Geom.Obj.scale = Vector3(14.0f);
+        statue2->Geom.Obj.euler.y = GH_PI;
 
         //Room 3
-        pillar3->pos = Vector3(400, 0, 0);
+        pillar3->Geom.Obj.pos = Vector3(400, 0, 0);
 
-        pillarRoom3->pos = Vector3(400, 0, 0);
+        pillarRoom3->Geom.Obj.pos = Vector3(400, 0, 0);
 
-        ground3->pos = Vector3(400, 0, 0);
-        ground3->scale *= 2.0f;
+        ground3->Geom.Obj.pos = Vector3(400, 0, 0);
+        ground3->Geom.Obj.scale *= 2.0f;
 
-        statue3->pos = Vector3(400, 0.9f, 9);
-        statue3->scale = Vector3(1.2f);
-        statue3->euler.y = GH_PI;
+        statue3->Geom.Obj.pos = Vector3(400, 0.9f, 9);
+        statue3->Geom.Obj.scale = Vector3(1.2f);
+        statue3->Geom.Obj.euler.y = GH_PI;
 
         //Portals
         pillarRoom1->SetPortal(*portal1);
@@ -365,28 +365,28 @@ void Engine::load_scene(size_t Index)
         Portal* portal3 = new Portal();
         Portal* portal4 = new Portal();
 
-        tunnel1->pos = Vector3(0, 0, 0);
-        tunnel1->scale = Vector3(1, 1, 5);
-        tunnel1->euler.y = GH_PI;
+        tunnel1->Geom.Obj.pos = Vector3(0, 0, 0);
+        tunnel1->Geom.Obj.scale = Vector3(1, 1, 5);
+        tunnel1->Geom.Obj.euler.y = GH_PI;
 
-        ground1->scale *= Vector3(1, 2, 1);
+        ground1->Geom.Obj.scale *= Vector3(1, 2, 1);
 
-        tunnel2->pos = Vector3(200, 0, 0);
-        tunnel2->scale = Vector3(1, 1, 5);
+        tunnel2->Geom.Obj.pos = Vector3(200, 0, 0);
+        tunnel2->Geom.Obj.scale = Vector3(1, 1, 5);
 
-        ground2->pos = Vector3(200, 0, 0);
-        ground2->scale *= Vector3(1, 2, 1);
-        ground2->euler.y = GH_PI;
+        ground2->Geom.Obj.pos = Vector3(200, 0, 0);
+        ground2->Geom.Obj.scale *= Vector3(1, 2, 1);
+        ground2->Geom.Obj.euler.y = GH_PI;
 
         tunnel1->SetDoor1(*portal1);
 
         tunnel1->SetDoor2(*portal2);
 
         tunnel2->SetDoor1(*portal3);
-        portal3->euler.y -= GH_PI;
+        portal3->Geom.Obj.euler.y -= GH_PI;
 
         tunnel2->SetDoor2(*portal4);
-        portal4->euler.y -= GH_PI;
+        portal4->Geom.Obj.euler.y -= GH_PI;
 
         Portal::Connect(portal1, portal4);
         Portal::Connect(portal2, portal3);
@@ -415,16 +415,16 @@ void Engine::load_scene(size_t Index)
         Portal* portal3 = new Portal();
         Portal* portal4 = new Portal();
 
-        tunnel1->pos = Vector3(-1.2f, 0, 0);
-        tunnel1->scale = Vector3(1, 1, 2.4f);
+        tunnel1->Geom.Obj.pos = Vector3(-1.2f, 0, 0);
+        tunnel1->Geom.Obj.scale = Vector3(1, 1, 2.4f);
 
-        ground1->scale *= 1.2f;
+        ground1->Geom.Obj.scale *= 1.2f;
 
-        tunnel2->pos = Vector3(201.2f, 0, 0);
-        tunnel2->scale = Vector3(1, 1, 2.4f);
+        tunnel2->Geom.Obj.pos = Vector3(201.2f, 0, 0);
+        tunnel2->Geom.Obj.scale = Vector3(1, 1, 2.4f);
 
-        ground2->pos = Vector3(200, 0, 0);
-        ground2->scale *= 1.2f;
+        ground2->Geom.Obj.pos = Vector3(200, 0, 0);
+        ground2->Geom.Obj.scale *= 1.2f;
 
         tunnel1->SetDoor1(*portal1);
 
@@ -437,9 +437,9 @@ void Engine::load_scene(size_t Index)
         Portal::Connect(portal1, portal2);
         Portal::Connect(portal3, portal4);
 
-        tunnel3->pos = Vector3(-1, 0, -4.2f);
-        tunnel3->scale = Vector3(0.25f, 0.25f, 0.6f);
-        tunnel3->euler.y = GH_PI / 2;
+        tunnel3->Geom.Obj.pos = Vector3(-1, 0, -4.2f);
+        tunnel3->Geom.Obj.scale = Vector3(0.25f, 0.25f, 0.6f);
+        tunnel3->Geom.Obj.euler.y = GH_PI / 2;
 
         player.SetPosition(Vector3(0, GH_PLAYER_HEIGHT, 5));
 
@@ -465,26 +465,26 @@ void Engine::load_scene(size_t Index)
       Portal* p5 = new Portal();
       Portal* p6 = new Portal();
 
-      p1->pos = Vector3(33, 10, 25.5f) * floorplan->scale;
-      p1->scale = Vector3(4, 10, 1) * floorplan->scale;
+      p1->Geom.Obj.pos = Vector3(33, 10, 25.5f) * floorplan->Geom.Obj.scale;
+      p1->Geom.Obj.scale = Vector3(4, 10, 1) * floorplan->Geom.Obj.scale;
 
-      p2->pos = Vector3(74, 10, 25.5f) * floorplan->scale;
-      p2->scale = Vector3(4, 10, 1) * floorplan->scale;
+      p2->Geom.Obj.pos = Vector3(74, 10, 25.5f) * floorplan->Geom.Obj.scale;
+      p2->Geom.Obj.scale = Vector3(4, 10, 1) * floorplan->Geom.Obj.scale;
 
-      p3->pos = Vector3(33, 10, 66.5f) * floorplan->scale;
-      p3->scale = Vector3(4, 10, 1) * floorplan->scale;
+      p3->Geom.Obj.pos = Vector3(33, 10, 66.5f) * floorplan->Geom.Obj.scale;
+      p3->Geom.Obj.scale = Vector3(4, 10, 1) * floorplan->Geom.Obj.scale;
 
-      p4->pos = Vector3(63.5f, 10, 48) * floorplan->scale;
-      p4->scale = Vector3(4, 10, 1) * floorplan->scale;
-      p4->euler.y = GH_PI/2;
+      p4->Geom.Obj.pos = Vector3(63.5f, 10, 48) * floorplan->Geom.Obj.scale;
+      p4->Geom.Obj.scale = Vector3(4, 10, 1) * floorplan->Geom.Obj.scale;
+      p4->Geom.Obj.euler.y = GH_PI/2;
 
-      p5->pos = Vector3(63.5f, 10, 7) * floorplan->scale;
-      p5->scale = Vector3(4, 10, 1) * floorplan->scale;
-      p5->euler.y = GH_PI / 2;
+      p5->Geom.Obj.pos = Vector3(63.5f, 10, 7) * floorplan->Geom.Obj.scale;
+      p5->Geom.Obj.scale = Vector3(4, 10, 1) * floorplan->Geom.Obj.scale;
+      p5->Geom.Obj.euler.y = GH_PI / 2;
 
-      p6->pos = Vector3(22.5f, 10, 48) * floorplan->scale;
-      p6->scale = Vector3(4, 10, 1) * floorplan->scale;
-      p6->euler.y = GH_PI / 2;
+      p6->Geom.Obj.pos = Vector3(22.5f, 10, 48) * floorplan->Geom.Obj.scale;
+      p6->Geom.Obj.scale = Vector3(4, 10, 1) * floorplan->Geom.Obj.scale;
+      p6->Geom.Obj.euler.y = GH_PI / 2;
 
       Portal::Connect(p1->front, p3->back);
       Portal::Connect(p1->back, p2->front);

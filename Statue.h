@@ -1,10 +1,9 @@
 class Statue : public Rigid {
 public:
   Statue(const char* model) {
-    Object::Reset();
-    mesh = AquireMesh(model);
-    shader = AquireShader("texture");
+    object_reset(&Geom.Obj);
+    Geom.mesh = AquireMesh(model);
+    Geom.shader = AquireShader("texture");
     texture = AquireTexture("gold.bmp");
   }
-  virtual ~Statue() {}
 };

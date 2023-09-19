@@ -1,9 +1,9 @@
-class Player : public Object {
+class Player {
 public:
   Player();
 
-  virtual void Reset() override;
-  virtual void OnCollide(Vector3 push);
+  void Reset();
+  void OnCollide(Vector3 push);
   Matrix4 LocalToWorld() const;
   Matrix4 WorldToLocal() const;
   void update_bob_and_stuff(void);
@@ -12,7 +12,7 @@ public:
   void Move(float moveF, float moveL);
   void jump(void);
   void SetPosition(const Vector3& _pos) {
-    pos = _pos;
+    Obj.pos = _pos;
     prev_pos = _pos;
   }
 
@@ -20,6 +20,7 @@ public:
   Matrix4 CamToWorld() const;
   Vector3 CamOffset() const;
 
+  object_props Obj;
   Vector3 gravity;
   Vector3 velocity;
   float bounce;

@@ -1,15 +1,18 @@
 class Ground : public Rigid {
 public:
-  Ground(bool slope=false) {
-    Object::Reset();
-    if (slope) {
-      mesh = AquireMesh("ground_slope.obj");
-    } else {
-      mesh = AquireMesh("ground.obj");
+  Ground(bool slope=false)
+  {
+    object_reset(&Geom.Obj);
+    if (slope)
+    {
+      Geom.mesh = AquireMesh("ground_slope.obj");
     }
-    shader = AquireShader("texture");
+    else
+    {
+      Geom.mesh = AquireMesh("ground.obj");
+    }
+    Geom.shader = AquireShader("texture");
     texture = AquireTexture("checker_green.bmp");
-    scale = Vector3(10, 1, 10);
+    Geom.Obj.scale = Vector3(10, 1, 10);
   }
-  virtual ~Ground() {}
 };

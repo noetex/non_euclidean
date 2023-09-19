@@ -1,16 +1,17 @@
-class Portal : public Geometric
+class Portal
 {
 public:
-  struct Warp {
-    Warp(const Portal* fromPortal) : fromPortal(fromPortal), toPortal(nullptr) {
+  struct Warp
+  {
+    Warp(Portal* fromPortal) : fromPortal(fromPortal), toPortal(nullptr) {
       delta.MakeIdentity();
       deltaInv.MakeIdentity();
     }
 
     Matrix4 delta;
     Matrix4 deltaInv;
-    const Portal* fromPortal;
-    const Portal* toPortal;
+    Portal* fromPortal;
+    Portal* toPortal;
   };
 
   Portal();
@@ -21,8 +22,8 @@ public:
 
 
   Vector3 GetBump(const Vector3& a) const;
-  const Warp* Intersects(const Vector3& a, const Vector3& b, const Vector3& bump) const;
-  float DistTo(const Vector3& pt) const;
+  const Warp* Intersects(const Vector3& a, const Vector3& b, const Vector3& bump);
+  float DistTo(const Vector3& pt);
 
   static void Connect(Portal* a, Portal* b);
   static void Connect(Warp& a, Warp& b);
@@ -30,7 +31,8 @@ public:
   Warp front;
   Warp back;
 
-private:
+//private:
+  geometric_props Geom;
   Shader_Ptr errShader;
   FrameBuffer frameBuf[GH_MAX_RECURSION <= 1 ? 1 : GH_MAX_RECURSION - 1];
 };
