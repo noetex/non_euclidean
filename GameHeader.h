@@ -45,7 +45,7 @@ static const float GH_PLAYER_RADIUS = 0.2f;
 static const float GH_GRAVITY = -9.8f;
 
 //Global variables
-extern class Engine* GH_ENGINE;
+//extern class Engine* GH_ENGINE;
 
 //Functions
 template<class T>

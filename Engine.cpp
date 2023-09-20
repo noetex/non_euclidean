@@ -1,4 +1,4 @@
-Engine* GH_ENGINE = nullptr;
+//Engine* GH_ENGINE = nullptr;
 
 Engine::Engine(int64_t Frequency)
 : TicksPerStep((int64_t)(Frequency * GH_DT)),
@@ -16,7 +16,6 @@ Engine::Engine(int64_t Frequency)
   wglSwapIntervalEXT(1);
   player.init();
   this->sky.load();
-  GH_ENGINE = this;
 }
 
 void Engine::cleanup(void)
@@ -166,7 +165,7 @@ void Engine::Render(const Camera& cam, GLuint curFBO, const Portal* skipPortal)
     FrameBuffer CurrentFB = vPortals[i]->frameBuf[GH_REC_LEVEL - 1];
     glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, CurrentFB.fbo);
     glViewport(0, 0, GH_FBO_SIZE, GH_FBO_SIZE);
-    GH_ENGINE->Render(portalCam, CurrentFB.fbo, warp->toPortal);
+    this->Render(portalCam, CurrentFB.fbo, warp->toPortal);
     glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, curFBO);
     cam.UseViewport();
 
@@ -177,7 +176,6 @@ void Engine::Render(const Camera& cam, GLuint curFBO, const Portal* skipPortal)
     glBindTexture(GL_TEXTURE_2D, CurrentFB.texId);
     vPortals[i]->Geom.shader->SetMVP(mvp.m, mv.m);
     vPortals[i]->Geom.mesh->Draw();
-    //vPortals[i]->Draw(cam, curFBO);
   }
   GH_REC_LEVEL += 1;
 }

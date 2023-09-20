@@ -1,3 +1,5 @@
+static Engine* GH_ENGINE;
+
 static void
 enable_dpi_awareness(void)
 {
@@ -184,6 +186,7 @@ WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
   LARGE_INTEGER Frequency = {0};
   QueryPerformanceFrequency(&Frequency);
   Engine engine(Frequency.QuadPart);
+  GH_ENGINE = &engine;
 
   engine.load_scene(0);
 
