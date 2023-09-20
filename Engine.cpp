@@ -93,62 +93,57 @@ void Engine::Render(const Camera& cam, GLuint curFBO, const Portal* skipPortal)
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   }
 
-  //Draw scene
   for(auto& object : vObjects)
   {
     object->Draw(cam, curFBO);
+#if 0
+    object->DebugDraw(cam);
+#endif
   }
 
   GLuint drawTest[GH_MAX_PORTALS];
   Assert(vPortals.size() <= GH_MAX_PORTALS);
 
-  //Portal recursive rendering
-  if (GH_REC_LEVEL > 0)
+  if (GH_REC_LEVEL <= 0)
   {
-    GLuint Query;
-    if (occlusionCullingSupported)
+    return;
+  }
+  GLuint Query;
+  if (occlusionCullingSupported)
+  {
+    glGenQueriesARB(1, &Query);
+  }
+  GH_REC_LEVEL -= 1;
+  if (occlusionCullingSupported && GH_REC_LEVEL > 0)
+  {
+    glDepthMask(GL_FALSE);
+    glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
+    for (size_t i = 0; i < vPortals.size(); ++i)
     {
-      glGenQueriesARB(1, &Query);
-    }
-    GH_REC_LEVEL -= 1;
-    if (occlusionCullingSupported && GH_REC_LEVEL > 0)
-    {
-      glDepthMask(GL_FALSE);
-      glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
-      for (size_t i = 0; i < vPortals.size(); ++i)
-      {
-        if (vPortals[i] == skipPortal)
-        {
-          continue;
-        }
-        glBeginQueryARB(GL_SAMPLES_PASSED_ARB, Query);
-        vPortals[i]->DrawPink(cam);
-        glEndQueryARB(GL_SAMPLES_PASSED_ARB);
-        glGetQueryObjectuivARB(Query, GL_QUERY_RESULT_ARB, &drawTest[i]);
-      }
-      glDeleteQueriesARB(1, &Query);
-      glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
-      glDepthMask(GL_TRUE);
-    }
-    for (size_t i = 0; i < vPortals.size(); ++i) {
       if (vPortals[i] == skipPortal)
       {
         continue;
       }
-      if (occlusionCullingSupported && (GH_REC_LEVEL > 0) && (drawTest[i] == 0)) {
-        continue;
-      }
-      vPortals[i]->Draw(cam, curFBO);
+      glBeginQueryARB(GL_SAMPLES_PASSED_ARB, Query);
+      vPortals[i]->DrawPink(cam);
+      glEndQueryARB(GL_SAMPLES_PASSED_ARB);
+      glGetQueryObjectuivARB(Query, GL_QUERY_RESULT_ARB, &drawTest[i]);
     }
-    GH_REC_LEVEL += 1;
+    glDeleteQueriesARB(1, &Query);
+    glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
+    glDepthMask(GL_TRUE);
   }
-
-#if 0
-  for(auto& object : vObjects)
-  {
-    object->DebugDraw(cam);
+  for (size_t i = 0; i < vPortals.size(); ++i) {
+    if (vPortals[i] == skipPortal)
+    {
+      continue;
+    }
+    if (occlusionCullingSupported && (GH_REC_LEVEL > 0) && (drawTest[i] == 0)) {
+      continue;
+    }
+    vPortals[i]->Draw(cam, curFBO);
   }
-#endif
+  GH_REC_LEVEL += 1;
 }
 
 void Engine::do_frame(int64_t& cur_ticks, int64_t new_ticks)
