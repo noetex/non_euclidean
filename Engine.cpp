@@ -133,7 +133,8 @@ void Engine::Render(const Camera& cam, GLuint curFBO, const Portal* skipPortal)
       glDepthMask(GL_TRUE);
     }
   }
-  for (size_t i = 0; i < vPortals.size(); ++i) {
+  for (size_t i = 0; i < vPortals.size(); ++i)
+  {
     if (vPortals[i] == skipPortal)
     {
       continue;
@@ -141,7 +142,42 @@ void Engine::Render(const Camera& cam, GLuint curFBO, const Portal* skipPortal)
     if (occlusionCullingSupported && (GH_REC_LEVEL > 0) && (drawTest[i] == 0)) {
       continue;
     }
-    vPortals[i]->Draw(cam, curFBO);
+    Assert(vPortals[i]->Geom.Obj.euler.x == 0.0f);
+    Assert(vPortals[i]->Geom.Obj.euler.z == 0.0f);
+    if(GH_REC_LEVEL <= 0)
+    {
+      vPortals[i]->DrawPink(cam);
+      continue;
+    }
+    Vector3 normal = vPortals[i]->Forward();
+    Vector3 camPos = cam.worldView.Inverse().Translation();
+    bool frontDirection = ((camPos - vPortals[i]->Geom.Obj.pos).Dot(normal)) > 0;
+    Portal::Warp* warp = frontDirection ? &vPortals[i]->front : &vPortals[i]->back;
+    if(frontDirection)
+    {
+      normal = -normal;
+    }
+    float extra_clip = GH_MIN(this->NearestPortalDist() * 0.5f, 0.1f);
+    Camera portalCam = cam;
+    portalCam.ClipOblique(vPortals[i]->Geom.Obj.pos - normal*extra_clip, -normal);
+    portalCam.worldView *= warp->delta;
+    portalCam.width = GH_FBO_SIZE;
+    portalCam.height = GH_FBO_SIZE;
+    FrameBuffer CurrentFB = vPortals[i]->frameBuf[GH_REC_LEVEL - 1];
+    glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, CurrentFB.fbo);
+    glViewport(0, 0, GH_FBO_SIZE, GH_FBO_SIZE);
+    GH_ENGINE->Render(portalCam, CurrentFB.fbo, warp->toPortal);
+    glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, curFBO);
+    cam.UseViewport();
+
+    //Now we can render the portal texture to the screen
+    const Matrix4 mv = object_local_to_world(&vPortals[i]->Geom.Obj);
+    const Matrix4 mvp = cam.Matrix() * mv;
+    vPortals[i]->Geom.shader->Use();
+    glBindTexture(GL_TEXTURE_2D, CurrentFB.texId);
+    vPortals[i]->Geom.shader->SetMVP(mvp.m, mv.m);
+    vPortals[i]->Geom.mesh->Draw();
+    //vPortals[i]->Draw(cam, curFBO);
   }
   GH_REC_LEVEL += 1;
 }

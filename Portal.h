@@ -16,7 +16,6 @@ public:
 
   Portal();
 
-  virtual void Draw(const Camera& cam, GLuint curFBO);
   void DrawPink(const Camera& cam);
   Vector3 Forward() const;
 

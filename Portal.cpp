@@ -9,55 +9,6 @@ Vector3 Portal::Forward() const {
   return -(Matrix4::RotZ(Geom.Obj.euler.z) * Matrix4::RotX(Geom.Obj.euler.x) * Matrix4::RotY(Geom.Obj.euler.y)).ZAxis();
 }
 
-void Portal::Draw(const Camera& cam, GLuint curFBO) {
-  Assert(Geom.Obj.euler.x == 0.0f);
-  Assert(Geom.Obj.euler.z == 0.0f);
-
-  //Draw pink to indicate end of render chain
-  if (GH_ENGINE->GH_REC_LEVEL <= 0) {
-    DrawPink(cam);
-    return;
-  }
-
-  //Find normal relative to camera
-  Vector3 normal = Forward();
-  const Vector3 camPos = cam.worldView.Inverse().Translation();
-  const bool frontDirection = (camPos - Geom.Obj.pos).Dot(normal) > 0;
-  const Warp* warp = (frontDirection ? &front : &back);
-  if (frontDirection) {
-    normal = -normal;
-  }
-
-  //Extra clipping to prevent artifacts
-  const float extra_clip = GH_MIN(GH_ENGINE->NearestPortalDist() * 0.5f, 0.1f);
-
-  //Create new portal camera
-  Camera portalCam = cam;
-  portalCam.ClipOblique(Geom.Obj.pos - normal*extra_clip, -normal);
-  portalCam.worldView *= warp->delta;
-  portalCam.width = GH_FBO_SIZE;
-  portalCam.height = GH_FBO_SIZE;
-
-  //Render portal's view from new camera
-  FrameBuffer CurrentFB = frameBuf[GH_ENGINE->GH_REC_LEVEL - 1];
-  //CurrentFB.Render(portalCam, curFBO, warp->toPortal);
-
-  glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, CurrentFB.fbo);
-  glViewport(0, 0, GH_FBO_SIZE, GH_FBO_SIZE);
-  GH_ENGINE->Render(portalCam, CurrentFB.fbo, warp->toPortal);
-  glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, curFBO);
-
-  cam.UseViewport();
-
-  //Now we can render the portal texture to the screen
-  const Matrix4 mv = object_local_to_world(&Geom.Obj);
-  const Matrix4 mvp = cam.Matrix() * mv;
-  Geom.shader->Use();
-  glBindTexture(GL_TEXTURE_2D, CurrentFB.texId);
-  Geom.shader->SetMVP(mvp.m, mv.m);
-  Geom.mesh->Draw();
-}
-
 void Portal::DrawPink(const Camera& cam) {
   const Matrix4 mv = object_local_to_world(&Geom.Obj);
   const Matrix4 mvp = cam.Matrix() * mv;
