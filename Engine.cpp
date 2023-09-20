@@ -108,30 +108,30 @@ void Engine::Render(const Camera& cam, GLuint curFBO, const Portal* skipPortal)
   {
     return;
   }
-  GLuint Query;
   if (occlusionCullingSupported)
   {
+    GLuint Query;
     glGenQueriesARB(1, &Query);
-  }
-  GH_REC_LEVEL -= 1;
-  if (occlusionCullingSupported && GH_REC_LEVEL > 0)
-  {
-    glDepthMask(GL_FALSE);
-    glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
-    for (size_t i = 0; i < vPortals.size(); ++i)
+    GH_REC_LEVEL -= 1;
+    if (GH_REC_LEVEL > 0)
     {
-      if (vPortals[i] == skipPortal)
+      glDepthMask(GL_FALSE);
+      glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
+      for (size_t i = 0; i < vPortals.size(); ++i)
       {
-        continue;
+        if (vPortals[i] == skipPortal)
+        {
+          continue;
+        }
+        glBeginQueryARB(GL_SAMPLES_PASSED_ARB, Query);
+        vPortals[i]->DrawPink(cam);
+        glEndQueryARB(GL_SAMPLES_PASSED_ARB);
+        glGetQueryObjectuivARB(Query, GL_QUERY_RESULT_ARB, &drawTest[i]);
       }
-      glBeginQueryARB(GL_SAMPLES_PASSED_ARB, Query);
-      vPortals[i]->DrawPink(cam);
-      glEndQueryARB(GL_SAMPLES_PASSED_ARB);
-      glGetQueryObjectuivARB(Query, GL_QUERY_RESULT_ARB, &drawTest[i]);
+      glDeleteQueriesARB(1, &Query);
+      glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
+      glDepthMask(GL_TRUE);
     }
-    glDeleteQueriesARB(1, &Query);
-    glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
-    glDepthMask(GL_TRUE);
   }
   for (size_t i = 0; i < vPortals.size(); ++i) {
     if (vPortals[i] == skipPortal)

@@ -10,8 +10,6 @@
 
 typedef int bool_t;
 
-//Windows
-
 //General
 static const float GH_PI = 3.141592653589793f;
 static const int GH_MAX_PORTALS = 16;
