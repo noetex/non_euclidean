@@ -1,5 +1,5 @@
 Portal::Portal() : front(this), back(this) {
-  object_reset(&Geom.Obj);
+  Geom.Obj.reset();
   Geom.mesh = AquireMesh("double_quad.obj");
   Geom.shader = AquireShader("portal");
   errShader = AquireShader("pink");
@@ -10,7 +10,7 @@ Vector3 Portal::Forward() const {
 }
 
 void Portal::DrawPink(const Camera& cam) {
-  const Matrix4 mv = object_local_to_world(&Geom.Obj);
+  const Matrix4 mv = Geom.Obj.local_to_world();
   const Matrix4 mvp = cam.Matrix() * mv;
   errShader->Use();
   errShader->SetMVP(mvp.m, mv.m);
@@ -31,7 +31,7 @@ const Portal::Warp* Portal::Intersects(const Vector3& a, const Vector3& b, const
   if (da * db > 0.0f) {
     return nullptr;
   }
-  const Matrix4 m = object_local_to_world(&Geom.Obj);
+  const Matrix4 m = Geom.Obj.local_to_world();
   const Vector3 d = a + (b - a) * (da / (da - db)) - p;
   const Vector3 x = (m * Vector4(1, 0, 0, 0)).XYZ();
   if (std::abs(d.Dot(x)) >= x.Dot(x)) {
@@ -47,7 +47,7 @@ const Portal::Warp* Portal::Intersects(const Vector3& a, const Vector3& b, const
 float Portal::DistTo(const Vector3& pt)
 {
   //Get world delta
-  const Matrix4 localToWorld = object_local_to_world(&Geom.Obj);
+  const Matrix4 localToWorld = Geom.Obj.local_to_world();
   const Vector3 v = pt - localToWorld.Translation();
 
   //Get axes
@@ -71,10 +71,10 @@ void Portal::Connect(Portal* a, Portal* b) {
 void Portal::Connect(Warp& a, Warp& b) {
   a.toPortal = b.fromPortal;
   b.toPortal = a.fromPortal;
-  Matrix4 a_ltw = object_local_to_world(&a.fromPortal->Geom.Obj);
-  Matrix4 a_wtl = object_world_to_local(&a.fromPortal->Geom.Obj);
-  Matrix4 b_ltw = object_local_to_world(&b.fromPortal->Geom.Obj);
-  Matrix4 b_wtl = object_world_to_local(&b.fromPortal->Geom.Obj);
+  Matrix4 a_ltw = a.fromPortal->Geom.Obj.local_to_world();
+  Matrix4 a_wtl = a.fromPortal->Geom.Obj.world_to_local();
+  Matrix4 b_ltw = b.fromPortal->Geom.Obj.local_to_world();
+  Matrix4 b_wtl = b.fromPortal->Geom.Obj.world_to_local();
   a.delta = a_ltw * b_wtl;
   b.delta = b_ltw * a_wtl;
   a.deltaInv = b.delta;

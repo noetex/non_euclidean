@@ -6,7 +6,7 @@ void Player::init(void)
 }
 
 void Player::Reset() {
-  object_reset(&Obj);
+  Obj.reset();
   velocity.SetZero();
   gravity.Set(0.0f, GH_GRAVITY, 0.0f);
   bounce = 0.0f;

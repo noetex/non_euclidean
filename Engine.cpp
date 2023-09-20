@@ -42,7 +42,7 @@ void Engine::Update(void)
       {
         continue;
       }
-      Matrix4 localToUnit = worldToUnit * object_local_to_world(&obj.Geom.Obj);
+      Matrix4 localToUnit = worldToUnit * obj.Geom.Obj.local_to_world();
       for(auto& collider : obj.Geom.mesh->colliders)
       {
         Vector3 push;
@@ -170,7 +170,7 @@ void Engine::Render(const Camera& cam, GLuint curFBO, const Portal* skipPortal)
     cam.UseViewport();
 
     //Now we can render the portal texture to the screen
-    const Matrix4 mv = object_local_to_world(&vPortals[i]->Geom.Obj);
+    const Matrix4 mv = vPortals[i]->Geom.Obj.local_to_world();
     const Matrix4 mvp = cam.Matrix() * mv;
     vPortals[i]->Geom.shader->Use();
     glBindTexture(GL_TEXTURE_2D, CurrentFB.texId);

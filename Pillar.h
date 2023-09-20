@@ -2,7 +2,7 @@ class Pillar : public Rigid {
 public:
   Pillar()
   {
-    object_reset(&Geom.Obj);
+    Geom.Obj.reset();
     Geom.mesh = AquireMesh("pillar.obj");
     Geom.shader = AquireShader("texture");
     texture = AquireTexture("white.bmp");

@@ -7,7 +7,7 @@ public:
   };
 
   Tunnel(Type type) : type(type) {
-    object_reset(&Geom.Obj);
+    Geom.Obj.reset();
     if (type == SCALE) {
       Geom.mesh = AquireMesh("tunnel_scale.obj");
     } else if (type == SLOPE) {
@@ -21,14 +21,14 @@ public:
 
   void SetDoor1(Portal& portal)
   {
-    Matrix4 ltw = object_local_to_world(&Geom.Obj);
+    Matrix4 ltw = Geom.Obj.local_to_world();
     portal.Geom.Obj.pos = ltw.MulPoint(Vector3(0, 1, 1));
     portal.Geom.Obj.euler = Geom.Obj.euler;
     portal.Geom.Obj.scale = Vector3(0.6f, 0.999f, 1) * Geom.Obj.scale.x;
   }
   void SetDoor2(Portal& portal)
   {
-    Matrix4 ltw = object_local_to_world(&Geom.Obj);
+    Matrix4 ltw = Geom.Obj.local_to_world();
     portal.Geom.Obj.euler = Geom.Obj.euler;
     if (type == SCALE) {
       portal.Geom.Obj.pos = ltw.MulPoint(Vector3(0, 0.5f, -1));

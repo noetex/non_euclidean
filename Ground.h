@@ -2,7 +2,7 @@ class Ground : public Rigid {
 public:
   Ground(bool slope=false)
   {
-    object_reset(&Geom.Obj);
+    Geom.Obj.reset();
     if (slope)
     {
       Geom.mesh = AquireMesh("ground_slope.obj");

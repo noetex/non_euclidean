@@ -174,6 +174,7 @@ create_the_window(void)
   return Result;
 }
 
+
 int APIENTRY
 WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 {
