@@ -131,13 +131,14 @@ void Engine::Render(const Camera& cam, GLuint curFBO, const Portal* skipPortal)
       glDepthMask(GL_TRUE);
     }
     for (size_t i = 0; i < vPortals.size(); ++i) {
-      if (vPortals[i] != skipPortal) {
-        if (occlusionCullingSupported && (GH_REC_LEVEL > 0) && (drawTest[i] == 0)) {
-          continue;
-        } else {
-          vPortals[i]->Draw(cam, curFBO);
-        }
+      if (vPortals[i] == skipPortal)
+      {
+        continue;
       }
+      if (occlusionCullingSupported && (GH_REC_LEVEL > 0) && (drawTest[i] == 0)) {
+        continue;
+      }
+      vPortals[i]->Draw(cam, curFBO);
     }
     GH_REC_LEVEL += 1;
   }
