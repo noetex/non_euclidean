@@ -2,8 +2,7 @@
 
 Engine::Engine(int64_t Frequency)
 : TicksPerStep((int64_t)(Frequency * GH_DT)),
-  input({0}),
-  GH_FRAME(0)
+  input({0})
 {
   Assert(glewInit() == GLEW_OK);
   glClearColor(0.6f, 0.9f, 1.0f, 1.0f);
@@ -186,7 +185,7 @@ void Engine::do_frame(int64_t& cur_ticks, int64_t new_ticks)
   for (int i = 0; cur_ticks < new_ticks && i < GH_MAX_STEPS; ++i) {
     this->Update();
     cur_ticks += this->TicksPerStep;
-    this->GH_FRAME += 1;
+    //this->GH_FRAME += 1;
     this->input.EndFrame();
   }
   cur_ticks = (cur_ticks < new_ticks ? new_ticks: cur_ticks);

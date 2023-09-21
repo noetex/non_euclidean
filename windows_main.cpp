@@ -65,6 +65,16 @@ window_proc(HWND Window, UINT Message, WPARAM wParam, LPARAM lParam)
       BeginPaint(Window, &PaintStruct);
       EndPaint(Window, &PaintStruct);
     } break;
+#if 1
+    case WM_SETCURSOR:
+    {
+      if(LOWORD(lParam) == HTCLIENT)
+      {
+        SetCursor(0);
+        Result = TRUE;
+      }
+    } break;
+#endif
     case WM_SIZE:
     {
       //engine->iWidth = LOWORD(lParam);
@@ -200,7 +210,7 @@ WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
   SetWindowLongPtrW(Window, GWLP_USERDATA, (LONG_PTR)&engine);
   SetWindowLongPtrW(Window, GWLP_WNDPROC, (LONG_PTR)window_proc);
   SetWindowPos(Window, HWND_TOP, GH_SCREEN_X, GH_SCREEN_Y, 1280, 720, SWP_SHOWWINDOW);
-  ShowCursor(!GH_HIDE_MOUSE);
+  //ShowCursor(!GH_HIDE_MOUSE);
 
   for(;;)
   {
