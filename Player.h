@@ -16,7 +16,6 @@ public:
   }
 
   Matrix4 WorldToCam() const;
-  Matrix4 CamToWorld() const;
   Vector3 CamOffset() const;
 
   object_props Obj;

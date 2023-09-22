@@ -12,7 +12,6 @@ Engine::Engine(int64_t Frequency)
   glDepthFunc(GL_LESS);
   glDepthMask(GL_TRUE);
   glGetQueryiv(GL_SAMPLES_PASSED_ARB, GL_QUERY_COUNTER_BITS_ARB, &this->occlusionCullingSupported);
-  wglSwapIntervalEXT(1);
   player.init();
   this->sky.load();
 }

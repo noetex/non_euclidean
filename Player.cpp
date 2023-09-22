@@ -148,10 +148,6 @@ Matrix4 Player::WorldToCam() const {
   return Matrix4::RotX(-cam_rx) * Matrix4::RotY(-cam_ry) * Matrix4::Trans(-CamOffset()) * WorldToLocal();
 }
 
-Matrix4 Player::CamToWorld() const {
-  return LocalToWorld() * Matrix4::Trans(CamOffset()) * Matrix4::RotY(cam_ry) * Matrix4::RotX(cam_rx);
-}
-
 Vector3 Player::CamOffset() const {
   //If bob is too small, don't even bother
   if (bob_mag < GH_BOB_MIN) {
