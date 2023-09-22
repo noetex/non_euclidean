@@ -102,11 +102,9 @@ void Player::OnCollide(Vector3 push) {
     friction = 0.0f;
   }
 
-  //Base call
   Obj.pos += push;
   if (push.MagSq() > 1e-8f * p_scale)
   {
-    //Calculate kinetic friction
     float kinetic_friction = friction;
     if (high_friction > 0.0f) {
       const float vel_ratio = velocity.Mag() / (high_friction * p_scale);
@@ -138,7 +136,6 @@ void Player::process_input(Input& input)
   }
   this->Move(moveF, moveL);
 
-  //Jumping
   if (input.key[VK_SPACE]) {
     this->jump();
   }
@@ -149,12 +146,9 @@ Matrix4 Player::WorldToCam() const {
 }
 
 Vector3 Player::CamOffset() const {
-  //If bob is too small, don't even bother
   if (bob_mag < GH_BOB_MIN) {
     return Vector3::Zero();
   }
-
-  //Convert bob to translation
   const float theta = (GH_PI/2) * std::sin(bob_phi);
   const float y = bob_mag * GH_BOB_OFFS * (1.0f - std::cos(theta));
   return Vector3(0, y, 0);
