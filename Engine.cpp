@@ -98,37 +98,33 @@ void Engine::Render(const Camera& cam, GLuint curFBO, const Portal* skipPortal)
 #endif
   }
 
-  GLuint drawTest[GH_MAX_PORTALS];
-  Assert(vPortals.size() <= GH_MAX_PORTALS);
-
   if (GH_REC_LEVEL <= 0)
   {
     return;
   }
+
+  GLuint drawTest[GH_MAX_PORTALS];
   if (occlusionCullingSupported)
   {
     GLuint Query;
     glGenQueriesARB(1, &Query);
     GH_REC_LEVEL -= 1;
-    if (GH_REC_LEVEL > 0)
+    glDepthMask(GL_FALSE);
+    glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
+    for (size_t i = 0; i < vPortals.size(); ++i)
     {
-      glDepthMask(GL_FALSE);
-      glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
-      for (size_t i = 0; i < vPortals.size(); ++i)
+      if (vPortals[i] == skipPortal)
       {
-        if (vPortals[i] == skipPortal)
-        {
-          continue;
-        }
-        glBeginQueryARB(GL_SAMPLES_PASSED_ARB, Query);
-        vPortals[i]->DrawPink(cam);
-        glEndQueryARB(GL_SAMPLES_PASSED_ARB);
-        glGetQueryObjectuivARB(Query, GL_QUERY_RESULT_ARB, &drawTest[i]);
+        continue;
       }
-      glDeleteQueriesARB(1, &Query);
-      glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
-      glDepthMask(GL_TRUE);
+      glBeginQueryARB(GL_SAMPLES_PASSED_ARB, Query);
+      vPortals[i]->DrawPink(cam);
+      glEndQueryARB(GL_SAMPLES_PASSED_ARB);
+      glGetQueryObjectuivARB(Query, GL_QUERY_RESULT_ARB, &drawTest[i]);
     }
+    glDeleteQueriesARB(1, &Query);
+    glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
+    glDepthMask(GL_TRUE);
   }
   for (size_t i = 0; i < vPortals.size(); ++i)
   {
@@ -191,13 +187,13 @@ void Engine::do_frame(int64_t& cur_ticks, int64_t new_ticks)
 
   //Setup camera for rendering
   const float n = GH_CLAMP(this->NearestPortalDist() * 0.5f, GH_NEAR_MIN, GH_NEAR_MAX);
-  this->main_cam.worldView = this->player.WorldToCam();
-  this->main_cam.SetSize(GH_SCREEN_WIDTH, GH_SCREEN_HEIGHT, n, GH_FAR);
-  this->main_cam.UseViewport();
+  this->player.main_cam.worldView = this->player.WorldToCam();
+  this->player.main_cam.SetSize(GH_SCREEN_WIDTH, GH_SCREEN_HEIGHT, n, GH_FAR);
+  this->player.main_cam.UseViewport();
 
   //Render scene
   GH_REC_LEVEL = GH_MAX_RECURSION;
-  this->Render(this->main_cam, 0, nullptr);
+  this->Render(this->player.main_cam, 0, nullptr);
 }
 
 float Engine::NearestPortalDist() const {
@@ -532,4 +528,5 @@ void Engine::load_scene(size_t Index)
       vObjects.push_back(floorplan);
     } break;
   }
+  Assert(vPortals.size() <= GH_MAX_PORTALS);
 }

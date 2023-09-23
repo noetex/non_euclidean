@@ -14,8 +14,6 @@ public:
   int64_t TicksPerStep;
   GLint occlusionCullingSupported;
   Input input;
-  //int64_t GH_FRAME;
-  Camera main_cam;
   int GH_REC_LEVEL;
   Sky sky;
 };

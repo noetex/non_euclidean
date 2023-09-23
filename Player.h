@@ -18,6 +18,8 @@ public:
   Matrix4 WorldToCam() const;
   Vector3 CamOffset() const;
 
+  Camera main_cam;
+
   object_props Obj;
   Vector3 gravity;
   Vector3 velocity;
